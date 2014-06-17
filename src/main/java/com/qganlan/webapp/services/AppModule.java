@@ -1,5 +1,7 @@
 package com.qganlan.webapp.services;
 
+import java.io.IOException;
+
 import org.apache.tapestry5.MarkupWriter;
 import org.apache.tapestry5.SymbolConstants;
 import org.apache.tapestry5.ValidationDecorator;
@@ -8,21 +10,39 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.services.*;
+import org.apache.tapestry5.ioc.services.cron.IntervalSchedule;
+import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
+import org.apache.tapestry5.services.ClasspathAssetAliasManager;
+import org.apache.tapestry5.services.ComponentSource;
+import org.apache.tapestry5.services.Environment;
+import org.apache.tapestry5.services.ExceptionReporter;
+import org.apache.tapestry5.services.MarkupRenderer;
+import org.apache.tapestry5.services.MarkupRendererFilter;
+import org.apache.tapestry5.services.RequestExceptionHandler;
+import org.apache.tapestry5.services.ResponseRenderer;
+import org.apache.tapestry5.services.ValueEncoderFactory;
+import org.apache.tapestry5.services.ValueEncoderSource;
 import org.apache.tapestry5.services.javascript.JavaScriptStack;
 import org.apache.tapestry5.upload.services.UploadSymbols;
 import org.appfuse.model.Role;
 import org.appfuse.model.User;
 import org.appfuse.service.RoleManager;
 import org.appfuse.service.UserManager;
-import com.qganlan.webapp.AppFuseSymbolConstants;
-import com.qganlan.webapp.data.FileData;
-import com.qganlan.webapp.services.impl.*;
-import com.qganlan.webapp.services.javascript.BootstrapJavaScriptStack;
 import org.slf4j.Logger;
 
-import java.io.IOException;
+import com.qganlan.service.JobManager;
+import com.qganlan.webapp.AppFuseSymbolConstants;
+import com.qganlan.webapp.data.FileData;
+import com.qganlan.webapp.services.impl.BootstrapValidationDecorator;
+import com.qganlan.webapp.services.impl.CountryServiceImpl;
+import com.qganlan.webapp.services.impl.EmailServiceImpl;
+import com.qganlan.webapp.services.impl.FileDataEncoder;
+import com.qganlan.webapp.services.impl.RoleEncoder;
+import com.qganlan.webapp.services.impl.SpringSecurityContext;
+import com.qganlan.webapp.services.impl.UserEncoder;
+import com.qganlan.webapp.services.javascript.BootstrapJavaScriptStack;
 
 
 /**
@@ -150,6 +170,14 @@ public class AppModule {
     }
 
 
-
+    @Startup
+    public static void scheduleJobs(PeriodicExecutor executor, final JobManager jobManager) {
+    	executor.addJob(new IntervalSchedule(60*60000L), "1 HOUR JOB", new Runnable() {
+			public void run() {
+				jobManager.checkModifiedTaobaoItems();
+				jobManager.checkGoods();
+			}
+		});
+    }
 
 }

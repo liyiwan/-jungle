@@ -19,22 +19,26 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" t:type="pagelink" page="index">${message:webapp.name}</a>
+        <a class="navbar-brand" t:type="pagelink" page="index">Jungle</a>
     </div>
     <div class="collapse navbar-collapse" id="navbar">
     <t:menu class="nav navbar-nav" active="${menu}">
         <t:if test="prop:loggedIn">
-            <t:menuitem name="Home" title="home.title" page="home" roles="ROLE_ADMIN,ROLE_USER"/>
-            <t:menuitem name="UserMenu" title="menu.user" page="home.editprofile"
-                        roles="ROLE_ADMIN,ROLE_USER"/>
-            <!-- Add new menu items here -->
-            <t:menuitem name="AdminMenu" title="menu.admin" roles="ROLE_ADMIN"
-                        class="dropdown" data-toggle="dropdown">
+            <t:menuitem name="Home" title="literal:主菜单" page="home" roles="ROLE_ADMIN,ROLE_USER"/>
+            
+            <t:menuitem name="StockMenu" title="literal:库存管理" roles="ROLE_ADMIN,ROLE_USER" class="dropdown" data-toggle="dropdown">
+            	<ul class="dropdown-menu">
+            		<t:delegate to="block:stockItemsBlock"/>
+            	</ul>
+            </t:menuitem>
+            
+            <t:menuitem name="AdminMenu" title="literal:系统管理" roles="ROLE_ADMIN" class="dropdown" data-toggle="dropdown">
                 <ul class="dropdown-menu">
                     <t:delegate to="block:adminItemsBlock"/>
                 </ul>
             </t:menuitem>
-            <t:menuitem name="Logout" title="user.logout" page="logout" roles="ROLE_ADMIN,ROLE_USER"/>
+            <t:menuitem name="UserMenu" title="literal:编辑信息" page="home.editprofile" roles="ROLE_ADMIN,ROLE_USER"/>
+            <t:menuitem name="Logout" title="literal:退出" page="logout" roles="ROLE_ADMIN,ROLE_USER"/>
 
             <p:else>
                 <li class="active">
@@ -69,12 +73,14 @@
 </t:block>
 
 <t:block id="adminItemsBlock">
-    <t:menuitem name="ViewUsers" title="menu.admin.users" page="admin/userlist"/>
-    <t:menuitem name="ActiveUsers" title="home.activeUsers" page="admin/activeusers"/>
-    <t:menuitem name="ReloadContext" title="menu.admin.reload" page="admin/reload"/>
-    <t:menuitem name="FileUpload" title="menu.selectFile" page="fileupload"/>
+    <t:menuitem name="ViewUsers" title="literal:查看用户" page="admin/userlist"/>
+    <t:menuitem name="ActiveUsers" title="literal:在线用户" page="admin/activeusers"/>
+    <t:menuitem name="ReloadContext" title="literal:重载选项" page="admin/reload"/>
+    <t:menuitem name="FileUpload" title="literal:上传文件" page="fileupload"/>
 </t:block>
-
+<t:block id="stockItemsBlock">
+	<t:menuitem name="StockWarning" title="literal:库存警告" page="stock/warning"/>
+</t:block>
 <t:footer/>
 </body>
 </html>

@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE hibernate-mapping PUBLIC  
+        "-//Hibernate/Hibernate Mapping DTD 3.0//EN"  
+        "http://hibernate.sourceforge.net/hibernate-mapping-3.0.dtd">
+<hibernate-mapping>
+	<sql-query name="GoodsToCheck">
+		<![CDATA[
+			SELECT TOP 100 Goods.GoodsID AS GoodsId, Goods.GoodsNO AS GoodsNo, Goods.GoodsName AS GoodsName FROM G_Goods_GoodsList Goods LEFT JOIN J_MyGoods MyGoods ON Goods.GoodsID = MyGoods.GoodsId
+			WHERE CheckDate IS NULL OR datediff(hh,MyGoods.CheckDate,GETDATE()) > 24 
+		]]>
+	</sql-query>
+</hibernate-mapping>
