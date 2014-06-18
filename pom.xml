@@ -13,33 +13,6 @@
         <maven>3.1.0</maven>
     </prerequisites>
 
-    <!--<licenses>
-        <license>
-            <name></name>
-            <url></url>
-        </license>
-    </licenses>
-
-    <scm>
-        <connection></connection>
-        <developerConnection></developerConnection>
-        <url></url>
-    </scm>
-
-    <issueManagement>
-        <system></system>
-        <url></url>
-    </issueManagement>
-
-    <developers>
-        <developer>
-            <id></id>
-            <name></name>
-            <email></email>
-            <timezone></timezone>
-        </developer>
-    </developers>-->
-
     <build>
     	<finalName>jungle</finalName>
         <defaultGoal>install</defaultGoal>
@@ -71,8 +44,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.1</version>
                 <configuration>
-                    <source>1.5</source>
-					<target>1.5</target>
+                    <source>1.7</source>
+					<target>1.7</target>
 					<optimize>true</optimize>
 					<encoding>UTF-8</encoding>
                 </configuration>
@@ -105,14 +78,7 @@
                         <skip>${skipTests}</skip>
                     </componentProperties>
                 </configuration>
-                <executions>
-                    <execution>
-                        <phase>process-test-resources</phase>
-                        <goals>
-                            <goal>hbm2ddl</goal>
-                        </goals>
-                    </execution>
-                </executions>
+
                 <dependencies>
                     <dependency>
                         <groupId>${jdbc.groupId}</groupId>
@@ -137,23 +103,7 @@
                     <skip>${skipTests}</skip>
                     <transaction>true</transaction>
                 </configuration>
-                <executions>
-                    <execution>
-                        <id>test-compile</id>
-                        <phase>test-compile</phase>
-                        <goals>
-                            <goal>operation</goal>
-                        </goals>
-                    </execution>
-                    <execution>
-                        <!-- Runs before integration tests and jetty:run-war -->
-                        <id>test</id>
-                        <phase>test</phase>
-                        <goals>
-                            <goal>operation</goal>
-                        </goals>
-                    </execution>
-                </executions>
+
                 <dependencies>
                     <dependency>
                         <groupId>${jdbc.groupId}</groupId>
@@ -216,61 +166,9 @@
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>native2ascii-maven-plugin</artifactId>
                 <version>1.0-beta-1</version>
-                <executions>
-                    <execution>
-                        <id>native2ascii-utf8</id>
-                        <goals>
-                            <goal>native2ascii</goal>
-                        </goals>
-                        <configuration>
-                            <encoding>UTF8</encoding>
-                            <includes>
-                                <include>ApplicationResources_el*.properties</include>
-                                <include>ApplicationResources_zh*.properties</include>
-                                <include>ApplicationResources_ko*.properties</include>
-                            </includes>
-                        </configuration>
-                    </execution>
-                </executions>
+
             </plugin>
-            <plugin>
-                <artifactId>maven-antrun-plugin</artifactId>
-                <version>1.7</version>
-                <executions>
-                    <execution>
-                        <id>default-resources</id>
-                        <phase>process-resources</phase>
-                        <configuration>
-                            <tasks>
-                                <echo>Copying i18n files...</echo>
-                                <copy todir="src/main/webapp/WEB-INF" overwrite="true">
-                                    <globmapper from="ApplicationResources*" to="app*" />
-                                    <fileset dir="${project.build.outputDirectory}" includes="ApplicationResources*" />
-                                    <!-- Tapestry specific customizations -->
-                                    <filterset begintoken="{" endtoken="}">
-                                        <!-- Convert {i} to %s -->
-                                        <filter token="0" value="%1$s" />
-                                        <filter token="1" value="%2$s" />
-                                        <filter token="2" value="%3$s" />
-                                        <filter token="3" value="%4$s" />
-                                        <filter token="4" value="%5$s" />
-                                        <filter token="5" value="%6$s" />
-                                        <filter token="6" value="%7$s" />
-                                    </filterset>
-                                    <filterset begintoken="${" endtoken="}">
-                                        <!-- Tapestry interpret these as symbols -->
-                                        <filter token="pom.version" value="${project.version}" />
-                                        <filter token="copyright.year" value="${copyright.year}" />
-                                    </filterset>
-                                </copy>
-                            </tasks>
-                        </configuration>
-                        <goals>
-                            <goal>run</goal>
-                        </goals>
-                    </execution>
-                </executions>
-            </plugin>
+            
         </plugins>
         <resources>
             <resource>

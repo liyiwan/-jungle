@@ -3,6 +3,7 @@ package com.qganlan.service.impl;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.qganlan.dto.GoodsDTO;
@@ -26,13 +27,19 @@ public class JobManagerImpl implements JobManager {
 		this.goodsManager = goodsManager;
 	}
 	
-	public void checkModifiedTaobaoItems() {
+	@Scheduled(initialDelay = 10000, fixedDelay = 3600000)
+	public void hourJob() {
+		checkGoods();
+	}
+	
+	private void checkModifiedTaobaoItems() {
 	}
 
-	public void checkGoods() {
+	private void checkGoods() {
 		try {
 			List<GoodsDTO> goodsList = goodsManager.getGoodsToCheck();
 			for (GoodsDTO goods : goodsList) {
+				System.out.println("CHECK GOODS " + goods.getGoodsNo() + " " + goods.getGoodsName());
 				goodsManager.checkGoods(goods);
 			}
 		} catch (Throwable t) {

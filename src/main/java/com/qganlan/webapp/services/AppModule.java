@@ -169,15 +169,14 @@ public class AppModule {
         };
     }
 
-
-    @Startup
-    public static void scheduleJobs(PeriodicExecutor executor, final JobManager jobManager) {
-    	executor.addJob(new IntervalSchedule(60*60000L), "1 HOUR JOB", new Runnable() {
-			public void run() {
-				jobManager.checkModifiedTaobaoItems();
-				jobManager.checkGoods();
-			}
-		});
-    }
+//    @Startup
+//    public static void scheduleJobs(PeriodicExecutor executor, final JobManager jobManager) {
+//    	executor.addJob(new IntervalSchedule(60*60000L), "1 HOUR JOB", new Runnable() {
+//			public void run() {
+//				jobManager.checkModifiedTaobaoItems();
+//				jobManager.checkGoods();
+//			}
+//		});
+//    }
 
 }

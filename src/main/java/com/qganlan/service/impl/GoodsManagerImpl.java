@@ -13,6 +13,7 @@ import com.qganlan.dto.GoodsDTO;
 import com.qganlan.model.MyGoods;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.TaobaoApiManager;
+import com.qganlan.webapp.services.EmailService;
 import com.taobao.api.domain.Item;
 
 @Service("goodsManager")
@@ -41,7 +42,7 @@ public class GoodsManagerImpl implements GoodsManager {
 	public void checkGoods(GoodsDTO goods) {
 		try {
 			List<Item> items = taobaoApiManager.getItemByOuterId(goods.getGoodsNo());
-			if (items.size() > 0) {
+			if (items != null && items.size() > 0) {
 				Item item = items.get(0);
 				MyGoods myGoods = goodsDao.getMyGoods(goods.getGoodsId());
 				if (myGoods == null) {
@@ -52,7 +53,9 @@ public class GoodsManagerImpl implements GoodsManager {
 				myGoods.setCheckDate(new Date());
 				goodsDao.saveMyGoods(myGoods);
 				System.out.println(goods.getGoodsNo() + " " + myGoods.getPicPath());
-			}	
+			} else {
+				System.out.println(goods.getGoodsNo() + " 没有在售");
+			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}

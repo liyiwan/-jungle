@@ -5,13 +5,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import javax.annotation.PostConstruct;
-
-import org.apache.tapestry5.ioc.annotations.Inject;
-import org.apache.tapestry5.ioc.internal.util.CollectionFactory;
-import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qganlan.dao.MyConfigDao;
+import com.qganlan.dao.TaobaoSessionKeyDao;
+import com.qganlan.model.MyConfig;
+import com.qganlan.model.TaobaoSessionKey;
 import com.qganlan.service.TaobaoApiManager;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
@@ -24,43 +24,74 @@ import com.taobao.api.response.ItemsCustomGetResponse;
 public class TaobaoApiManagerImpl implements TaobaoApiManager {
 	
 	private static String TAOBAO_API_URL = "http://gw.api.taobao.com/router/rest";
-	private String defaultSeller = "小脚丫商城";
-	private String appKey = "12421252";
-	private String appSecret = "81e9eb1005ce741ee23cc3081b1c9fd0";
+	private String defaultSeller = null;
+	private String appKey = null;
+	private String appSecret = null;
 	private Map<String,String> sessionKeyMap = new HashMap<String,String>();
-	private List<String> authorizedSellers = new ArrayList<String>();
+	private List<String> authorizedSellers = null;
+	private TaobaoSessionKeyDao taobaoSessionKeyDao;
+	private MyConfigDao myConfigDao;
 	
-	String[][] keys = {
-			{ "dwf306", "6101c09193bd6f93e1ffc62f9441e055e086d37f19405c7136835512","2014-02-22" }, 
-			{ "janny0293", "610170051ff5c4bdb615844ff158c90c1e8651fb5125fd169955725", "2013-12-07" }, 
-			{ "lingxige", "6102826210c4c88696a314d2a4e8cf210b11ca52ff4ef35167962435", "2013-12-07" }, 
-			{ "狐狐屋", "6102528c37ee8f46a43f99cf2ee5612654cd18696abf0aa143185909", "2014-05-10" },
-			{ "小脚丫商城", "6101f151eb6f16f174a1fd11e6c2adcf250cf34a197d567268631276", "2013-07-18" } };
-	
-	@Inject
-    private Logger logger;
-	
-	@PostConstruct
-	public void loadTaobaoSessionKeys() {
-		for (String[] key : keys) {
-			sessionKeyMap.put(key[0], key[1]);
-			authorizedSellers.add(key[0]);
-		}
+	@Autowired
+	public void setTaobaoSessionKeyDao(TaobaoSessionKeyDao taobaoSessionKeyDao) {
+		this.taobaoSessionKeyDao = taobaoSessionKeyDao;
 	}
 
+	@Autowired
+	public void setMyConfigDao(MyConfigDao myConfigDao) {
+		this.myConfigDao = myConfigDao;
+	}
+	
 	public String getAppKey() {
+		if (appKey == null) {
+			MyConfig config = myConfigDao.get("AppKey"); 
+			if (config != null) {
+				appKey = config.getConfigValue();
+			}
+		}
 		return appKey;
 	}
 	
 	public String getAppSecret() {
+		if (appSecret == null) {
+			MyConfig config = myConfigDao.get("AppSecret"); 
+			if (config != null) {
+				appSecret = config.getConfigValue();
+			}
+		}
 		return appSecret;
 	}
 	
+	public String getDefaultSeller() {
+		if (defaultSeller == null) {
+			MyConfig config = myConfigDao.get("DefaultSeller"); 
+			if (config != null) {
+				defaultSeller = config.getConfigValue();
+			}
+		}
+		return defaultSeller;
+	}
+	
 	public String getSessionKey(String nick) {
-		return sessionKeyMap.get(nick);
+		String key = sessionKeyMap.get(nick);
+		if (key == null) {
+			TaobaoSessionKey taobaoSessionKey = taobaoSessionKeyDao.get(nick);
+			if (taobaoSessionKey != null) {
+				key = taobaoSessionKey.getSessionKey();
+				sessionKeyMap.put(nick, key);
+			}
+		}
+		return key;
 	}
 	
 	public List<String> getAuthorizedSellers() {
+		if (authorizedSellers == null) {
+			List<TaobaoSessionKey> keys = taobaoSessionKeyDao.getAll();
+			authorizedSellers = new ArrayList<String>();
+			for (TaobaoSessionKey key : keys) {
+				authorizedSellers.add(key.getNick());
+			}
+		}
 		return authorizedSellers;
 	}
 
@@ -72,18 +103,14 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 		int retry = 0;
 		while (retry < 3) {
 			try {
-				ItemsCustomGetResponse response = taobaoClient.execute(req , getSessionKey(defaultSeller));
-				if (response.isSuccess()) {
-					return response.getItems();
-				} else {
-					break;
-				}
+				ItemsCustomGetResponse response = taobaoClient.execute(req , getSessionKey(getDefaultSeller()));
+				return response.getItems();
 			} catch (ApiException e) {
 				e.printStackTrace();
 			}
 			retry = retry + 1;
 		}
-		return CollectionFactory.newList();
+		return null;
 	}
 
 }
