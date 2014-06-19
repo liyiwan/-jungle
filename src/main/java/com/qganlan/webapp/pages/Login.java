@@ -1,32 +1,26 @@
 package com.qganlan.webapp.pages;
 
-import org.apache.tapestry5.Asset;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.tapestry5.alerts.AlertManager;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Environmental;
+import org.apache.tapestry5.annotations.Import;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.annotations.Value;
 import org.apache.tapestry5.json.JSONObject;
 import org.apache.tapestry5.services.Context;
 import org.apache.tapestry5.services.PageRenderLinkSource;
 import org.apache.tapestry5.services.Request;
 import org.apache.tapestry5.services.javascript.JavaScriptSupport;
 import org.appfuse.Constants;
-import com.qganlan.webapp.AppFuseSymbolConstants;
 import org.slf4j.Logger;
-import org.springframework.security.web.authentication.AbstractAuthenticationProcessingFilter;
+import org.springframework.security.web.WebAttributes;
 
-import java.util.HashMap;
-import java.util.Map;
-
-/**
- * Login Page
- *
- * @author Serge Eby
- * @version $Id: Login.java 5 2008-08-30 09:59:21Z serge.eby $
- */
-
+import com.qganlan.webapp.AppFuseSymbolConstants;
 
 @Import(library = {"context:scripts/login.js"})
 public class Login {
@@ -57,7 +51,6 @@ public class Login {
     @Property
     private String errorMessage;
 
-
     @Inject
     private Context context;
 
@@ -67,7 +60,7 @@ public class Login {
         if ("error".equals(loginError)) {
             this.errorMessage = ((Exception) request
                     .getSession(true)
-                    .getAttribute(AbstractAuthenticationProcessingFilter.SPRING_SECURITY_LAST_EXCEPTION_KEY))
+                    .getAttribute(WebAttributes.AUTHENTICATION_EXCEPTION))
                     .getMessage();
             logger.error(String.format("Error while attempting to login: %s",
                     errorMessage));

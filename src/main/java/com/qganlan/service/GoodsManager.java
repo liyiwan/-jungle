@@ -7,4 +7,6 @@ import com.qganlan.dto.GoodsDTO;
 public interface GoodsManager {
 	public List<GoodsDTO> getGoodsToCheck();
 	public void checkGoods(GoodsDTO goods);
+	public void disableStockWarning(Long goodsId);
+	public void hideOneDay(Long goodsId);
 }

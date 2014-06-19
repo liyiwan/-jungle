@@ -18,6 +18,7 @@ import org.slf4j.Logger;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.StockSpecDTO;
 import com.qganlan.model.Provider;
+import com.qganlan.service.GoodsManager;
 import com.qganlan.service.ProviderManager;
 import com.qganlan.service.StockManager;
 
@@ -33,6 +34,9 @@ public class StockWarning {
 	
 	@Inject
 	private ProviderManager providerManager;
+	
+	@Inject
+	private GoodsManager goodsManager;
 	
 	@Inject
     private BeanModelSource beanModelSource;
@@ -53,10 +57,10 @@ public class StockWarning {
     private String errorMessage;
 	
 	@Property
-	private Map<Long, List<GoodsDTO>> goodsMap = new HashMap<Long, List<GoodsDTO>>();
+	private Map<Long, List<GoodsDTO>> goodsMap = null;
 	
 	@Property
-	private List<Provider> providerList = new ArrayList<Provider>();
+	private List<Provider> providerList = null;
 	
 	@Property
 	private Provider provider;
@@ -68,6 +72,8 @@ public class StockWarning {
 	private StockSpecDTO stockSpec;
 
 	public void setUpRender() {
+		goodsMap = new HashMap<Long, List<GoodsDTO>>();
+		providerList = new ArrayList<Provider>();
 		List<GoodsDTO> goodsList = stockManager.getStockWarningGoodsList();
 		for (GoodsDTO goods : goodsList) {
 			Long providerId = goods.getProviderId();
@@ -95,7 +101,7 @@ public class StockWarning {
 		if (goods.getPicPath() == null || "".equals(goods.getPicPath())) {
 			return "#";
 		} else {
-			return goods.getPicPath() + "_300x300.jpg";
+			return goods.getPicPath() + "_310x310.jpg";
 		}
 	}
 	
@@ -109,5 +115,13 @@ public class StockWarning {
 		} else {
 			return "";
 		}
+	}
+	
+	public void onDisableStockWarning(Long goodsId) {
+		goodsManager.disableStockWarning(goodsId);
+	}
+	
+	public void onHideOneDay(Long goodsId) {
+		goodsManager.hideOneDay(goodsId);
 	}
 }

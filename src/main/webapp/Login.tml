@@ -6,29 +6,20 @@
     <form method="post" id="loginForm" action="${springSecurityUrl}"
           onsubmit="saveUsername(this)" class="form-signin" autocomplete="off">
 
-        <h2 class="form-signin-heading">
-            ${message:login.heading}
-        </h2>
+        <h2 class="form-signin-heading">登录</h2>
 
         <t:if test="${errorMessage}">
-            <div class="alert alert-danger alert-dismissable">
-                ${message:errors.password.mismatch}
-            </div>
+            <div class="alert alert-danger alert-dismissable">无效用户名或密码，请重试！</div>
         </t:if>
 
-        <input type="text" class="form-control" name="j_username" id="j_username"
-               placeholder="${message:label.username}" required="true" tabindex="1"/>
-        <input type="password" class="form-control" name="j_password" id="j_password" tabindex="2"
-               placeholder="${message:label.password}" required="true"/>
+        <input type="text" class="form-control" name="j_username" id="j_username" placeholder="用户名" required="true" tabindex="1"/>
+        <input type="password" class="form-control" name="j_password" id="j_password" tabindex="2" placeholder="密码" required="true"/>
 
         <t:if test="rememberMeEnabled">
-            <label for="rememberMe" class="checkbox">
-                <input type="checkbox" name="_spring_security_remember_me" id="rememberMe" tabindex="3"/>
-                ${message:login.rememberMe}
-            </label>
+            <label for="rememberMe" class="checkbox"><input type="checkbox" name="_spring_security_remember_me" id="rememberMe" tabindex="3"/>让系统记住我</label>
         </t:if>
 
-        <input type="submit" class="btn btn-lg btn-primary btn-block" name="login" value="${message:button.login}" tabindex="4"/>
+        <input type="submit" class="btn btn-lg btn-primary btn-block" name="login" value="登录" tabindex="4"/>
 
     </form>
 

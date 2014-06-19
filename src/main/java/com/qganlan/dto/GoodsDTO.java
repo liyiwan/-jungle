@@ -1,13 +1,7 @@
 package com.qganlan.dto;
 
-import java.io.Serializable;
 
-import org.apache.commons.lang3.builder.ToStringBuilder;
-import org.apache.commons.lang3.builder.ToStringStyle;
-
-public class GoodsDTO implements Serializable {
-
-	private static final long serialVersionUID = 4789512455855965526L;
+public class GoodsDTO {
 
 	private Long goodsId;
 	private String goodsNo;
@@ -16,6 +10,7 @@ public class GoodsDTO implements Serializable {
 	private Long sellCountMonth;
 	private Long providerId;
 	private String picPath;
+	private String remark;
 
 	public Long getGoodsId() {
 		return goodsId;
@@ -73,28 +68,12 @@ public class GoodsDTO implements Serializable {
 		this.picPath = picPath;
 	}
 
-	public String toString() {
-		ToStringBuilder sb = new ToStringBuilder(this, ToStringStyle.DEFAULT_STYLE)
-			.append("goodsId", this.goodsId)
-			.append("goodsNo", this.goodsNo)
-			.append("goodsName", this.goodsName);
-		return sb.toString();
+	public String getRemark() {
+		return remark;
 	}
 
-	public boolean equals(Object o) {
-		if (this == o) {
-            return true;
-        }
-        if (!(o instanceof GoodsDTO)) {
-            return false;
-        }
-
-        final GoodsDTO goods = (GoodsDTO) o;
-        return goodsId.equals(goods.getGoodsId());
-	}
-
-	public int hashCode() {
-		return goodsId.hashCode();
+	public void setRemark(String remark) {
+		this.remark = remark;
 	}
 
 }

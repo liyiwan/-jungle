@@ -61,4 +61,12 @@ public class GoodsManagerImpl implements GoodsManager {
 		}
 	}
 
+	public void disableStockWarning(Long goodsId) {
+		goodsDao.disableStockWarning(goodsId);
+	}
+
+	public void hideOneDay(Long goodsId) {
+		goodsDao.hideOneDay(goodsId);
+	}
+
 }

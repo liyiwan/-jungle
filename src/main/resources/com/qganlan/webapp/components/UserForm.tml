@@ -24,13 +24,12 @@
 </t:if>
 
 <div class="form-group">
-    <label t:type="label" class="control-label" for="username">${message:user.username}</label>
+    <label t:type="label" class="control-label" for="username">用户名</label>
 
     <input t:type="textfield" t:id="username" value="user.username" validate="required" class="form-control" autofocus="true"/>
     <t:if test="self">
         <span class="help-block">
-              <a href="#" t:type="eventlink" t:id="updatePassword" id="updatePassword" event="updatePassword">
-                  ${message:updatePassword.changePasswordLink}</a>
+              <a href="#" t:type="eventlink" t:id="updatePassword" id="updatePassword" event="updatePassword">修改密码</a>
          </span>
     </t:if>
 </div>
@@ -60,62 +59,61 @@
 
 <div class="row">
     <div class="col-sm-6 form-group">
-        <label t:type="label" class="control-label" for="firstName">${message:user.firstName}</label>
+        <label t:type="label" class="control-label" for="firstName">名字</label>
         <input t:type="textfield" t:id="firstName" value="user.firstName" validate="required" class="form-control"/>
     </div>
 
     <div class="col-sm-6 form-group">
-        <label t:type="label" class="control-label" for="lastName">${message:user.lastName}</label>
+        <label t:type="label" class="control-label" for="lastName">姓</label>
         <input class="form-control" t:type="textfield" t:id="lastName" value="user.lastName" validate="required"/>
     </div>
 </div>
 <div class="row">
     <div class="col-sm-6 form-group">
-        <label t:type="label" class="control-label" for="email">${message:user.email}</label>
+        <label t:type="label" class="control-label" for="email">E-Mail</label>
         <input t:type="textfield" t:id="email" value="user.email" validate="required,email" class="form-control"/>
     </div>
 
     <div class="col-sm-6 form-group">
-        <label t:type="label" class="control-label" for="phoneNumber">${message:user.phoneNumber}</label>
-        <input class="form-control" t:type="textfield" t:id="phoneNumber" value="user.phoneNumber"
-               validate="minlength=11"/>
+        <label t:type="label" class="control-label" for="phoneNumber">电话</label>
+        <input class="form-control" t:type="textfield" t:id="phoneNumber" value="user.phoneNumber"/>
     </div>
 </div>
 <div class="form-group">
-    <label t:type="label" class="control-label" for="website">${message:user.website}</label>
+    <label t:type="label" class="control-label" for="website">网址</label>
     <input t:type="textfield" t:id="website" value="user.website" class="form-control"/>
 </div>
 
 <div>
     <legend class="accordion-heading">
-        <a data-toggle="collapse" href="#collapse-address">${message:user.address.address}</a>
+        <a data-toggle="collapse" href="#collapse-address">地址</a>
     </legend>
 
     <div id="collapse-address" class="accordion-body collapse">
 
         <div class="form-group">
-            <label class="control-label" t:type="label" for="address">${message:user.address.address}</label>
+            <label class="control-label" t:type="label" for="address">地址</label>
             <input t:type="textfield" t:id="address" value="user.address?.address" class="form-control"/>
         </div>
 
         <div class="row">
             <div class="col-sm-7 form-group">
-                <label class="control-label" t:type="label" for="city">${message:user.address.city}</label>
+                <label class="control-label" t:type="label" for="city">城市</label>
                 <input t:type="textfield" t:id="city" value="user.address?.city" class="form-control"/>
             </div>
 
             <div class="col-sm-2 form-group">
-                <label class="control-label" t:type="label" for="state">${message:user.address.province}</label>
+                <label class="control-label" t:type="label" for="state">省份</label>
                 <input t:type="textfield" t:id="state" value="user.address?.province" class="form-control"/>
             </div>
 
             <div class="col-sm-3 form-group">
-                <label class="control-label" t:type="label" for="postalCode">${message:user.address.postalCode}</label>
+                <label class="control-label" t:type="label" for="postalCode">邮编</label>
                 <input t:type="textfield" t:id="postalCode" value="user.address?.postalCode" class="form-control"/>
             </div>
         </div>
         <div class="form-group">
-            <label t:type="label" for="country" class="control-label">${message:user.address.country}</label>
+            <label t:type="label" for="country" class="control-label">国家</label>
             <select t:type="select" t:id="country" model="countryModel" value="user.address?.country"
                     encoder="countryEncoder" blankOption="always" class="form-control"/>
         </div>
@@ -166,28 +164,27 @@
 </t:unless>
 
 <div class="form-group form-actions">
-    <button type="submit" id="save" name="save" class="btn btn-primary">
-        <i class="icon-ok icon-white"></i> ${submitLabel}</button>
+    <button type="submit" id="save" name="save" class="btn btn-primary"><i class="icon-ok icon-white"></i>保存</button>
     <t:unless test="${signup}">
         <t:if test="fromList">
             <t:if test="userPersisted">
                 <a data-toggle="modal" data-target="#confirmModal" class="btn btn-danger">
-                    <i class="icon-trash icon-white"></i> ${message:button.delete}
+                    <i class="icon-trash icon-white"></i>删除
                 </a>
 
                 <div class="modal hide" id="confirmModal">
                     <div class="modal-header">
                         <button type="button" class="close" data-dismiss="modal">×</button>
-                        <h3>Confirmation</h3>
+                        <h3>确认</h3>
                     </div>
                     <div class="modal-body">
-                        <p>${confirmDeletion}</p>
+                        <p>确认删除</p>
                     </div>
                     <div class="modal-footer">
                         <a href="#" t:type="eventlink" t:id="delete" id="delete" event="delete" class="btn btn-primary">
-                            <i class="icon-ok icon-white"></i> ${message:button.delete}</a>
+                            <i class="icon-ok icon-white"></i>删除</a>
                         <a href="#" class="btn btn-default" data-dismiss="modal">
-                            <i class="icon-remove"></i> ${message:button.cancel}</a>
+                            <i class="icon-remove"></i>取消</a>
                     </div>
                 </div>
 
@@ -195,8 +192,7 @@
         </t:if>
     </t:unless>
 
-    <a t:type="eventlink" id="cancel" event="canceled" class="btn btn-default">
-        <i class="icon-remove"></i> ${message:button.cancel}</a>
+    <a t:type="eventlink" id="cancel" event="canceled" class="btn btn-default"><i class="icon-remove"></i>取消</a>
 </div>
 
 </fieldset>

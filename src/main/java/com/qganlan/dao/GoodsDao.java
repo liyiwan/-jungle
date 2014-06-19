@@ -16,4 +16,6 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public List<GoodsDTO> getGoodsToCheck();
 	public MyGoods getMyGoods(Long goodsId);
 	public void saveMyGoods(MyGoods myGoods);
+	public void disableStockWarning(Long goodsId);
+	public void hideOneDay(Long goodsId);
 }

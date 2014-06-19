@@ -13,7 +13,8 @@ public class MyGoods {
 	private Long goodsId;
 	private String picPath;
 	private Date checkDate;
-	
+	private Date stockWarningDate;
+
 	@Id
     @Column(name = "GoodsId", nullable = false)
 	public Long getGoodsId() {
@@ -37,6 +38,14 @@ public class MyGoods {
 	}
 	public void setCheckDate(Date checkDate) {
 		this.checkDate = checkDate;
+	}
+	
+	@Column(name = "StockWarningDate")
+	public Date getStockWarningDate() {
+		return stockWarningDate;
+	}
+	public void setStockWarningDate(Date stockWarningDate) {
+		this.stockWarningDate = stockWarningDate;
 	}
 	
 }

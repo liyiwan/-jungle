@@ -1,8 +1,10 @@
 package com.qganlan.dao.hibernate;
 
+import java.util.Calendar;
 import java.util.List;
 
 import org.appfuse.dao.hibernate.GenericDaoHibernate;
+import org.hibernate.Query;
 import org.hibernate.SQLQuery;
 import org.hibernate.Session;
 import org.hibernate.transform.Transformers;
@@ -32,6 +34,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("SellCountMonth", StandardBasicTypes.LONG);
 		query.addScalar("ProviderId", StandardBasicTypes.LONG);
 		query.addScalar("PicPath", StandardBasicTypes.STRING);
+		query.addScalar("Remark", StandardBasicTypes.STRING);
 		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
 		return query.list();
 	}
@@ -66,6 +69,25 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		Session sess = getSession();
 		sess.saveOrUpdate(myGoods);
 		sess.flush();
+	}
+
+	public void disableStockWarning(Long goodsId) {
+		Query q = getSession().createQuery("UPDATE Goods SET flagId = 13 WHERE goodsId = :goodsId");
+		q.setLong("goodsId", goodsId);
+		q.executeUpdate();
+	}
+
+	public void hideOneDay(Long goodsId) {
+		Calendar cal = Calendar.getInstance();
+		cal.set(Calendar.HOUR_OF_DAY, 0);
+		cal.set(Calendar.MINUTE, 0);
+		cal.set(Calendar.SECOND, 0);
+		cal.set(Calendar.MILLISECOND, 0);
+		cal.add(Calendar.DAY_OF_MONTH, 1);
+		Query q = getSession().createQuery("UPDATE MyGoods SET StockWarningDate = :stockWarningDate WHERE goodsId = :goodsId");
+		q.setLong("goodsId", goodsId);
+		q.setDate("stockWarningDate", cal.getTime());
+		q.executeUpdate();
 	}
 
 }

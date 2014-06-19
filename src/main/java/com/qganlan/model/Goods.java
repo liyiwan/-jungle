@@ -12,9 +12,8 @@ public class Goods {
 	private Long goodsId;
 	private String goodsNo;
 	private String goodsName;
-	private Long stock;
-	private Long sellCountMonth;
-	private Long providerId;
+	private Long flagId;
+	private String remark;
 
     @Id
     @Column(name = "GoodsID", nullable = false)
@@ -44,4 +43,21 @@ public class Goods {
 		this.goodsName = goodsName;
 	}
 
+	@Column(name = "FlagID")
+	public Long getFlagId() {
+		return flagId;
+	}
+
+	public void setFlagId(Long flagId) {
+		this.flagId = flagId;
+	}
+
+	@Column(name = "Remark")
+	public String getRemark() {
+		return remark;
+	}
+
+	public void setRemark(String remark) {
+		this.remark = remark;
+	}
 }

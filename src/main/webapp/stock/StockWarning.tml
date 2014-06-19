@@ -13,10 +13,14 @@
 	<tr t:type="loop" t:source="providerList" t:value="provider">
 		<td align="left" valign="top">
 			<table style="border-collapse:collapse;">
-				<tr style="border:1px solid #aaaaaa;">
-					<td align="left" valign="top">${provider.providerName}&#160;${provider.adr}</td>
+				<tr>
+					<td align="left" valign="top">
+					${provider.providerName}&#160;地址：${provider.adr}<br/>
+					联系人：${provider.linkMan}&#160;电话：${provider.tel}&#160;QQ：${provider.qq}<br/>
+					网址：<a target="_blank" href="${provider.webSite}">${provider.webSite}</a>
+					</td>
 				</tr>
-				<tr style="border:1px solid #aaaaaa;" t:type="loop" t:source="goodsList" t:value="goods">
+				<tr style="border:1px solid #dddddd;" t:type="loop" t:source="goodsList" t:value="goods">
 					<td align="left" valign="top">
 						<table>
 							<tr>
@@ -27,20 +31,33 @@
 								<td align="left" valign="top">${goods.goodsName}</td>
 							</tr>
 							<tr>
-								<td align="left" valign="top">货号:</td>
+								<td align="left" valign="top">货号：</td>
 								<td align="left" valign="top">${goods.goodsNo}</td>
 							</tr>
 							<tr>
-								<td align="left" valign="top">月销量:</td>
+								<td align="left" valign="top">月销量：</td>
 								<td align="left" valign="top">${goods.sellCountMonth}</td>
 							</tr>
 							<tr>
-								<td align="left" valign="top">库存:</td>
+								<td align="left" valign="top">库存：</td>
 								<td align="left" valign="top">${goods.stock}</td>
 							</tr>
+							<tr>
+								<td align="left" valign="top" colspan="2">${goods.remark}</td>
+							</tr>
+							<tr>
+								<td align="left" valign="top" colspan="2">
+									<div id="actions" class="btn-group">
+										<table>
+											<tr>
+												<td><a t:type="eventlink" event="disableStockWarning" context="goods.goodsId" id="disableStockWarning" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;关闭警告&#160;</a></td>
+												<td><a t:type="eventlink" event="hideOneDay" context="goods.goodsId" id="hideOneDay" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;完成进货&#160;</a></td>
+											</tr>
+										</table>
+									</div>
+								</td>
+							</tr>
 						</table>
-					</td>
-					<td align="left" valign="top">
 						<table>
 							<tr t:type="loop" t:source="stockSpecList" t:value="stockSpec">
 								<td style="${stockSpecStyle}" align="left" valign="top">${stockSpec.specName}</td>

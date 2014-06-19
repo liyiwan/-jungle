@@ -1,42 +1,44 @@
 package com.qganlan.webapp.pages;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.commons.lang.StringUtils;
 import org.apache.tapestry5.Link;
 import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.alerts.AlertManager;
 import org.apache.tapestry5.alerts.Duration;
 import org.apache.tapestry5.alerts.Severity;
-import org.apache.tapestry5.annotations.*;
+import org.apache.tapestry5.annotations.Component;
+import org.apache.tapestry5.annotations.DiscardAfter;
+import org.apache.tapestry5.annotations.InjectPage;
+import org.apache.tapestry5.annotations.Log;
+import org.apache.tapestry5.annotations.PageActivationContext;
+import org.apache.tapestry5.annotations.Persist;
+import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.apache.tapestry5.services.PageRenderLinkSource;
+import org.apache.tapestry5.services.URLEncoder;
 import org.appfuse.Constants;
 import org.appfuse.model.Role;
 import org.appfuse.model.User;
 import org.appfuse.service.RoleManager;
 import org.appfuse.service.UserExistsException;
 import org.appfuse.service.UserManager;
+import org.slf4j.Logger;
+import org.springframework.mail.MailException;
+import org.springframework.security.access.AccessDeniedException;
+
 import com.qganlan.webapp.components.UserForm;
 import com.qganlan.webapp.pages.admin.UserList;
 import com.qganlan.webapp.services.EmailService;
 import com.qganlan.webapp.services.SecurityContext;
 import com.qganlan.webapp.util.RequestUtil;
-import org.slf4j.Logger;
-import org.springframework.mail.MailException;
-import org.springframework.security.access.AccessDeniedException;
 
-import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.List;
-
-/**
- * Allow adding new users or viewing/updating existing users
- *
- * @author Serge Eby
- * @version $Id: UserEdit.java 5 2008-08-30 09:59:21Z serge.eby $
- */
 public class UserEdit {
 
     @Inject
@@ -101,6 +103,9 @@ public class UserEdit {
     private boolean delete = false;
 
     private boolean cancel = false;
+    
+    @Inject
+    private URLEncoder urlEncoder;
 
     public void setUser(User user) {
         this.user = user;
@@ -275,11 +280,10 @@ public class UserEdit {
         return UserList.class;
     }
 
-
     @Log
     Object onUpdatePassword() {
         Link link = pageRenderLinkSource.createPageRenderLinkWithContext(PasswordUpdate.class);
-        link.addParameter("username", user.getUsername());
+        link.addParameter("username", urlEncoder.encode(user.getUsername()));
         return link;
     }
 
