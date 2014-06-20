@@ -31,4 +31,14 @@
 			Group By StockSpec.GoodsID,StockSpec.SpecID,GoodsSpec.SpecName
 		]]>
 	</sql-query>
+	<sql-query name="SoldOutGoods">
+		<![CDATA[
+			SELECT G_Goods_GoodsList.GoodsID AS GoodsId,
+			       G_Goods_GoodsList.GoodsNO AS GoodsNo,
+			       G_Goods_GoodsList.GoodsName AS GoodsName,
+			       J_MyGoods.PicPath AS PicPath
+			FROM   G_Goods_GoodsList LEFT JOIN J_MyGoods ON G_Goods_GoodsList.GoodsID = J_MyGoods.GoodsID
+			WHERE  G_Goods_GoodsList.GoodsID IN (SELECT G_Goods_GoodSspec.GoodsID AS GoodsID FROM G_Goods_GoodSspec LEFT JOIN G_Stock_Spec ON G_Goods_GoodSspec.GoodsID=G_Stock_Spec.GoodsID GROUP BY G_Goods_GoodSspec.GoodsID HAVING SUM(G_Stock_Spec.Stock) <= 0)
+		]]>
+	</sql-query>
 </hibernate-mapping>

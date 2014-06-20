@@ -18,4 +18,6 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public void saveMyGoods(MyGoods myGoods);
 	public void disableStockWarning(Long goodsId);
 	public void hideOneDay(Long goodsId);
+	public List<GoodsDTO> getSoldOutGoodsList();
+	public void deleteGoods(Long goodsId);
 }

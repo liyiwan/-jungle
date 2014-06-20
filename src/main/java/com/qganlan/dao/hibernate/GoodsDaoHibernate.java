@@ -90,4 +90,32 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		q.executeUpdate();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<GoodsDTO> getSoldOutGoodsList() {
+		SQLQuery query = (SQLQuery) getSession().getNamedQuery("SoldOutGoods");
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
+		query.addScalar("GoodsName", StandardBasicTypes.STRING);
+		query.addScalar("PicPath", StandardBasicTypes.STRING);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
+		return query.list();
+	}
+
+	public void deleteGoods(Long goodsId) {
+		SQLQuery query = getSession().createSQLQuery("DELETE FROM G_API_SysMatch WHERE GoodsID = :goodsId");
+		query.setLong("goodsId", goodsId);
+		query.executeUpdate();
+		query = getSession().createSQLQuery("DELETE FROM G_Stock_Spec WHERE GoodsID = :goodsId");
+		query.setLong("goodsId", goodsId);
+		query.executeUpdate();
+		query = getSession().createSQLQuery("DELETE FROM G_Goods_GoodsSpec WHERE GoodsID = :goodsId");
+		query.setLong("goodsId", goodsId);
+		query.executeUpdate();
+		query = getSession().createSQLQuery("DELETE FROM J_MyGoods WHERE GoodsID = :goodsId");
+		query.setLong("goodsId", goodsId);
+		query.executeUpdate();
+		query = getSession().createSQLQuery("DELETE FROM G_Goods_GoodsList WHERE GoodsID = :goodsId");
+		query.setLong("goodsId", goodsId);
+		query.executeUpdate();
+	}
 }

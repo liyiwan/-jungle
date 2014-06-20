@@ -13,7 +13,6 @@ import com.qganlan.dto.GoodsDTO;
 import com.qganlan.model.MyGoods;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.TaobaoApiManager;
-import com.qganlan.webapp.services.EmailService;
 import com.taobao.api.domain.Item;
 
 @Service("goodsManager")
@@ -67,6 +66,14 @@ public class GoodsManagerImpl implements GoodsManager {
 
 	public void hideOneDay(Long goodsId) {
 		goodsDao.hideOneDay(goodsId);
+	}
+
+	public List<GoodsDTO> getSoldOutGoodsList() {
+		return goodsDao.getSoldOutGoodsList();
+	}
+
+	public void deleteGoods(Long goodsId) {
+		goodsDao.deleteGoods(goodsId);
 	}
 
 }

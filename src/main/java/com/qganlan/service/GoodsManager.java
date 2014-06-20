@@ -9,4 +9,6 @@ public interface GoodsManager {
 	public void checkGoods(GoodsDTO goods);
 	public void disableStockWarning(Long goodsId);
 	public void hideOneDay(Long goodsId);
+	public List<GoodsDTO> getSoldOutGoodsList();
+	public void deleteGoods(Long goodsId);
 }

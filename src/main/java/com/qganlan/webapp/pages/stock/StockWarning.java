@@ -98,7 +98,7 @@ public class StockWarning {
 	}
 	
 	public String getPicPath() {
-		if (goods.getPicPath() == null || "".equals(goods.getPicPath())) {
+		if (goods.getPicPath() == null || goods.getPicPath().trim().equals("")) {
 			return "#";
 		} else {
 			return goods.getPicPath() + "_310x310.jpg";
