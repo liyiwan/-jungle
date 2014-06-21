@@ -35,6 +35,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("ProviderId", StandardBasicTypes.LONG);
 		query.addScalar("PicPath", StandardBasicTypes.STRING);
 		query.addScalar("Remark", StandardBasicTypes.STRING);
+		query.addScalar("CostPrice", StandardBasicTypes.BIG_DECIMAL);
 		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
 		query.setLong("classId", classId);
 		return query.list();

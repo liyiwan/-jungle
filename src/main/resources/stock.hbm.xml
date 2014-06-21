@@ -10,10 +10,11 @@
 			       Goods.SellCountMonth AS SellCountMonth,
 			       Goods.ProviderID AS ProviderId,
 			       Goods.Remark AS Remark,
+			       Goods.CostPrice AS CostPrice,
 			       MyGoods.PicPath AS PicPath
 			FROM
 				(
-					SELECT a.GoodsID AS GoodsID, a.GoodsNO AS GoodsNO, a.GoodsName AS GoodsName, a.bBlockUp AS bBlockUp, a.Remark AS Remark,
+					SELECT a.GoodsID AS GoodsID, a.GoodsNO AS GoodsNO, a.GoodsName AS GoodsName, a.bBlockUp AS bBlockUp, a.Remark AS Remark, b.Price AS CostPrice,
 					       (SELECT ISNULL(SUM(stock),0) FROM G_Stock_Spec WHERE GoodsID=a.GoodsID) AS Stock,
 					       (SELECT ISNULL(SUM(SellCount),0) FROM G_sta_SellDay WHERE GoodsID = a.GoodsID AND datediff(day, staDay, getdate()) < 31) AS SellCountMonth,
 					b.ProviderID AS ProviderID, c.OrderPos AS OrderPos

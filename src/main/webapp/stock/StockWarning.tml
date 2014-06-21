@@ -72,6 +72,10 @@
 								<td align="left" valign="top">${goods.stock}</td>
 							</tr>
 							<tr>
+								<td align="left" valign="top" nowrap="true">进货价：</td>
+								<td align="left" valign="top">${goods.costPrice}</td>
+							</tr>
+							<tr>
 								<td align="left" valign="top" colspan="2">${goods.remark}</td>
 							</tr>
 							<tr>

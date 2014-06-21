@@ -1,5 +1,7 @@
 package com.qganlan.dto;
 
+import java.math.BigDecimal;
+
 
 public class GoodsDTO {
 
@@ -11,6 +13,7 @@ public class GoodsDTO {
 	private Long providerId;
 	private String picPath;
 	private String remark;
+	private BigDecimal costPrice;
 
 	public Long getGoodsId() {
 		return goodsId;
@@ -74,6 +77,14 @@ public class GoodsDTO {
 
 	public void setRemark(String remark) {
 		this.remark = remark;
+	}
+
+	public BigDecimal getCostPrice() {
+		return costPrice;
+	}
+
+	public void setCostPrice(BigDecimal costPrice) {
+		this.costPrice = costPrice;
 	}
 
 }

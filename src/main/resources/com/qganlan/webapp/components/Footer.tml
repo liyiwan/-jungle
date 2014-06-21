@@ -6,7 +6,7 @@
             </t:if>
         </span>
         <span class="col-sm-6 text-right">
-            &copy; ${message:copyright.year} <a href="${message:company.url}"> ${message:company.name}</a>
+            &copy; ${message:copyright.year} <a href="http://360xjy.taobao.com/">杭州小脚丫电子商务有限公司</a>
         </span>
     </div>
 </t:container>
