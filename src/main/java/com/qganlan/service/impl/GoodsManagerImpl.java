@@ -38,7 +38,7 @@ public class GoodsManagerImpl implements GoodsManager {
 		return goodsDao.getGoodsToCheck();
 	}
 
-	public void checkGoods(GoodsDTO goods) {
+	public boolean checkGoods(GoodsDTO goods) {
 		try {
 			List<Item> items = taobaoApiManager.getItemByOuterId(goods.getGoodsNo());
 			if (items != null && items.size() > 0) {
@@ -52,12 +52,14 @@ public class GoodsManagerImpl implements GoodsManager {
 				myGoods.setCheckDate(new Date());
 				goodsDao.saveMyGoods(myGoods);
 				System.out.println(goods.getGoodsNo() + " " + myGoods.getPicPath());
+				return true;
 			} else {
 				System.out.println(goods.getGoodsNo() + " 没有在售");
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
 		}
+		return false;
 	}
 
 	public void disableStockWarning(Long goodsId) {
@@ -72,6 +74,10 @@ public class GoodsManagerImpl implements GoodsManager {
 		return goodsDao.getSoldOutGoodsList();
 	}
 
+	public List<GoodsDTO> getNotOnSaleGoodsList() {
+		return goodsDao.getNotOnSaleGoodsList();
+	}
+	
 	public void deleteGoods(Long goodsId) {
 		goodsDao.deleteGoods(goodsId);
 	}

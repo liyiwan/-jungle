@@ -3,15 +3,12 @@ package com.qganlan.webapp.services.impl;
 import org.apache.tapestry5.ioc.Messages;
 import org.appfuse.model.User;
 import org.appfuse.service.MailEngine;
-import com.qganlan.webapp.services.EmailService;
 import org.springframework.mail.MailException;
 import org.springframework.mail.SimpleMailMessage;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 
-/**
- *
- * @author Serge Eby
- */
+import com.qganlan.webapp.services.EmailService;
+
 public class EmailServiceImpl implements EmailService {
     final private MailEngine mailEngine;
     final private SimpleMailMessage simpleMailMessage;
@@ -23,13 +20,9 @@ public class EmailServiceImpl implements EmailService {
         this.messages = messages;
     }
 
+    public void send(User user, String subject, String message, String url, boolean hint) throws UsernameNotFoundException, MailException {
 
-    public void send(User user, String subject, String message, String url, boolean hint)
-            throws UsernameNotFoundException, MailException {
-
-        // Message Template
         StringBuilder msg = new StringBuilder(message);
-        // Skip credentials in Password Hint
         if (!hint) {
             msg.append("\n\n").append(messages.get("user.username"));
             msg.append(": ").append(user.getUsername()).append("\n");
@@ -44,4 +37,5 @@ public class EmailServiceImpl implements EmailService {
 
         mailEngine.send(simpleMailMessage);
     }
+
 }

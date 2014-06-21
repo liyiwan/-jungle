@@ -7,6 +7,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.qganlan.dto.GoodsDTO;
+import com.qganlan.service.EmailManager;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.JobManager;
 import com.qganlan.service.TaobaoApiManager;
@@ -14,17 +15,23 @@ import com.qganlan.service.TaobaoApiManager;
 @Service("jobManager")
 public class JobManagerImpl implements JobManager {
 
-	private TaobaoApiManager taobaoApiManager;
-	private GoodsManager goodsManager;
-
 	@Autowired
+	private TaobaoApiManager taobaoApiManager;
+	@Autowired
+	private GoodsManager goodsManager;
+	@Autowired
+	private EmailManager emailManager;
+
 	public void setTaobaoApiManager(TaobaoApiManager taobaoApiManager) {
 		this.taobaoApiManager = taobaoApiManager;
 	}
-	
-	@Autowired
+
 	public void setGoodsManager(GoodsManager goodsManager) {
 		this.goodsManager = goodsManager;
+	}
+
+	public void setEmailManager(EmailManager emailManager) {
+		this.emailManager = emailManager;
 	}
 	
 	@Scheduled(initialDelay = 10000, fixedDelay = 3600000)

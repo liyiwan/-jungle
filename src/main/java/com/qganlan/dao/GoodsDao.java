@@ -19,5 +19,6 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public void disableStockWarning(Long goodsId);
 	public void hideOneDay(Long goodsId);
 	public List<GoodsDTO> getSoldOutGoodsList();
+	public List<GoodsDTO> getNotOnSaleGoodsList();
 	public void deleteGoods(Long goodsId);
 }

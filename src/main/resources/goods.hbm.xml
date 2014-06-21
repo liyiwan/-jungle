@@ -9,4 +9,12 @@
 			WHERE CheckDate IS NULL OR datediff(hh,MyGoods.CheckDate,GETDATE()) > 24 
 		]]>
 	</sql-query>
+	<sql-query name="NotOnSaleGoods">
+		<![CDATA[
+			SELECT G_Goods_GoodsList.GoodsID AS GoodsId,G_Goods_GoodsList.GoodsNO AS GoodsNo,G_Goods_GoodsList.GoodsName AS GoodsName
+			FROM G_Goods_GoodsList LEFT JOIN J_MyGoods ON G_Goods_GoodsList.GoodsID=J_MyGoods.GoodsID
+			WHERE J_MyGoods.PicPath IS NULL OR J_MyGoods.PicPath = ''
+		]]>
+	</sql-query>
+
 </hibernate-mapping>

@@ -103,6 +103,16 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
+	public List<GoodsDTO> getNotOnSaleGoodsList() {
+		SQLQuery query = (SQLQuery) getSession().getNamedQuery("NotOnSaleGoods");
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
+		query.addScalar("GoodsName", StandardBasicTypes.STRING);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
+		return query.list();
+	}
+	
 	public void deleteGoods(Long goodsId) {
 		SQLQuery query = getSession().createSQLQuery("DELETE FROM G_API_SysMatch WHERE GoodsID = :goodsId");
 		query.setLong("goodsId", goodsId);

@@ -87,6 +87,7 @@
 
 <t:block id="goodsItemsBlock">
 	<t:menuitem name="GoodsSoldOut" title="literal:卖完货品" page="goods/soldout"/>
+	<t:menuitem name="GoodsNotOnSale" title="literal:未在售货品" page="goods/notonsale"/>
 </t:block>
 
 <t:block id="stockItemsBlock">
