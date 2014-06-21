@@ -3,13 +3,10 @@ package com.qganlan.service.impl;
 import java.io.BufferedInputStream;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
-import java.net.MalformedURLException;
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
@@ -21,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.gargoylesoftware.htmlunit.CookieManager;
-import com.gargoylesoftware.htmlunit.FailingHttpStatusCodeException;
 import com.gargoylesoftware.htmlunit.WebClient;
 import com.gargoylesoftware.htmlunit.html.HtmlAnchor;
 import com.gargoylesoftware.htmlunit.html.HtmlPage;
@@ -31,7 +27,6 @@ import com.gargoylesoftware.htmlunit.html.HtmlTableRow;
 import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.qganlan.service.EmailManager;
 import com.qganlan.service.RzcshopManager;
-import com.qganlan.service.TaobaoApiManager;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
@@ -82,6 +77,7 @@ public class RzcshopManagerImpl implements RzcshopManager {
 			CookieManager cookieManager = webClient.getCookieManager();
 			List<Cookie> cookies = parseCookies("www.rzcshop.com", cookie);
 			for (Cookie aCookie : cookies) {
+				System.out.println(aCookie.getName() + "=" + aCookie.getValue());
 				cookieManager.addCookie(aCookie);
 			}
 			
@@ -89,9 +85,11 @@ public class RzcshopManagerImpl implements RzcshopManager {
 			PrintWriter rzcshopLogWriter = new PrintWriter(stringWriter);
 			
 			String startDatetime = sdf.format(new Date());
+			System.out.println("运行开始时间 " + startDatetime);
 			rzcshopLogWriter.println("运行开始时间 " + startDatetime);
 			
 			// 下架通知
+			System.out.println("下架通知");
 			rzcshopLogWriter.println("下架通知");
 			HtmlPage page = webClient.getPage("http://www.rzcshop.com/member-1-2-updatelist.html");
 			boolean done = false;
@@ -114,8 +112,10 @@ public class RzcshopManagerImpl implements RzcshopManager {
 		            if (skus != null && skus.size() > 0) {
 		            	for (Sku sku : skus) {
 		            		if (taobaoItemQuantityUpdate(sku.getNumIid(), sku.getSkuId(), 0L, appKey, appSecret, sessionKey)) {
+		            			System.out.println(downDate + " " + goodsNo + " " + goodsName + " 下架成功。");
 			            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " 下架成功。");
 		            		} else {
+		            			System.out.println(downDate + " " + goodsNo + " " + goodsName + " 下架失败。");
 			            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " 下架失败。");
 		            		}
 		            	}
@@ -124,12 +124,15 @@ public class RzcshopManagerImpl implements RzcshopManager {
 		            	if (items != null && items.size() > 0) {
 		            		for (Item item : items) {
 		            			if (taobaoItemQuantityUpdate(item.getNumIid(), null, 0L, appKey, appSecret, sessionKey)) {
+		            				System.out.println(downDate + " " + goodsNo + " " + goodsName + " 下架成功。");
 				            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " 下架成功。");
 		            			} else {
+		            				System.out.println(downDate + " " + goodsNo + " " + goodsName + " 下架失败。");
 				            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " 下架失败。");
 		            			}
 		            		}
 		            	} else {
+		            		System.out.println(downDate + " " + goodsNo + " " + goodsName + " 没有在店里出售。");
 		            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " 没有在店里出售。");
 		            	}
 		            }
@@ -225,8 +228,10 @@ public class RzcshopManagerImpl implements RzcshopManager {
 		            if (skus != null && skus.size() > 0) {
 		            	for (Sku sku : skus) {
 		            		if (taobaoItemQuantityUpdate(sku.getNumIid(), sku.getSkuId(), quantity, appKey, appSecret, sessionKey)) {
+		            			System.out.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更新成功。");
 			            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更新成功。");
 		            		} else {
+		            			System.out.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更新失败。");
 			            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更失败。");
 		            		}
 		            	}
@@ -235,12 +240,15 @@ public class RzcshopManagerImpl implements RzcshopManager {
 		            	if (items != null && items.size() > 0) {
 		            		for (Item item : items) {
 		            			if (taobaoItemQuantityUpdate(item.getNumIid(), null, quantity, appKey, appSecret, sessionKey)) {
+		            				System.out.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更新成功。");
 				            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更新成功。");
 		            			} else {
+		            				System.out.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更新失败。");
 				            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " " + quantity + " 库存更失败。");
 		            			}
 		            		}
 		            	} else {
+		            		System.out.println(downDate + " " + goodsNo + " " + goodsName + " 没有在店里出售。");
 		            		rzcshopLogWriter.println(downDate + " " + goodsNo + " " + goodsName + " 没有在店里出售。");
 		            	}
 		            }
@@ -277,6 +285,7 @@ public class RzcshopManagerImpl implements RzcshopManager {
 		            	if (items != null && items.size() > 0) {
 		            		// 已经在架出售
 		            	} else {
+		            		System.out.println(upDate + " " + goodsNo + " " + goodsName + " 新货上架。");
 		            		rzcshopLogWriter.println(upDate + " " + goodsNo + " " + goodsName + " 新货上架。");
 		            	}
 		            }

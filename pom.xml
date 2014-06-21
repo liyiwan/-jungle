@@ -248,6 +248,11 @@
     </dependencyManagement>
 
     <dependencies>
+   		<dependency>
+			<groupId>net.sourceforge.htmlunit</groupId>
+			<artifactId>htmlunit</artifactId>
+			<version>2.14</version>
+		</dependency>
     	<dependency>
 			<groupId>com.taobao</groupId>
 			<artifactId>taobao-sdk-java-online_standard</artifactId>
