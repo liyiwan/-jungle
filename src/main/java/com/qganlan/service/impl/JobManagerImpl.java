@@ -1,15 +1,29 @@
 package com.qganlan.service.impl;
 
+import java.io.BufferedInputStream;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStream;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
+import java.util.Properties;
+import java.util.StringTokenizer;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
+import com.gargoylesoftware.htmlunit.CookieManager;
+import com.gargoylesoftware.htmlunit.WebClient;
+import com.gargoylesoftware.htmlunit.util.Cookie;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.service.EmailManager;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.JobManager;
+import com.qganlan.service.RzcshopManager;
 import com.qganlan.service.TaobaoApiManager;
 
 @Service("jobManager")
@@ -21,6 +35,8 @@ public class JobManagerImpl implements JobManager {
 	private GoodsManager goodsManager;
 	@Autowired
 	private EmailManager emailManager;
+	@Autowired
+	private RzcshopManager rzcshopManager;
 
 	public void setTaobaoApiManager(TaobaoApiManager taobaoApiManager) {
 		this.taobaoApiManager = taobaoApiManager;
@@ -34,12 +50,18 @@ public class JobManagerImpl implements JobManager {
 		this.emailManager = emailManager;
 	}
 	
+	public void setRzcshopManager(RzcshopManager rzcshopManager) {
+		this.rzcshopManager = rzcshopManager;
+	}
+	
 	@Scheduled(initialDelay = 10000, fixedDelay = 3600000)
-	public void hourJob() {
+	public void hourlyJob() {
 		checkGoods();
 	}
 	
-	private void checkModifiedTaobaoItems() {
+	@Scheduled(cron = "0 45 22 ? * *")
+	public void dailyJob() {
+		rzcshopManager.execute();
 	}
 
 	private void checkGoods() {

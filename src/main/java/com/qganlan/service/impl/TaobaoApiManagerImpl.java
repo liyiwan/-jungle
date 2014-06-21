@@ -17,8 +17,13 @@ import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.Item;
+import com.taobao.api.domain.Sku;
+import com.taobao.api.request.ItemQuantityUpdateRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
+import com.taobao.api.request.SkusCustomGetRequest;
+import com.taobao.api.response.ItemQuantityUpdateResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
+import com.taobao.api.response.SkusCustomGetResponse;
 
 @Service("taobaoApiManager")
 public class TaobaoApiManagerImpl implements TaobaoApiManager {
