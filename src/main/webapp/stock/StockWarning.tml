@@ -9,7 +9,14 @@
     </div>
 </t:if>
 <h2>库存警告表</h2>
-<table width="300">
+<form t:type="Form"> 
+	<table>
+		<tr>
+			<td><span>分类：</span></td><td><select t:id="SearchByClassId" t:type="select" t:model="ProviderClassSelectModel" t:value="classId" t:validate="required" onChange="this.form.submit();"/></td>
+		</tr>
+	</table>
+</form>
+<table class="table table-striped table-hover" width="320">
 	<tr t:type="loop" t:source="providerList" t:value="provider">
 		<td align="left" valign="top">
 			<table style="border-collapse:collapse;">
@@ -46,7 +53,7 @@
 					<td align="left" valign="top">
 						<table>
 							<tr>
-								<td align="left" valign="top" colspan="2"><img width="300" src="${picPath}"/></td>
+								<td align="left" valign="top" colspan="2"><img width="310" src="${picPath}"/></td>
 							</tr>
 							<tr>
 								<td align="left" valign="top" nowrap="true">名称</td>
@@ -72,8 +79,8 @@
 									<div id="actions" class="btn-group">
 										<table>
 											<tr>
-												<td><a t:type="eventlink" event="disableStockWarning" context="goods.goodsId" id="disableStockWarning" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;关闭警告&#160;</a></td>
-												<td><a t:type="eventlink" event="hideOneDay" context="goods.goodsId" id="hideOneDay" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;完成进货&#160;</a></td>
+												<td><a t:type="eventlink" event="disableStockWarning" context="goods.goodsId" id="disableStockWarning" class="btn btn-primary" t:mixins="Confirm" t:message="关闭库存警告，请确认！"><i class="icon-plus icon-white"></i>&#160;关闭警告&#160;</a></td>
+												<td><a t:type="eventlink" event="hideOneDay" context="goods.goodsId" id="hideOneDay" class="btn btn-primary" t:mixins="Confirm" t:message="完成进货，请确认！"><i class="icon-plus icon-white"></i>&#160;完成进货&#160;</a></td>
 											</tr>
 										</table>
 									</div>

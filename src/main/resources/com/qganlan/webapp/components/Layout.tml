@@ -19,12 +19,12 @@
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
         </button>
-        <a class="navbar-brand" t:type="pagelink" page="index">小脚丫</a>
+        <a class="navbar-brand" t:type="pagelink" page="index">小脚丫电子商务</a>
     </div>
     <div class="collapse navbar-collapse" id="navbar">
     <t:menu class="nav navbar-nav" active="${menu}">
         <t:if test="prop:loggedIn">
-            <t:menuitem name="Home" title="literal:主菜单" page="home" roles="ROLE_ADMIN,ROLE_USER"/>
+            <t:menuitem name="Home" title="literal:首页" page="home" roles="ROLE_ADMIN,ROLE_USER"/>
             
             <t:menuitem name="GoodsMenu" title="literal:货品管理" roles="ROLE_ADMIN,ROLE_USER" class="dropdown" data-toggle="dropdown">
             	<ul class="dropdown-menu">

@@ -20,8 +20,8 @@ public class StockManagerImpl implements StockManager {
         this.goodsDao = goodsDao;
     }
 
-	public List<GoodsDTO> getStockWarningGoodsList() {
-		return goodsDao.getStockWarningGoodsList();
+	public List<GoodsDTO> getStockWarningGoodsList(Long classId) {
+		return goodsDao.getStockWarningGoodsList(classId);
 	}
 	
 	public List<StockSpecDTO> getStockSpecByGoods(Long goodsId) {

@@ -1,19 +1,7 @@
-<html t:type="layout" title="home.title"
-          heading="message:home.heading" menu="Home" bodyClass="home"
+<html t:type="layout" title="literal:首页"
+          heading="literal:首页" menu="Home" bodyClass="home"
           xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
-    <h2>${message:home.heading}</h2>
-    <p>${message:home.message}</p>
-
-    <div class="separator"></div>
-
-    <ul class="glassList">
-        <li>
-            <a t:type="actionlink" t:id="editProfile">${message:menu.user}</a>
-        </li>
-        <li>
-            <a t:type="pagelink" page="FileUpload">${message:menu.selectFile}</a>
-        </li>
-    </ul>
+    <p>欢迎使用杭州小脚丫电子商务有限公司系统</p>
 
 </html>

@@ -4,6 +4,7 @@ public class StockSpecDTO {
 	private Long goodsId;
 	private Long specId;
 	private String specName;
+	private Long flagId;
 	private Long stock;
 	
 	public Long getGoodsId() {
@@ -29,5 +30,11 @@ public class StockSpecDTO {
 	}
 	public void setStock(Long stock) {
 		this.stock = stock;
+	}
+	public Long getFlagId() {
+		return flagId;
+	}
+	public void setFlagId(Long flagId) {
+		this.flagId = flagId;
 	}
 }

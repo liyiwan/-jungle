@@ -8,6 +8,7 @@
         <mapping class="com.qganlan.model.Goods"/>
         <mapping class="com.qganlan.model.MyGoods"/>
         <mapping class="com.qganlan.model.Provider"/>
+        <mapping class="com.qganlan.model.ProviderClass"/>
         <mapping class="com.qganlan.model.TaobaoSessionKey"/>
         <mapping class="com.qganlan.model.MyConfig"/>
         <mapping resource="stock.hbm.xml"/>

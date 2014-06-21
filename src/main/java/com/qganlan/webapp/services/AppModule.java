@@ -10,10 +10,7 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
-import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
-import org.apache.tapestry5.ioc.services.cron.IntervalSchedule;
-import org.apache.tapestry5.ioc.services.cron.PeriodicExecutor;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ComponentSource;
 import org.apache.tapestry5.services.Environment;
@@ -32,7 +29,6 @@ import org.appfuse.service.RoleManager;
 import org.appfuse.service.UserManager;
 import org.slf4j.Logger;
 
-import com.qganlan.service.JobManager;
 import com.qganlan.webapp.AppFuseSymbolConstants;
 import com.qganlan.webapp.data.FileData;
 import com.qganlan.webapp.services.impl.BootstrapValidationDecorator;
@@ -40,23 +36,18 @@ import com.qganlan.webapp.services.impl.CountryServiceImpl;
 import com.qganlan.webapp.services.impl.EmailServiceImpl;
 import com.qganlan.webapp.services.impl.FileDataEncoder;
 import com.qganlan.webapp.services.impl.RoleEncoder;
+import com.qganlan.webapp.services.impl.SelectIdModelFactoryImpl;
 import com.qganlan.webapp.services.impl.SpringSecurityContext;
 import com.qganlan.webapp.services.impl.UserEncoder;
 import com.qganlan.webapp.services.javascript.BootstrapJavaScriptStack;
 
-
-/**
- * Application global configurations
- *
- * @author Serge Eby
- * @version $Id: AppModule.java 5 2008-08-30 09:59:21Z serge.eby $
- */
 public class AppModule {
 
     public static void bind(ServiceBinder binder) {
         binder.bind(SecurityContext.class, SpringSecurityContext.class);
         binder.bind(CountryService.class, CountryServiceImpl.class);
         binder.bind(EmailService.class, EmailServiceImpl.class);
+        binder.bind(SelectIdModelFactory.class, SelectIdModelFactoryImpl.class);
     }
 
     public static void contributeApplicationDefaults(MappedConfiguration<String, String> configuration) {

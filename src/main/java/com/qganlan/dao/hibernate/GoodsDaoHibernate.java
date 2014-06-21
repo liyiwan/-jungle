@@ -25,7 +25,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
     }
 
 	@SuppressWarnings("unchecked")
-	public List<GoodsDTO> getStockWarningGoodsList() {
+	public List<GoodsDTO> getStockWarningGoodsList(Long classId) {
 		SQLQuery query = (SQLQuery) getSession().getNamedQuery("StockWarningGoods");
 		query.addScalar("GoodsId", StandardBasicTypes.LONG);
 		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
@@ -36,6 +36,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("PicPath", StandardBasicTypes.STRING);
 		query.addScalar("Remark", StandardBasicTypes.STRING);
 		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
+		query.setLong("classId", classId);
 		return query.list();
 	}
 	
@@ -45,6 +46,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("GoodsId", StandardBasicTypes.LONG);
 		query.addScalar("SpecId", StandardBasicTypes.LONG);
 		query.addScalar("SpecName", StandardBasicTypes.STRING);
+		query.addScalar("FlagId", StandardBasicTypes.LONG);
 		query.addScalar("Stock", StandardBasicTypes.LONG);
 		query.setLong("goodsId", goodsId);
 		query.setResultTransformer(Transformers.aliasToBean(StockSpecDTO.class));

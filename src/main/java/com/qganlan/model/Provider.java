@@ -18,6 +18,7 @@ public class Provider {
 	private String email;
 	private String webSite;
 	private String remark;
+	private Long classId;
 	
 	@Id
 	@Column(name = "ProviderID", unique = true, nullable = false)
@@ -101,4 +102,13 @@ public class Provider {
 		this.remark = remark;
 	}
 
+	public Long getClassId() {
+		return classId;
+	}
+
+	@Column(name = "ClassID")
+	public void setClassId(Long classId) {
+		this.classId = classId;
+	}
+	
 }
