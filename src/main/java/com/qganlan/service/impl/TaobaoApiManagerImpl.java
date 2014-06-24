@@ -18,10 +18,10 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.Sku;
-import com.taobao.api.request.ItemQuantityUpdateRequest;
+import com.taobao.api.request.ItemGetRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
 import com.taobao.api.request.SkusCustomGetRequest;
-import com.taobao.api.response.ItemQuantityUpdateResponse;
+import com.taobao.api.response.ItemGetResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
 import com.taobao.api.response.SkusCustomGetResponse;
 
@@ -117,5 +117,61 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 		}
 		return null;
 	}
+
+	public List<Sku> getTaobaoSkusByOuterId(String outerId, String appkey, String appsecret, String sessionkey) {
+		TaobaoClient client = new DefaultTaobaoClient(TAOBAO_API_URL, appkey, appsecret);
+		SkusCustomGetRequest req = new SkusCustomGetRequest();
+		req.setOuterId(outerId);
+		req.setFields("properties_name,sku_id,num_iid,properties,quantity,price,outer_id,created,modified,status");
+		try {
+			SkusCustomGetResponse response = client.execute(req , sessionkey);
+			if (!response.isSuccess()) {
+				System.out.println("ERROR:" + response.getErrorCode() + " " + response.getMsg());
+			} 
+			return response.getSkus();
+		} catch (ApiException e) {
+			e.printStackTrace();
+			System.out.println("ERROR:" + e.getMessage());
+		}
+		return null;
+	}
+
+	public List<Item> getTaobaoItemsByOuterId(String outerId, String appkey, String appsecret, String sessionkey) {
+		TaobaoClient client = new DefaultTaobaoClient(TAOBAO_API_URL, appkey, appsecret);
+		ItemsCustomGetRequest req = new ItemsCustomGetRequest();
+		req.setOuterId(outerId);
+		req.setFields("detail_url,num_iid,title,nick,type,desc,sku,props_name,created,property_alias,cid,props,pic_url,num,list_time,delist_time,price,modified,approve_status,item_img,prop_img,outer_id,input_pids,input_str,volume");
+		try {
+			ItemsCustomGetResponse response = client.execute(req , sessionkey);
+			if (!response.isSuccess()) {
+				System.out.println("ERROR:" + response.getErrorCode() + " " + response.getMsg());
+			} 
+			return response.getItems();
+		} catch (ApiException e) {
+			e.printStackTrace();
+			System.out.println("ERROR:" + e.getMessage());
+		}
+		return null;
+	}
+
+    public Item getTaobaoItemByNumIid(Long numIid, String appkey, String appsecret, String sessionkey) {
+    	TaobaoClient client = new DefaultTaobaoClient(TAOBAO_API_URL, appkey, appsecret);
+		ItemGetRequest itemGetRequest = new ItemGetRequest();
+    	itemGetRequest.setFields("detail_url,num_iid,title,nick,type,desc,sku,props_name,created,property_alias,cid,props,pic_url,num,list_time,delist_time,price,modified,approve_status,item_img,prop_img,outer_id,input_pids,input_str,volume");
+    	itemGetRequest.setNumIid(numIid);
+    	Item item = null;
+    	int retryCount = 0;
+    	while (retryCount < 3) {
+    		try {
+	    		ItemGetResponse itemGetResponse = client.execute(itemGetRequest, sessionkey);
+	    		item = itemGetResponse.getItem();
+	    		break;
+	    	} catch (ApiException e) {
+	    		e.printStackTrace();
+	    	}
+    		retryCount = retryCount + 1;
+    	}
+    	return item;
+    }
 
 }

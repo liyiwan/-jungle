@@ -12,4 +12,5 @@ public interface GoodsManager {
 	public List<GoodsDTO> getSoldOutGoodsList();
 	public List<GoodsDTO> getNotOnSaleGoodsList();
 	public void deleteGoods(Long goodsId);
+	public void checkGoodsSpec(GoodsDTO goods);
 }

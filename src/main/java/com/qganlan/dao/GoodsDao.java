@@ -5,7 +5,9 @@ import java.util.List;
 import org.appfuse.dao.GenericDao;
 
 import com.qganlan.dto.GoodsDTO;
+import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.StockSpecDTO;
+import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.Goods;
 import com.qganlan.model.MyGoods;
 
@@ -21,4 +23,8 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public List<GoodsDTO> getSoldOutGoodsList();
 	public List<GoodsDTO> getNotOnSaleGoodsList();
 	public void deleteGoods(Long goodsId);
+	public void deleteStaleApiSysMatch(GoodsDTO goods);
+	public List<GoodsSpecDTO> getGoodsSpecList(GoodsDTO goods);
+	public ApiSysMatch getApiSysMatch(String numIid, String skuIid);
+	public void saveOrUpdate(ApiSysMatch apiSysMatch);
 }

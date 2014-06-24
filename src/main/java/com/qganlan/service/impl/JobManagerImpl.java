@@ -57,6 +57,7 @@ public class JobManagerImpl implements JobManager {
 			for (GoodsDTO goods : goodsList) {
 				System.out.println("CHECK GOODS " + goods.getGoodsNo() + " " + goods.getGoodsName());
 				goodsManager.checkGoods(goods);
+				goodsManager.checkGoodsSpec(goods);
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();

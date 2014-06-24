@@ -14,6 +14,8 @@ public class GoodsDTO {
 	private String picPath;
 	private String remark;
 	private BigDecimal costPrice;
+	private Long multiSpec;
+	private Long flagId;
 
 	public Long getGoodsId() {
 		return goodsId;
@@ -85,6 +87,22 @@ public class GoodsDTO {
 
 	public void setCostPrice(BigDecimal costPrice) {
 		this.costPrice = costPrice;
+	}
+
+	public Long getMultiSpec() {
+		return multiSpec;
+	}
+
+	public void setMultiSpec(Long multiSpec) {
+		this.multiSpec = multiSpec;
+	}
+
+	public Long getFlagId() {
+		return flagId;
+	}
+
+	public void setFlagId(Long flagId) {
+		this.flagId = flagId;
 	}
 
 }
