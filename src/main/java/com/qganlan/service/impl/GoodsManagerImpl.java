@@ -200,4 +200,8 @@ public class GoodsManagerImpl implements GoodsManager {
 	public ApiSysMatch getApiSysMatch(String numIid, String skuIid) {
 		return goodsDao.getApiSysMatch(numIid, skuIid);
 	}
+
+	public List<GoodsSpecDTO> getOutOfStockGoods() {
+		return goodsDao.getOutOfStockGoods();
+	}
 }

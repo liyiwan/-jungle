@@ -8,4 +8,5 @@ import com.qganlan.model.ProviderClass;
 public interface ProviderManager {
 	public Provider getProvider(Long providerId);
 	public List<ProviderClass> getProviderClassList();
+	public List<Provider> getProviderListByGoodsId(Long goodsId);
 }

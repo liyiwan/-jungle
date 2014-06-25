@@ -94,8 +94,9 @@
 						<table>
 							<tr t:type="loop" t:source="stockSpecList" t:value="stockSpec">
 								<td style="${stockSpecStyle}" align="left" valign="top">${stockSpec.specName}</td>
-								<td style="${stockSpecStyle}">&#160;&#160;&#160;&#160;</td>
+								<td style="${stockSpecStyle}" align="left" valign="top">&#160;&#160;</td>
 								<td style="${stockSpecStyle}" align="left" valign="top">${stockSpec.stock}</td>
+								<td style="${stockSpecStyle}" align="left" valign="top">${shortStock}</td>
 							</tr>
 						</table>
 					</td>

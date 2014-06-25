@@ -28,4 +28,8 @@ public class ProviderManagerImpl implements ProviderManager {
 		return providerDao.getProviderClassList();
 	}
 
+	public List<Provider> getProviderListByGoodsId(Long goodsId) {
+		return providerDao.getProviderListByGoodsId(goodsId);
+	}
+
 }

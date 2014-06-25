@@ -51,6 +51,8 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("SpecName", StandardBasicTypes.STRING);
 		query.addScalar("FlagId", StandardBasicTypes.LONG);
 		query.addScalar("Stock", StandardBasicTypes.LONG);
+		query.addScalar("SoldCount", StandardBasicTypes.LONG);
+		query.addScalar("PurchaseCount", StandardBasicTypes.LONG);
 		query.setLong("goodsId", goodsId);
 		query.setResultTransformer(Transformers.aliasToBean(StockSpecDTO.class));
 		return query.list();
@@ -171,5 +173,22 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 
 	public void saveOrUpdate(ApiSysMatch apiSysMatch) {
 		getSession().saveOrUpdate(apiSysMatch);
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<GoodsSpecDTO> getOutOfStockGoods() {
+		SQLQuery query = (SQLQuery) getSession().getNamedQuery("OutOfStockGoods");
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
+		query.addScalar("GoodsName", StandardBasicTypes.STRING);
+		query.addScalar("SpecId", StandardBasicTypes.LONG);
+		query.addScalar("SpecCode", StandardBasicTypes.STRING);
+		query.addScalar("SpecName", StandardBasicTypes.STRING);
+		query.addScalar("PicPath", StandardBasicTypes.STRING);
+		query.addScalar("SoldCount", StandardBasicTypes.LONG);
+		query.addScalar("Stock", StandardBasicTypes.LONG);
+		query.addScalar("PurchaseCount", StandardBasicTypes.LONG);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsSpecDTO.class));
+		return query.list();
 	}
 }

@@ -26,8 +26,14 @@
 	</sql-query>
 	<sql-query name="StockSpecByGoods">
 		<![CDATA[
-			SELECT StockSpec.GoodsID AS GoodsId,StockSpec.SpecID AS SpecId,GoodsSpec.SpecName AS SpecName,GoodsSpec.FlagID AS FlagId,SUM(StockSpec.Stock) AS Stock
-			FROM G_Stock_Spec StockSpec, G_Goods_GoodsSpec GoodsSpec
+			SELECT StockSpec.GoodsID AS GoodsId,
+			StockSpec.SpecID AS SpecId,
+			GoodsSpec.SpecName AS SpecName,
+			GoodsSpec.FlagID AS FlagId,
+			ISNULL(SUM(StockSpec.Stock),0) AS Stock,
+			(SELECT ISNULL(SUM(G_Purchase_OrderDetail.Count1-G_Purchase_OrderDetail.Count2),0) FROM G_Purchase_OrderDetail,G_Purchase_Order WHERE G_Purchase_Order.OrderID = G_Purchase_OrderDetail.OrderID AND G_Purchase_OrderDetail.GoodsID = StockSpec.GoodsID AND G_Purchase_OrderDetail.SpecID = StockSpec.SpecID AND G_Purchase_Order.curStatus = 1) AS PurchaseCount,
+			(SELECT ISNULL(SUM(G_Trade_GoodsList.SellCount),0) FROM G_Trade_GoodsList,G_Trade_TradeList WHERE G_Trade_TradeList.TradeID = G_Trade_GoodsList.TradeID AND G_Trade_TradeList.TradeStatus in (2,3,4,5) AND G_Trade_GoodsList.GoodsID = StockSpec.GoodsID AND G_Trade_GoodsList.SpecID = StockSpec.SpecID) AS SoldCount
+			FROM G_Stock_Spec StockSpec,G_Goods_GoodsSpec GoodsSpec
 			WHERE StockSpec.GoodsID = GoodsSpec.GoodsID AND StockSpec.SpecID = GoodsSpec.SpecID AND StockSpec.GoodsID = :goodsId
 			Group By StockSpec.GoodsID,StockSpec.SpecID,GoodsSpec.SpecName,GoodsSpec.FlagID
 		]]>
@@ -40,6 +46,32 @@
 			       J_MyGoods.PicPath AS PicPath
 			FROM   G_Goods_GoodsList LEFT JOIN J_MyGoods ON G_Goods_GoodsList.GoodsID = J_MyGoods.GoodsID
 			WHERE  G_Goods_GoodsList.GoodsID IN (SELECT G_Goods_GoodSspec.GoodsID AS GoodsID FROM G_Goods_GoodSspec LEFT JOIN G_Stock_Spec ON G_Goods_GoodSspec.GoodsID=G_Stock_Spec.GoodsID GROUP BY G_Goods_GoodSspec.GoodsID HAVING SUM(G_Stock_Spec.Stock) <= 0)
+		]]>
+	</sql-query>
+	<sql-query name="OutOfStockGoods">
+		<![CDATA[
+			SELECT T.*, J_MyGoods.PicPath FROM
+			(
+			    SELECT
+					G_Trade_GoodsList.GoodsID AS GoodsId,
+					G_Goods_GoodsList.GoodsNO AS GoodsNo,
+					G_Goods_GoodsList.GoodsName AS GoodsName,
+					G_Trade_GoodsList.SpecID AS SpecId,
+					G_Goods_GoodsSpec.SpecCode AS SpecCode,
+					G_Goods_GoodsSpec.SpecName AS SpecName,
+					SUM(G_Trade_GoodsList.SellCount) AS SoldCount,
+			        (SELECT ISNULL(SUM(G_Stock_Spec.Stock),0) FROM G_Stock_Spec WHERE G_Stock_Spec.GoodsID = G_Trade_GoodsList.GoodsID AND G_Stock_Spec.SpecID = G_Trade_GoodsList.SpecID) AS Stock,
+					(SELECT ISNULL(SUM(G_Purchase_OrderDetail.Count1-G_Purchase_OrderDetail.Count2),0) FROM G_Purchase_OrderDetail,G_Purchase_Order WHERE G_Purchase_Order.OrderID = G_Purchase_OrderDetail.OrderID AND G_Purchase_OrderDetail.GoodsID = G_Trade_GoodsList.GoodsID AND G_Purchase_OrderDetail.SpecID = G_Trade_GoodsList.SpecID AND G_Purchase_Order.curStatus = 1) AS PurchaseCount
+			    FROM
+					G_Trade_GoodsList,G_Trade_TradeList,G_Goods_GoodsList,G_Goods_GoodsSpec
+					WHERE G_Trade_TradeList.TradeID = G_Trade_GoodsList.TradeID 
+					AND G_Trade_TradeList.TradeStatus in (2,3,4,5) 
+					AND G_Goods_GoodsList.GoodsID = G_Trade_GoodsList.GoodsID
+					AND G_Goods_GoodsSpec.GoodsID =G_Trade_GoodsList.GoodsID AND G_Goods_GoodsSpec.SpecID = G_Trade_GoodsList.SpecID
+			    GROUP BY G_Trade_GoodsList.GoodsID,G_Trade_GoodsList.SpecID,G_Goods_GoodsList.GoodsNO,G_Goods_GoodsList.GoodsName,G_Goods_GoodsSpec.SpecCode,G_Goods_GoodsSpec.SpecName
+			) T, J_MyGoods
+			WHERE SoldCount > Stock + PurchaseCount AND T.GoodsId = J_MyGoods.GoodsId
+			ORDER BY T.GoodsId, T.SpecId
 		]]>
 	</sql-query>
 </hibernate-mapping>

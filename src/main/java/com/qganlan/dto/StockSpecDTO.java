@@ -6,6 +6,8 @@ public class StockSpecDTO {
 	private String specName;
 	private Long flagId;
 	private Long stock;
+	private Long soldCount;
+	private Long purchaseCount;
 	
 	public Long getGoodsId() {
 		return goodsId;
@@ -36,5 +38,21 @@ public class StockSpecDTO {
 	}
 	public void setFlagId(Long flagId) {
 		this.flagId = flagId;
+	}
+	
+	public Long getSoldCount() {
+		return soldCount;
+	}
+	
+	public void setSoldCount(Long soldCount) {
+		this.soldCount = soldCount;
+	}
+	
+	public Long getPurchaseCount() {
+		return purchaseCount;
+	}
+	
+	public void setPurchaseCount(Long purchaseCount) {
+		this.purchaseCount = purchaseCount;
 	}
 }

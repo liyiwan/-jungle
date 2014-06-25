@@ -11,5 +11,6 @@ public interface ProviderDao extends GenericDao<Provider, Long> {
 
 	Provider getProvider(Long providerId);
 	List<ProviderClass> getProviderClassList();
+	List<Provider> getProviderListByGoodsId(Long goodsId);
 
 }

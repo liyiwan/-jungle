@@ -2,10 +2,16 @@ package com.qganlan.dto;
 
 public class GoodsSpecDTO {
 	private Long goodsId;
+	private String goodsNo;
+	private String goodsName;
 	private Long specId;
 	private String specCode;
 	private String specName;
 	private Long flagId;
+	private String picPath;
+	private Long soldCount;
+	private Long stock;
+	private Long purchaseCount;
 	
 	public Long getGoodsId() {
 		return goodsId;
@@ -41,8 +47,55 @@ public class GoodsSpecDTO {
 	public Long getFlagId() {
 		return flagId;
 	}
+	
 	public void setFlagId(Long flagId) {
 		this.flagId = flagId;
 	}
 	
+	public String getPicPath() {
+		return picPath;
+	}
+
+	public void setPicPath(String picPath) {
+		this.picPath = picPath;
+	}
+	
+	public String getGoodsNo() {
+		return goodsNo;
+	}
+	
+	public void setGoodsNo(String goodsNo) {
+		this.goodsNo = goodsNo;
+	}
+	
+	public String getGoodsName() {
+		return goodsName;
+	}
+	
+	public void setGoodsName(String goodsName) {
+		this.goodsName = goodsName;
+	}
+	
+	public Long getSoldCount() {
+		return soldCount;
+	}
+	
+	public void setSoldCount(Long soldCount) {
+		this.soldCount = soldCount;
+	}
+	
+	public Long getStock() {
+		return stock;
+	}
+	public void setStock(Long stock) {
+		this.stock = stock;
+	}
+	
+	public Long getPurchaseCount() {
+		return purchaseCount;
+	}
+	
+	public void setPurchaseCount(Long purchaseCount) {
+		this.purchaseCount = purchaseCount;
+	}
 }

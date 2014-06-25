@@ -124,9 +124,19 @@ public class StockWarning {
 	public List<StockSpecDTO> getStockSpecList() {
 		return stockManager.getStockSpecByGoods(goods.getGoodsId());
 	}
-	
+
+	public String getShortStock() {
+		Long shortStock = stockSpec.getSoldCount() - stockSpec.getStock() - stockSpec.getPurchaseCount();
+		if (shortStock > 0) {
+			return "(卖出:" + stockSpec.getSoldCount() + " 缺货:" + shortStock + ")";
+		} else {
+			return "";
+		}
+	}
+
 	public String getStockSpecStyle() {
-		if (stockSpec.getStock() == 0 && (stockSpec.getFlagId() == null || stockSpec.getFlagId() != 13)) {
+		Long shortStock = stockSpec.getSoldCount() - stockSpec.getStock() - stockSpec.getPurchaseCount();
+		if ((stockSpec.getStock() == 0 && (stockSpec.getFlagId() == null || stockSpec.getFlagId() != 13)) || shortStock >= 0) {
 			return "color:red;";
 		} else if (stockSpec.getStock() == 0 && (stockSpec.getFlagId() != null && stockSpec.getFlagId() == 13)) {
 			return "color:orange;";
