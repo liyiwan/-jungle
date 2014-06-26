@@ -1,5 +1,7 @@
 package com.qganlan.service.impl;
 
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.qganlan.dto.GoodsDTO;
+import com.qganlan.service.AccountManager;
 import com.qganlan.service.EmailManager;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.JobManager;
@@ -24,6 +27,12 @@ public class JobManagerImpl implements JobManager {
 	private EmailManager emailManager;
 	@Autowired
 	private RzcshopManager rzcshopManager;
+	@Autowired
+	private AccountManager accountManager;
+
+	public void setAccountManager(AccountManager accountManager) {
+		this.accountManager = accountManager;
+	}
 
 	public void setTaobaoApiManager(TaobaoApiManager taobaoApiManager) {
 		this.taobaoApiManager = taobaoApiManager;
@@ -41,7 +50,7 @@ public class JobManagerImpl implements JobManager {
 		this.rzcshopManager = rzcshopManager;
 	}
 	
-	@Scheduled(initialDelay = 10000, fixedDelay = 3600000)
+	@Scheduled(initialDelay = 60000, fixedDelay = 3600000)
 	public void hourlyJob() {
 		checkGoods();
 	}
@@ -49,6 +58,7 @@ public class JobManagerImpl implements JobManager {
 	@Scheduled(cron = "0 0 20 ? * *")
 	public void dailyJob() {
 		rzcshopManager.execute();
+		sendAccountBalanceReport();
 	}
 
 	private void checkGoods() {
@@ -64,4 +74,11 @@ public class JobManagerImpl implements JobManager {
 		}
 	}
 
+	private void sendAccountBalanceReport() {
+		String content = accountManager.getHtmlAccountBalanceReport();
+		String[] receivers = new String[] {"1106628276@qq.com", "9394908@qq.com", "dwf306@sina.com"};
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+		emailManager.sentHtml("今日账户报表" + sdf.format(new Date()), content, receivers);
+		System.out.println("今日账户报表发送成功");
+	}
 }

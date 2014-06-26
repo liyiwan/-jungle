@@ -12,7 +12,10 @@
         <mapping class="com.qganlan.model.ProviderClass"/>
         <mapping class="com.qganlan.model.TaobaoSessionKey"/>
         <mapping class="com.qganlan.model.MyConfig"/>
+        <mapping class="com.qganlan.model.Trade"/>
+        <mapping class="com.qganlan.model.TradeGoods"/>
         <mapping class="com.qganlan.model.ApiSysMatch"/>
+        <mapping class="com.qganlan.model.MoneyInOut"/>
         <mapping resource="stock.hbm.xml"/>
         <mapping resource="goods.hbm.xml"/>
     </session-factory>

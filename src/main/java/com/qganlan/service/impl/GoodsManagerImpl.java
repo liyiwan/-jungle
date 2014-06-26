@@ -204,4 +204,8 @@ public class GoodsManagerImpl implements GoodsManager {
 	public List<GoodsSpecDTO> getOutOfStockGoods() {
 		return goodsDao.getOutOfStockGoods();
 	}
+
+	public GoodsSpecDTO getGoodsSpec(Long goodsId, Long specId) {
+		return goodsDao.getGoodsSpecList(goodsId, specId);
+	}
 }

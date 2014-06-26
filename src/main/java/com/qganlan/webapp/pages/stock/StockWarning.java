@@ -112,7 +112,7 @@ public class StockWarning {
 	public List<GoodsDTO> getGoodsList() {
 		return goodsMap.get(provider.getProviderId());
 	}
-	
+
 	public String getPicPath() {
 		if (goods.getPicPath() == null || goods.getPicPath().trim().equals("")) {
 			return "#";
@@ -136,7 +136,7 @@ public class StockWarning {
 
 	public String getStockSpecStyle() {
 		Long shortStock = stockSpec.getSoldCount() - stockSpec.getStock() - stockSpec.getPurchaseCount();
-		if ((stockSpec.getStock() == 0 && (stockSpec.getFlagId() == null || stockSpec.getFlagId() != 13)) || shortStock >= 0) {
+		if ((stockSpec.getStock() == 0 && (stockSpec.getFlagId() == null || stockSpec.getFlagId() != 13)) || shortStock > 0) {
 			return "color:red;";
 		} else if (stockSpec.getStock() == 0 && (stockSpec.getFlagId() != null && stockSpec.getFlagId() == 13)) {
 			return "color:orange;";
@@ -144,7 +144,7 @@ public class StockWarning {
 			return "";
 		}
 	}
-	
+
 	public void onDisableStockWarning(Long goodsId) {
 		goodsManager.disableStockWarning(goodsId);
 	}

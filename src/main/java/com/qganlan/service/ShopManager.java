@@ -8,4 +8,6 @@ public interface ShopManager {
 
 	List<Shop> getTaobaoShopList();
 
+	Shop getShop(Long shopId);
+
 }

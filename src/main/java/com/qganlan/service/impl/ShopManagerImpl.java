@@ -28,4 +28,8 @@ public class ShopManagerImpl implements ShopManager {
 		return taobaoShopList;
 	}
 
+	public Shop getShop(Long shopId) {
+		return shopDao.get(shopId);
+	}
+
 }

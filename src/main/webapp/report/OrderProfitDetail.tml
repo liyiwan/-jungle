@@ -1,0 +1,67 @@
+<html t:type="layout" title="literal:订单利润详细"
+    heading="literal:订单利润详细" menu="ReportMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<h1>订单利润详情</h1>
+	<p>
+		<span>店铺:&#160;${shop?.shopName}</span>&#160;&#160;
+		<span>昵称:&#160;${trade.tradeNick}</span>&#160;&#160;
+		<span>收件人:&#160;${trade.sndTo}</span>&#160;&#160;
+		<span>收货地址:&#160;${trade.adr}</span>&#160;&#160;
+		<span>联系电话:&#160;${trade.tel}</span>&#160;&#160;
+	</p>
+	<p>
+		<span>订单类别:&#160;${trade.tradeType}</span>&#160;&#160;
+	</p>
+	<table class="table table-striped table-hover">
+		<tr>
+			<th align="left" valign="top">货号</th>
+			<th align="left" valign="top">货名</th>
+			<th align="left" valign="top">规格</th>
+			<th align="right" valign="top">数量</th>
+			<th align="right" valign="top">价格</th>
+			<th align="right" valign="top">折扣</th>
+			<th align="right" valign="top">金额</th>
+			<th align="right" valign="top">成本</th>
+			<th align="right" valign="top">利润</th>
+			<th align="right" valign="top">利润率</th>
+		</tr>
+		<tr t:type="loop" t:source="tradeGoodsList" t:value="tradeGoods">
+			<td align="left" valign="top" style="${rowStyle}">${goodsSpec?.goodsNo}</td>
+			<td align="left" valign="top" style="${rowStyle}">${goodsSpec?.goodsName}</td>
+			<td align="left" valign="top" style="${rowStyle}">${goodsSpec?.specName}</td>
+			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.sellCount}</td>
+			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.sellPrice}</td>
+			<td align="right" valign="top" style="${rowStyle}">${discount}</td>
+			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.sellTotal}</td>
+			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.goodsCost}</td>
+			<td align="right" valign="top" style="${rowStyle}">${goodsGrossProfit}</td>
+			<td align="right" valign="top" style="${rowStyle}">${goodsGrossProfitRate}</td>
+		</tr>
+	</table>
+	<p>
+		<span>货物金额:&#160;${trade.goodsTotal}
+		</span>&#160;&#160;
+		<span>收取邮费:&#160;${trade.postageTotal}
+		</span>&#160;&#160;
+		<span>订单金额:&#160;${trade.allTotal}
+		</span>&#160;&#160;
+	</p>
+	<p>
+		<span>货物成本:&#160;${trade.goodsCost}
+		</span>&#160;&#160;
+		<span>估算邮费:&#160;${trade.postage}
+		</span>&#160;&#160;
+		<span>包裹重量:&#160;${trade.packagedWeight}
+		</span>&#160;&#160;
+	</p>
+	<p>
+		<span>货物利润:&#160;${goodsTotalProfit}
+		</span>&#160;&#160;
+		<span>邮费利润:&#160;${postageProfit}
+		</span>&#160;&#160;
+		<span>订单利润:&#160;${trade.totalProfit}
+		</span>&#160;&#160;
+		<span>毛利率:&#160;${grossProfitRate}
+		</span>&#160;&#160;
+	</p>
+</html>

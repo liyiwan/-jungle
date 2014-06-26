@@ -38,6 +38,12 @@
             	</ul>
             </t:menuitem>
             
+            <t:menuitem name="ReportMenu" title="literal:统计报表" roles="ROLE_ADMIN" class="dropdown" data-toggle="dropdown">
+            	<ul class="dropdown-menu">
+            		<t:delegate to="block:reportItemsBlock"/>
+            	</ul>
+            </t:menuitem>
+            
             <t:menuitem name="AdminMenu" title="literal:系统管理" roles="ROLE_ADMIN" class="dropdown" data-toggle="dropdown">
                 <ul class="dropdown-menu">
                     <t:delegate to="block:adminItemsBlock"/>
@@ -93,6 +99,10 @@
 
 <t:block id="stockItemsBlock">
 	<t:menuitem name="StockWarning" title="literal:库存警告" page="stock/warning"/>
+</t:block>
+
+<t:block id="reportItemsBlock">
+	<t:menuitem name="ReportOrderProfit" title="literal:订单利润" page="report/orderprofit"/>
 </t:block>
 
 <t:footer/>

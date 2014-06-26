@@ -191,4 +191,18 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.setResultTransformer(Transformers.aliasToBean(GoodsSpecDTO.class));
 		return query.list();
 	}
+
+	public GoodsSpecDTO getGoodsSpecList(Long goodsId, Long specId) {
+		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT G_Goods_GoodsSpec.GoodsID AS GoodsId, G_Goods_GoodsSpec.SpecID AS SpecId, G_Goods_GoodsSpec.SpecCode AS SpecCode, G_Goods_GoodsSpec.SpecName AS SpecName, G_Goods_GoodsList.GoodsNo AS GoodsNo, G_Goods_GoodsList.GoodsName AS GoodsName FROM G_Goods_GoodsSpec, G_Goods_GoodsList WHERE G_Goods_GoodsList.GoodsID=G_Goods_GoodsSpec.GoodsID AND G_Goods_GoodsSpec.GoodsID = :goodsId AND G_Goods_GoodsSpec.SpecID = :specId");
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
+		query.addScalar("GoodsName", StandardBasicTypes.STRING);
+		query.addScalar("SpecId", StandardBasicTypes.LONG);
+		query.addScalar("SpecCode", StandardBasicTypes.STRING);
+		query.addScalar("SpecName", StandardBasicTypes.STRING);
+		query.setLong("goodsId", goodsId);
+		query.setLong("specId", specId);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsSpecDTO.class));
+		return (GoodsSpecDTO) query.uniqueResult();
+	}
 }

@@ -1,0 +1,100 @@
+<html t:type="layout" title="literal:订单利润"
+    heading="literal:订单利润" menu="ReportMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<h2>订单利润表</h2>
+	<br />
+	<form t:type="form" t:id="searchParameterForm">
+		<div id="actions" class="btn-group">
+			<table>
+				<tr>
+					<td><a t:type="linksubmit" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;查询&#160;</a></td>
+					<td><a t:type="eventlink" event="lastDay" id="lastDay" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;昨天&#160;</a></td>
+					<td><a t:type="eventlink" event="lastDay2" id="lastDay2" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;前天&#160;</a></td>
+					<td><a t:type="eventlink" event="thisWeek" id="thisWeek" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;本周&#160;</a></td>
+					<td><a t:type="eventlink" event="lastWeek" id="lastWeek" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;上周&#160;</a></td>
+					<td><a t:type="eventlink" event="thisMonth" id="thisMonth" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;本月&#160;</a></td>
+					<td><a t:type="eventlink" event="lastMonth" id="lastMonth" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;上月&#160;</a></td>
+				</tr>
+			</table>
+		</div>
+		<table>
+			<tr>
+				<td valign="top" align="left">&#160;&#160;<input type="text" t:type="datefield" t:id="startDate" t:value="startDate" t:format="yyyy/MM/dd" /></td>
+			</tr>
+			<tr>
+				<td valign="top" align="left">&#160;&#160;至</td>
+			</tr>
+			<tr>
+				<td valign="top" align="left">&#160;&#160;<input type="text" t:type="datefield" t:id="endDate" t:value="endDate" t:format="yyyy/MM/dd" /></td>
+			</tr>
+		</table>
+	</form>
+	<br/>
+	<p>
+		<span>发件数量:&#160;${sndCount}</span>&#160;
+		(&#160;<t:loop t:source="shopSndCountEntrySet" t:value="shopSndCountEntry">
+			<span>${shopSndCountEntry.key.shopName}:${shopSndCountEntry.value}个</span>&#160;</t:loop>)&#160;&#160;
+		<br />
+		<span>发件货物金额:&#160;${sumGoodsTotal}
+		</span>&#160;&#160;
+		<span>收取邮费金额:&#160;${sumPostageTotal}
+		</span>&#160;&#160;
+		<span>收入总金额:&#160;${sumAllTotal}
+		</span>
+	</p>
+	<p>
+		<span>货物总成本:&#160;${sumGoodsCost}
+		</span>&#160;&#160;
+		<span>估算邮费总金额:&#160;${sumPostage}
+		</span>
+	</p>
+	<p>
+		<span>总利润:&#160;${sumTotalProfit}
+		</span>&#160;&#160;
+		<span>总利润率:&#160;${avgProfitRate}
+		</span>
+	</p>
+	<table class="table table-striped table-hover">
+		<thead>
+			<tr>
+				<th class="align_left" nowrap="true">店铺</th>
+				<th class="align_left" nowrap="true">交易号</th>
+				<th class="align_left" nowrap="true">日期</th>
+				<th class="align_left" nowrap="true">交易名</th>
+				<th class="align_left" nowrap="true">货物金额</th>
+				<th class="align_right" nowrap="true">收取邮费</th>
+				<th class="align_right" nowrap="true">总金额</th>
+				<th class="align_right" nowrap="true">货物成本</th>
+				<th class="align_right" nowrap="true">货物重量</th>
+				<th class="align_right" nowrap="true">包裹重量</th>
+				<th class="align_right" nowrap="true">地区</th>
+				<th class="align_right" nowrap="true">估算邮费</th>
+				<th class="align_right" nowrap="true">毛利润</th>
+				<th class="align_right" nowrap="true">毛利率</th>
+			</tr>
+		</thead>
+		<tbody>
+			<tr t:type="loop" t:source="tradeList" t:value="trade">
+				<td class="align_left" style="${rowStyle}">${shopName}</td>
+				<td class="align_left">
+					<a target="_blank" t:type="pagelink" t:page="report/orderprofitdetail"
+						t:context="trade.tradeId">${trade.tradeId}</a>
+				</td>
+				<td>
+					<t:output value="trade.sndTime" format="dateFormat" />
+				</td>
+				<td class="align_left" style="${rowStyle}">${trade.tradeNick}</td>
+				<td class="align_right" style="${rowStyle}">${trade.goodsTotal}</td>
+				<td class="align_right" style="${rowStyle}">${trade.postageTotal}</td>
+				<td class="align_right" style="${rowStyle}">${trade.allTotal}</td>
+				<td class="align_right" style="${rowStyle}">${trade.goodsCost}</td>
+				<td class="align_right" style="${rowStyle}">${trade.goodsWeight}</td>
+				<td class="align_right" style="${rowStyle}">${trade.packagedWeight}</td>
+				<td class="align_right" style="${rowStyle}">${trade.province}</td>
+				<td class="align_right" style="${rowStyle}">${trade.postage}</td>
+				<td class="align_right" style="${rowStyle}">${trade.totalProfit}</td>
+				<td class="align_right" style="${rowStyle}">${caculateGrossProfitRate()}</td>
+			</tr>
+		</tbody>
+	</table>
+</html>
