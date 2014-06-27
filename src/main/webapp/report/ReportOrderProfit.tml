@@ -11,9 +11,12 @@
 					<td><a t:type="eventlink" event="lastDay" id="lastDay" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;昨天&#160;</a></td>
 					<td><a t:type="eventlink" event="lastDay2" id="lastDay2" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;前天&#160;</a></td>
 					<td><a t:type="eventlink" event="thisWeek" id="thisWeek" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;本周&#160;</a></td>
+				</tr>
+				<tr>
 					<td><a t:type="eventlink" event="lastWeek" id="lastWeek" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;上周&#160;</a></td>
 					<td><a t:type="eventlink" event="thisMonth" id="thisMonth" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;本月&#160;</a></td>
 					<td><a t:type="eventlink" event="lastMonth" id="lastMonth" class="btn btn-primary"><i class="icon-plus icon-white"></i>&#160;上月&#160;</a></td>
+					<td></td>
 				</tr>
 			</table>
 		</div>
@@ -75,25 +78,24 @@
 		</thead>
 		<tbody>
 			<tr t:type="loop" t:source="tradeList" t:value="trade">
-				<td class="align_left" style="${rowStyle}">${shopName}</td>
-				<td class="align_left">
-					<a target="_blank" t:type="pagelink" t:page="report/orderprofitdetail"
-						t:context="trade.tradeId">${trade.tradeId}</a>
+				<td nowrap="true" class="align_left" style="${rowStyle}">${shopName}</td>
+				<td nowrap="true" class="align_left">
+					<a target="_blank" t:type="pagelink" t:page="report/orderprofitdetail" t:context="trade.tradeId">${trade.tradeId}</a>
 				</td>
-				<td>
+				<td nowrap="true">
 					<t:output value="trade.sndTime" format="dateFormat" />
 				</td>
-				<td class="align_left" style="${rowStyle}">${trade.tradeNick}</td>
-				<td class="align_right" style="${rowStyle}">${trade.goodsTotal}</td>
-				<td class="align_right" style="${rowStyle}">${trade.postageTotal}</td>
-				<td class="align_right" style="${rowStyle}">${trade.allTotal}</td>
-				<td class="align_right" style="${rowStyle}">${trade.goodsCost}</td>
-				<td class="align_right" style="${rowStyle}">${trade.goodsWeight}</td>
-				<td class="align_right" style="${rowStyle}">${trade.packagedWeight}</td>
-				<td class="align_right" style="${rowStyle}">${trade.province}</td>
-				<td class="align_right" style="${rowStyle}">${trade.postage}</td>
-				<td class="align_right" style="${rowStyle}">${trade.totalProfit}</td>
-				<td class="align_right" style="${rowStyle}">${caculateGrossProfitRate()}</td>
+				<td nowrap="true" class="align_left" style="${rowStyle}">${trade.tradeNick}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.goodsTotal}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.postageTotal}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.allTotal}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.goodsCost}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.goodsWeight}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.packagedWeight}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.province}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.postage}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${trade.totalProfit}</td>
+				<td nowrap="true" class="align_right" style="${rowStyle}">${caculateGrossProfitRate()}</td>
 			</tr>
 		</tbody>
 	</table>

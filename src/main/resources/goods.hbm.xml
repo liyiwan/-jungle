@@ -25,5 +25,48 @@
 			WHERE J_MyGoods.PicPath IS NULL OR J_MyGoods.PicPath = ''
 		]]>
 	</sql-query>
-
+	<sql-query name="AllGoods">
+		<![CDATA[
+			SELECT G_Goods_GoodsList.GoodsID AS GoodsId,
+			       G_Goods_GoodsList.GoodsNO AS GoodsNo,
+			       G_Goods_GoodsList.GoodsName AS GoodsName,
+			       J_MyGoods.PicPath AS PicPath,
+			       (SELECT ISNULL(SUM(stock),0) FROM G_Stock_Spec WHERE GoodsID = G_Goods_GoodsList.GoodsID) AS Stock,
+			       (SELECT ISNULL(SUM(SellCount),0) FROM G_sta_SellDay WHERE GoodsID = G_Goods_GoodsList.GoodsID AND datediff(day, staDay, getdate()) < 31) AS SellCountMonth,
+			       (CASE WHEN G_Goods_GoodsList.bFixCost = 1 THEN G_Goods_GoodsList.FixCostPrice ELSE ISNULL(G_Goods_PriceCost.PriceCost,0) END) AS CostPrice
+			 FROM G_Goods_GoodsList 
+			      LEFT JOIN J_MyGoods ON J_MyGoods.GoodsID = G_Goods_GoodsList.GoodsID
+			      LEFT JOIN G_Goods_PriceCost ON G_Goods_PriceCost.GoodsID = G_Goods_GoodsList.GoodsID AND G_Goods_PriceCost.WareHouseID = 1000
+			 WHERE G_Goods_GoodsList.GoodsNO LIKE :searchTerm OR G_Goods_GoodsList.GoodsName LIKE :searchTerm
+			 ORDER BY G_Goods_GoodsList.GoodsID DESC
+		]]>
+	</sql-query>
+	<sql-query name="SingleGoods">
+		<![CDATA[
+			SELECT G_Goods_GoodsList.GoodsID AS GoodsId,
+			       G_Goods_GoodsList.GoodsNO AS GoodsNo,
+			       G_Goods_GoodsList.GoodsName AS GoodsName,
+			       G_Goods_GoodsList.bMultiSpec AS MultiSpec,
+			       J_MyGoods.PicPath AS PicPath,
+			       (SELECT ISNULL(SUM(stock),0) FROM G_Stock_Spec WHERE GoodsID = G_Goods_GoodsList.GoodsID) AS Stock,
+			       (SELECT ISNULL(SUM(SellCount),0) FROM G_sta_SellDay WHERE GoodsID = G_Goods_GoodsList.GoodsID AND datediff(day, staDay, getdate()) < 31) AS SellCountMonth,
+			       (CASE WHEN G_Goods_GoodsList.bFixCost = 1 THEN G_Goods_GoodsList.FixCostPrice ELSE ISNULL(G_Goods_PriceCost.PriceCost,0) END) AS CostPrice
+			 FROM G_Goods_GoodsList 
+			      LEFT JOIN J_MyGoods ON J_MyGoods.GoodsID = G_Goods_GoodsList.GoodsID
+			      LEFT JOIN G_Goods_PriceCost ON G_Goods_PriceCost.GoodsID = G_Goods_GoodsList.GoodsID AND G_Goods_PriceCost.WareHouseID = 1000
+			 WHERE G_Goods_GoodsList.GoodsID = :goodsId
+		]]>
+	</sql-query>
+	<sql-query name="GoodsSpecList">
+		<![CDATA[
+			SELECT GoodsID AS GoodsId, 
+				   SpecID AS SpecId, 
+				   SpecCode AS SpecCode, 
+				   SpecName AS SpecName, 
+				   FlagID AS FlagId,
+				   (SELECT SUM(Stock) FROM G_Stock_Spec WHERE G_Stock_Spec.GoodsID = G_Goods_GoodsSpec.GoodsID AND G_Stock_Spec.SpecID = G_Goods_GoodsSpec.SpecID) AS Stock
+		    FROM   G_Goods_GoodsSpec
+		    WHERE  GoodsID = :goodsId
+		]]>
+	</sql-query>
 </hibernate-mapping>

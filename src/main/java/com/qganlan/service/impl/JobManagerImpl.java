@@ -50,7 +50,7 @@ public class JobManagerImpl implements JobManager {
 		this.rzcshopManager = rzcshopManager;
 	}
 	
-	@Scheduled(initialDelay = 60000, fixedDelay = 3600000)
+	@Scheduled(initialDelay = 600000, fixedDelay = 3600000)
 	public void hourlyJob() {
 		checkGoods();
 	}
@@ -75,10 +75,14 @@ public class JobManagerImpl implements JobManager {
 	}
 
 	private void sendAccountBalanceReport() {
-		String content = accountManager.getHtmlAccountBalanceReport();
-		String[] receivers = new String[] {"1106628276@qq.com", "9394908@qq.com", "dwf306@sina.com"};
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
-		emailManager.sentHtml("今日账户报表" + sdf.format(new Date()), content, receivers);
-		System.out.println("今日账户报表发送成功");
+		try {
+			String content = accountManager.getHtmlAccountBalanceReport();
+			String[] receivers = new String[] {"1106628276@qq.com", "9394908@qq.com", "dwf306@sina.com"};
+			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
+			emailManager.sentHtml("今日账户报表" + sdf.format(new Date()), content, receivers);
+			System.out.println("今日账户报表发送成功");
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 }

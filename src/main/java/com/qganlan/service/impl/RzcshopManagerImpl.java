@@ -298,8 +298,13 @@ public class RzcshopManagerImpl implements RzcshopManager {
 			
 			rzcshopLogWriter.println("运行完成时间 " + sdf.format(new Date()));
 			
-			String[] receivers = new String[] {"1106628276@qq.com"};
-			emailManager.sentText("RZCSHOP库存更新 " + sdf.format(new Date()), stringWriter.toString(), receivers);
+			try {
+				String[] receivers = new String[] {"1106628276@qq.com"};
+				emailManager.sentText("RZCSHOP库存更新 " + sdf.format(new Date()), stringWriter.toString(), receivers);
+			} catch (Throwable t) {
+				t.printStackTrace();
+			}
+			
 			OutputStream outputStream = new FileOutputStream(propertiesFile);
 			props.setProperty("date", startDatetime);
 			props.store(outputStream, sdf.format(new Date()));

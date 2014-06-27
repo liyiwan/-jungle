@@ -16,6 +16,10 @@
         <mapping class="com.qganlan.model.TradeGoods"/>
         <mapping class="com.qganlan.model.ApiSysMatch"/>
         <mapping class="com.qganlan.model.MoneyInOut"/>
+        <mapping class="com.qganlan.model.TaobaoItemImg"/>
+        <mapping class="com.qganlan.model.TaobaoItem"/>
+        <mapping class="com.qganlan.model.TaobaoItemPropImg"/>
+        <mapping class="com.qganlan.model.TaobaoItemSku"/>
         <mapping resource="stock.hbm.xml"/>
         <mapping resource="goods.hbm.xml"/>
     </session-factory>

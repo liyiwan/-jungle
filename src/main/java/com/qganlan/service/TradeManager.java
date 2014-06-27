@@ -14,4 +14,6 @@ public interface TradeManager {
 
 	Trade getTrade(Long tradeId);
 
+	void onTradeMemoModified(String nick, Long tid);
+
 }

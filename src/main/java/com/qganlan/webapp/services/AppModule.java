@@ -10,6 +10,7 @@ import org.apache.tapestry5.ioc.MappedConfiguration;
 import org.apache.tapestry5.ioc.OrderedConfiguration;
 import org.apache.tapestry5.ioc.ServiceBinder;
 import org.apache.tapestry5.ioc.annotations.Contribute;
+import org.apache.tapestry5.ioc.annotations.Startup;
 import org.apache.tapestry5.ioc.annotations.Symbol;
 import org.apache.tapestry5.services.ClasspathAssetAliasManager;
 import org.apache.tapestry5.services.ComponentSource;
@@ -29,6 +30,7 @@ import org.appfuse.service.RoleManager;
 import org.appfuse.service.UserManager;
 import org.slf4j.Logger;
 
+import com.qganlan.service.TmcManager;
 import com.qganlan.webapp.AppFuseSymbolConstants;
 import com.qganlan.webapp.data.FileData;
 import com.qganlan.webapp.services.impl.BootstrapValidationDecorator;
@@ -160,14 +162,9 @@ public class AppModule {
         };
     }
 
-//    @Startup
-//    public static void scheduleJobs(PeriodicExecutor executor, final JobManager jobManager) {
-//    	executor.addJob(new IntervalSchedule(60*60000L), "1 HOUR JOB", new Runnable() {
-//			public void run() {
-//				jobManager.checkModifiedTaobaoItems();
-//				jobManager.checkGoods();
-//			}
-//		});
-//    }
+	@Startup
+	public static void startMessageHandler(final TmcManager tmcManager) {
+		tmcManager.run();
+	}
 
 }

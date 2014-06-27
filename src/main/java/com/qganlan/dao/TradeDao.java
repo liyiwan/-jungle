@@ -14,4 +14,10 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 
 	List<TradeGoods> getTradeGoodsList(Long tradeId);
 
+	List<Trade> getTradeByTradeNO2(String string);
+
+	void updateRemark(Long tradeId, String remark);
+
+	void freezeTrade(Long tradeId, String string);
+
 }

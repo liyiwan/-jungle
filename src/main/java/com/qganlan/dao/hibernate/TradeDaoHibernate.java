@@ -6,6 +6,7 @@ import java.util.List;
 
 import org.appfuse.dao.hibernate.GenericDaoHibernate;
 import org.hibernate.Query;
+import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import com.qganlan.dao.TradeDao;
@@ -45,6 +46,29 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 		Query query = getSession().createQuery("FROM TradeGoods WHERE tradeId = :tradeId");
 		query.setLong("tradeId", tradeId);
 		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	public List<Trade> getTradeByTradeNO2(String tradeNo2) {
+		SQLQuery query = getSession().createSQLQuery("SELECT * FROM G_Trade_TradeList WHERE tradeNO2 LIKE :tradeNo2");
+		query.setString("tradeNo2", tradeNo2);
+		query.addEntity(Trade.class);
+		return query.list();
+	}
+
+	public void updateRemark(Long tradeId, String remark) {
+		SQLQuery query = getSession().createSQLQuery("UPDATE G_Trade_TradeList SET AppendRemark = :remark WHERE TradeID = :tradeId");
+		query.setString("remark", remark);
+		query.setLong("tradeId", tradeId);
+		query.executeUpdate();
+	}
+	
+	public void freezeTrade(Long tradeId, String freezeReason) {
+		SQLQuery query = getSession().createSQLQuery("UPDATE G_Trade_TradeList SET FreezeReason = :freezeReason WHERE TradeID = :tradeId");
+		query.setString("freezeReason", freezeReason);
+		query.setLong("tradeId", tradeId);
+		query.executeUpdate();
+		
 	}
 
 }

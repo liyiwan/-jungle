@@ -18,17 +18,18 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.Sku;
+import com.taobao.api.domain.Trade;
 import com.taobao.api.request.ItemGetRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
 import com.taobao.api.request.SkusCustomGetRequest;
+import com.taobao.api.request.TradeGetRequest;
 import com.taobao.api.response.ItemGetResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
 import com.taobao.api.response.SkusCustomGetResponse;
+import com.taobao.api.response.TradeGetResponse;
 
 @Service("taobaoApiManager")
 public class TaobaoApiManagerImpl implements TaobaoApiManager {
-	
-	private static String TAOBAO_API_URL = "http://gw.api.taobao.com/router/rest";
 	private String defaultSeller = null;
 	private String appKey = null;
 	private String appSecret = null;
@@ -173,5 +174,26 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
     	}
     	return item;
     }
+
+	public Trade getTaobaoTrade(Long tid, String appkey, String appsecret, String sessionkey) {
+		TaobaoClient client = new DefaultTaobaoClient(TAOBAO_API_URL, appkey, appsecret);
+		TradeGetRequest req = new TradeGetRequest();
+    	req.setFields("tid,seller_nick,buyer_nick,title,type,created,seller_rate,buyer_rate,status,payment,discount_fee,adjust_fee,post_fee,total_fee,pay_time,end_time,modified,consign_time,buyer_obtain_point_fee,point_fee,real_point_fee,received_payment,commission_fee,buyer_memo,seller_memo,alipay_no,buyer_message,pic_path,num_iid,num,price,cod_fee,cod_status,shipping_type,orders");
+    	req.setTid(tid);
+    	com.taobao.api.domain.Trade taobaoTrade = null;
+    	int retryCount = 0;
+    	while (retryCount < 3) {
+        	try {
+    			TradeGetResponse response = client.execute(req , sessionkey);
+    			taobaoTrade = response.getTrade();
+    			break;
+    		} catch (ApiException e) {
+    			e.printStackTrace();
+    		}
+        	retryCount++;
+    	}
+
+    	return taobaoTrade;
+	}
 
 }

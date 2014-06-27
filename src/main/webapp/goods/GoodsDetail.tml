@@ -1,0 +1,55 @@
+<html t:type="layout" title="literal:货品详情"
+    heading="literal:货品详情" menu="GoodsMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<h2>货品详情</h2>
+	<div><img src="${picPath}" width="310"/></div>
+	<form t:type="form" t:id="goodsDetailForm">
+		<table width="320">
+			<tr>
+				<th>名称:</th>
+				<td>${goods.goodsName}</td>
+			</tr>
+			<tr>
+				<th>编号:</th>
+				<td>${goods.goodsId}</td>
+			</tr>
+			<tr>
+				<th>货号:</th>
+				<td>${goods.goodsNo}</td>
+			</tr>
+			<tr>
+				<th>库存:</th>
+				<td>${goods.stock}</td>
+			</tr>
+			<tr>
+				<th>月销量:</th>
+				<td>${goods.sellCountMonth}</td>
+			</tr>
+			<tr>
+				<th>成本价:</th>
+				<td>${goods.costPrice}</td>
+			</tr>
+		</table>
+		<table width="320">
+			<tr>
+				<th align="left">选择</th>
+				<th align="left">编号</th>
+				<th align="left">附加码</th>
+				<th align="left">名称</th>
+				<th align="left">库存</th>
+			</tr>
+			<tr t:type="loop" t:source="goodsSpecList" t:value="goodsSpec" t:encoder="goodsSpecEncoder">
+				<td><input t:type="checkbox" t:id="goodsSpecSelected" value="goodsSpecSelected" /></td>
+				<td>${goodsSpec.specId}</td>
+				<td>${goodsSpec.specCode}</td>
+				<td>${goodsSpec.specName}</td>
+				<td>${goodsSpec.stock}</td>
+			</tr>
+		</table>
+		<table>
+			<tr>
+				<td><t:linksubmit class="btn btn-primary" t:id="deleteGoodsSpec" t:mixins="Confirm" t:message="确定删除选中的规格吗?">删除规格</t:linksubmit></td>
+			</tr>
+		</table>
+	</form>
+</html>

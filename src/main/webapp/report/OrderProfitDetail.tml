@@ -14,28 +14,29 @@
 	</p>
 	<table class="table table-striped table-hover">
 		<tr>
-			<th align="left" valign="top">货号</th>
-			<th align="left" valign="top">货名</th>
-			<th align="left" valign="top">规格</th>
-			<th align="right" valign="top">数量</th>
-			<th align="right" valign="top">价格</th>
-			<th align="right" valign="top">折扣</th>
-			<th align="right" valign="top">金额</th>
-			<th align="right" valign="top">成本</th>
-			<th align="right" valign="top">利润</th>
-			<th align="right" valign="top">利润率</th>
+			<th nowrap="true" align="left" valign="top">货号</th>
+			<th nowrap="true" align="left" valign="top">货名</th>
+			<th nowrap="true" align="left" valign="top">规格</th>
+			<th nowrap="true" align="right" valign="top">数量</th>
+			<th nowrap="true" align="right" valign="top">价格</th>
+			<th nowrap="true" align="right" valign="top">折扣</th>
+			<th nowrap="true" align="right" valign="top">金额</th>
+			<th nowrap="true" align="right" valign="top">成本</th>
+			<th nowrap="true" align="right" valign="top">利润</th>
+			<th nowrap="true" align="right" valign="top">利润率</th>
 		</tr>
 		<tr t:type="loop" t:source="tradeGoodsList" t:value="tradeGoods">
-			<td align="left" valign="top" style="${rowStyle}">${goodsSpec?.goodsNo}</td>
-			<td align="left" valign="top" style="${rowStyle}">${goodsSpec?.goodsName}</td>
-			<td align="left" valign="top" style="${rowStyle}">${goodsSpec?.specName}</td>
-			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.sellCount}</td>
-			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.sellPrice}</td>
-			<td align="right" valign="top" style="${rowStyle}">${discount}</td>
-			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.sellTotal}</td>
-			<td align="right" valign="top" style="${rowStyle}">${tradeGoods.goodsCost}</td>
-			<td align="right" valign="top" style="${rowStyle}">${goodsGrossProfit}</td>
-			<td align="right" valign="top" style="${rowStyle}">${goodsGrossProfitRate}</td>
+			<td nowrap="true" align="left" valign="top" style="${rowStyle}">${goodsSpec?.goodsNo}</td>
+			<td nowrap="true" align="left" valign="top" style="${rowStyle}">
+				<a target="_blank" t:type="pagelink" t:id="detail" page="goods/detail" context="goodsSpec?.goodsId">${goodsSpec?.goodsName}</a></td>
+			<td nowrap="true" align="left" valign="top" style="${rowStyle}">${goodsSpec?.specName}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${tradeGoods.sellCount}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${tradeGoods.sellPrice}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${discount}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${tradeGoods.sellTotal}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${tradeGoods.goodsCost}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${goodsGrossProfit}</td>
+			<td nowrap="true" align="right" valign="top" style="${rowStyle}">${goodsGrossProfitRate}</td>
 		</tr>
 	</table>
 	<p>

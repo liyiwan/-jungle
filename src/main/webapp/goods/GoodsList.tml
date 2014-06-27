@@ -1,0 +1,52 @@
+<html t:type="layout" title="literal:货品档案"
+    heading="literal:货品档案" menu="GoodsMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<div class="col-sm-10">
+		<h2>卖完货品</h2>
+		<form t:type="form" t:id="GoodsListForm">
+			<table width="320">	
+				<tr>
+					<td><input t:type="textfield" t:id="searchTerm" t:value="searchTerm"/></td>
+					<td><input t:id="searchButton" type="submit" t:type="submit" class="btn btn-primary" value="查询" /></td>
+				</tr>
+			</table>
+		</form>
+		<table width="320">
+			<tr t:type="loop" t:source="goodsList" t:value="goods">
+				<td align="left" valign="top" style="border-top:solid 1px #dddddd;">
+					<table>
+						<tr>
+							<td align="left" valign="top" colspan="2">
+								<img src="${picPath}" width="310"/>
+							</td>
+						</tr>
+						<tr>
+							<th align="left" valign="top">名称:</th>
+							<td align="left" valign="top"><a target="_blank" t:type="pagelink" t:id="detail" page="goods/detail" context="goods.goodsId">${goods.goodsName}</a></td>
+						</tr>
+						<tr>
+							<th align="left" valign="top">编号:</th>
+							<td align="left" valign="top">${goods.goodsId}</td>
+						</tr>
+						<tr>
+							<th align="left" valign="top">货号:</th>
+							<td align="left" valign="top">${goods.goodsNo}</td>
+						</tr>
+						<tr>
+							<th align="left" valign="top">库存:</th>
+							<td align="left" valign="top">${goods.stock}</td>
+						</tr>
+						<tr>
+							<th align="left" valign="top">月销量:</th>
+							<td align="left" valign="top">${goods.sellCountMonth}</td>
+						</tr>
+						<tr>
+							<th align="left" valign="top">成本价:</th>
+							<td align="left" valign="top">${goods.costPrice}</td>
+						</tr>
+					</table>
+				</td>
+			</tr>
+		</table>
+	</div>
+</html>

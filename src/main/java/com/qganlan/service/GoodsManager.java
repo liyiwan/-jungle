@@ -16,4 +16,8 @@ public interface GoodsManager {
 	public void checkGoodsSpec(GoodsDTO goods);
 	public List<GoodsSpecDTO> getOutOfStockGoods();
 	public GoodsSpecDTO getGoodsSpec(Long goodsId, Long specId);
+	public GoodsDTO getGoods(Long goodsId);
+	public List<GoodsSpecDTO> getGoodsSpecList(Long goodsId);
+	public void deleteGoodsSpec(Long goodsId, Long specId);
+	public List<GoodsDTO> getGoodsList(String searchTerm);
 }

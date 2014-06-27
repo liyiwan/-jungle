@@ -100,7 +100,7 @@ public class GoodsManagerImpl implements GoodsManager {
 	public void checkGoodsSpec(GoodsDTO goods) {
 		Map<Long, Item> itemMap = new HashMap<Long, Item>();
 		goodsDao.deleteStaleApiSysMatch(goods);
-		List<GoodsSpecDTO> goodsSpecs = goodsDao.getGoodsSpecList(goods);
+		List<GoodsSpecDTO> goodsSpecs = goodsDao.getGoodsSpecList(goods.getGoodsId());
 		List<Shop> shopList = shopManager.getTaobaoShopList();
 		for (GoodsSpecDTO goodsSpec : goodsSpecs) {
 			for (Shop shop : shopList) {
@@ -207,5 +207,21 @@ public class GoodsManagerImpl implements GoodsManager {
 
 	public GoodsSpecDTO getGoodsSpec(Long goodsId, Long specId) {
 		return goodsDao.getGoodsSpecList(goodsId, specId);
+	}
+
+	public GoodsDTO getGoods(Long goodsId) {
+		return goodsDao.getGoods(goodsId);
+	}
+
+	public List<GoodsSpecDTO> getGoodsSpecList(Long goodsId) {
+		return goodsDao.getGoodsSpecList(goodsId);
+	}
+
+	public void deleteGoodsSpec(Long goodsId, Long specId) {
+		goodsDao.deleteGoodsSpec(goodsId, specId);
+	}
+
+	public List<GoodsDTO> getGoodsList(String searchTerm) {
+		return goodsDao.getGoodsList(searchTerm);
 	}
 }
