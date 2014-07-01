@@ -25,7 +25,7 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public void deleteGoods(Long goodsId);
 	public void deleteStaleApiSysMatch(GoodsDTO goods);
 	public List<GoodsSpecDTO> getGoodsSpecList(Long goodsId);
-	public ApiSysMatch getApiSysMatch(String numIid, String skuIid);
+	public List<ApiSysMatch> getApiSysMatch(Long goodsId, Long specId);
 	public void saveOrUpdate(ApiSysMatch apiSysMatch);
 	public List<GoodsSpecDTO> getOutOfStockGoods();
 	public GoodsSpecDTO getGoodsSpecList(Long goodsId, Long specId);

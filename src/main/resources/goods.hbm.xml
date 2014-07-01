@@ -10,12 +10,13 @@
 			       Goods.GoodsName AS GoodsName, 
 			       Goods.FlagID AS FlagId, 
 			       Goods.bMultiSpec AS MultiSpec,
+			       MyGoods.PicPath AS PicPath,
 			       SUM(G_Stock_Spec.Stock) AS Stock
 			FROM   G_Goods_GoodsList Goods 
 			       LEFT JOIN J_MyGoods MyGoods ON MyGoods.GoodsId = Goods.GoodsID
 			       LEFT JOIN G_Stock_Spec ON G_Stock_Spec.GoodsID = Goods.GoodsID
 			WHERE  MyGoods.CheckDate IS NULL OR datediff(hh,MyGoods.CheckDate,GETDATE()) > 24 
-			GROUP BY Goods.GoodsID,Goods.GoodsNO,Goods.GoodsName,Goods.FlagID,Goods.bMultiSpec
+			GROUP BY Goods.GoodsID,Goods.GoodsNO,Goods.GoodsName,Goods.FlagID,Goods.bMultiSpec,MyGoods.PicPath
 		]]>
 	</sql-query>
 	<sql-query name="NotOnSaleGoods">

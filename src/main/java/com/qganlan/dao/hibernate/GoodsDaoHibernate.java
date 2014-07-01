@@ -66,6 +66,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("GoodsName", StandardBasicTypes.STRING);
 		query.addScalar("FlagId", StandardBasicTypes.LONG);
 		query.addScalar("MultiSpec", StandardBasicTypes.LONG);
+		query.addScalar("PicPath", StandardBasicTypes.STRING);
 		query.addScalar("Stock", StandardBasicTypes.LONG);
 		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
 		return query.list();
@@ -160,16 +161,11 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 	}
 
 	@SuppressWarnings("unchecked")
-	public ApiSysMatch getApiSysMatch(String numIid, String skuIid) {
-		Query query = getSession().createQuery("FROM ApiSysMatch WHERE numIid = :numIid AND skuId = :skuIid");
-		query.setString("numIid", numIid);
-		query.setString("skuIid", skuIid);
-		List<ApiSysMatch> l = query.list();
-		if (l.size() > 0) {
-			return l.get(0);
-		} else {
-			return null;
-		}
+	public List<ApiSysMatch> getApiSysMatch(Long goodsId, Long specId) {
+		Query query = getSession().createQuery("FROM ApiSysMatch WHERE goodsId = :goodsId AND specId = :specId");
+		query.setLong("goodsId", goodsId);
+		query.setLong("specId", specId);
+		return query.list();
 	}
 
 	public void saveOrUpdate(ApiSysMatch apiSysMatch) {

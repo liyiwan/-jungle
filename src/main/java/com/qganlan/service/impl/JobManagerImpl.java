@@ -49,16 +49,16 @@ public class JobManagerImpl implements JobManager {
 	public void setRzcshopManager(RzcshopManager rzcshopManager) {
 		this.rzcshopManager = rzcshopManager;
 	}
-	
+
 	@Scheduled(initialDelay = 600000, fixedDelay = 3600000)
 	public void hourlyJob() {
-		checkGoods();
+
 	}
-	
+
 	@Scheduled(cron = "0 0 20 ? * *")
 	public void dailyJob() {
-		rzcshopManager.execute();
 		sendAccountBalanceReport();
+		checkGoods();
 	}
 
 	private void checkGoods() {

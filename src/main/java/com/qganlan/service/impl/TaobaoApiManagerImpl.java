@@ -22,10 +22,12 @@ import com.taobao.api.domain.Trade;
 import com.taobao.api.request.ItemGetRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
 import com.taobao.api.request.SkusCustomGetRequest;
+import com.taobao.api.request.TradeFullinfoGetRequest;
 import com.taobao.api.request.TradeGetRequest;
 import com.taobao.api.response.ItemGetResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
 import com.taobao.api.response.SkusCustomGetResponse;
+import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradeGetResponse;
 
 @Service("taobaoApiManager")
@@ -194,6 +196,32 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
     	}
 
     	return taobaoTrade;
+	}
+	
+	public Trade getTradeFullInfo(Long tid, String appKey, String appSecret, String sessionKey) {
+		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
+		TradeFullinfoGetRequest req = new TradeFullinfoGetRequest();
+		req.setFields("seller_nick,buyer_nick,title,type,created,tid,seller_rate,status,payment,adjust_fee,has_post_fee,post_fee,total_fee,pay_time,buyer_message,receiver_address,receiver_name,receiver_mobile,receiver_phone,receiver_state,receiver_city,receiver_district,orders");
+		req.setTid(tid);
+		Trade trade = null;
+		int tryCount = 0;
+		while (tryCount < 10) {
+			tryCount = tryCount + 1;
+			try {
+				TradeFullinfoGetResponse response = taobaoClient.execute(req , sessionKey);
+				trade = response.getTrade();
+				break;
+			} catch (ApiException e) {
+				e.printStackTrace();
+				try {
+					Thread.sleep(1000L);
+				} catch (InterruptedException e1) {
+					e1.printStackTrace();
+				}
+			}
+		}
+
+		return trade;
 	}
 
 }

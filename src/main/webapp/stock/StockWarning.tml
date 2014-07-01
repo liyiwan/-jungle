@@ -57,7 +57,7 @@
 							</tr>
 							<tr>
 								<td align="left" valign="top" nowrap="true">名称</td>
-								<td align="left" valign="top">${goods.goodsName}</td>
+								<td align="left" valign="top"><a target="_blank" t:type="pagelink" t:id="detail" page="goods/detail" context="goods.goodsId">${goods.goodsName}</a></td>
 							</tr>
 							<tr>
 								<td align="left" valign="top" nowrap="true">货号：</td>

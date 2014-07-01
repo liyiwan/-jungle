@@ -55,21 +55,23 @@ public class GoodsManagerImpl implements GoodsManager {
 
 	public boolean checkGoods(GoodsDTO goods) {
 		try {
-			List<Item> items = taobaoApiManager.getItemByOuterId(goods.getGoodsNo());
-			if (items != null && items.size() > 0) {
-				Item item = items.get(0);
-				MyGoods myGoods = goodsDao.getMyGoods(goods.getGoodsId());
-				if (myGoods == null) {
-					myGoods = new MyGoods();
-					myGoods.setGoodsId(goods.getGoodsId());
+			if (goods.getPicPath() == null || goods.getPicPath().trim().equals("")) {
+	 			List<Item> items = taobaoApiManager.getItemByOuterId(goods.getGoodsNo());
+				if (items != null && items.size() > 0) {
+					Item item = items.get(0);
+					MyGoods myGoods = goodsDao.getMyGoods(goods.getGoodsId());
+					if (myGoods == null) {
+						myGoods = new MyGoods();
+						myGoods.setGoodsId(goods.getGoodsId());
+					}
+					myGoods.setPicPath(item.getPicUrl());
+					myGoods.setCheckDate(new Date());
+					goodsDao.saveMyGoods(myGoods);
+					System.out.println(goods.getGoodsNo() + " " + myGoods.getPicPath());
+					return true;
+				} else {
+					System.out.println(goods.getGoodsNo() + " 没有在售");
 				}
-				myGoods.setPicPath(item.getPicUrl());
-				myGoods.setCheckDate(new Date());
-				goodsDao.saveMyGoods(myGoods);
-				System.out.println(goods.getGoodsNo() + " " + myGoods.getPicPath());
-				return true;
-			} else {
-				System.out.println(goods.getGoodsNo() + " 没有在售");
 			}
 		} catch (Throwable t) {
 			t.printStackTrace();
@@ -98,107 +100,32 @@ public class GoodsManagerImpl implements GoodsManager {
 	}
 
 	public void checkGoodsSpec(GoodsDTO goods) {
-		Map<Long, Item> itemMap = new HashMap<Long, Item>();
 		goodsDao.deleteStaleApiSysMatch(goods);
 		List<GoodsSpecDTO> goodsSpecs = goodsDao.getGoodsSpecList(goods.getGoodsId());
-		List<Shop> shopList = shopManager.getTaobaoShopList();
 		for (GoodsSpecDTO goodsSpec : goodsSpecs) {
-			for (Shop shop : shopList) {
-				String sessionKey = taobaoApiManager.getSessionKey(shop.getSellNick());
-				if (sessionKey == null || sessionKey.trim().equals("")) {
-					continue;
-				}
-				if (goods.getMultiSpec() == 1) {
-					String outerId = goods.getGoodsNo() + goodsSpec.getSpecCode();
-					List<Sku> skus = taobaoApiManager.getTaobaoSkusByOuterId(outerId, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), sessionKey);
-					if (skus != null) {
-						for (Sku sku : skus) {
-							Item item = itemMap.get(sku.getNumIid());
-							if (item == null) {
-								item = taobaoApiManager.getTaobaoItemByNumIid(sku.getNumIid(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), sessionKey);
-								itemMap.put(sku.getNumIid(), item);
-							}
-							PropertyValueAlias pva = new PropertyValueAlias(item == null ? "" : item.getPropertyAlias());
-							ApiSysMatch apiSysMatch = getApiSysMatch(sku.getNumIid().toString(), sku.getSkuId().toString());
-							if (apiSysMatch == null) {
-								apiSysMatch = new ApiSysMatch();
-								apiSysMatch.setNumIid(sku.getNumIid().toString());
-								apiSysMatch.setSkuId(sku.getSkuId().toString());
-								apiSysMatch.setStopFlag(0L);
-							}
-							apiSysMatch.setGoodsId(goodsSpec.getGoodsId());
-							apiSysMatch.setSpecId(goodsSpec.getSpecId());
-							apiSysMatch.setSkuOuterId(sku.getOuterId());
-							apiSysMatch.setTbName(item == null ? "" : item.getTitle());
-							apiSysMatch.setTbSku(pva.translate(sku.getPropertiesName() == null ? "" : sku.getPropertiesName()));
-							apiSysMatch.setTbOuterId(item == null ? "" : item.getOuterId());
-							apiSysMatch.setShopId(shop.getShopId());
-							apiSysMatch.setTbGoods(1L);
-							apiSysMatch.setIsSys(1L);
-							apiSysMatch.setFixNumFlag(0L);
-							apiSysMatch.setFixNum(0L);
-							if (goods.getStock() > 50 || (goods.getFlagId() != null && goods.getFlagId() == 13) || (goodsSpec.getFlagId() != null && goodsSpec.getFlagId() == 13)) {
-								System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " " + goodsSpec.getSpecName() + " 设置为同步实际库存。");
-								apiSysMatch.setVirNumFlag(0L);
-								apiSysMatch.setVirNumBase(0L);
-								apiSysMatch.setVirNumTop(0L);
-								apiSysMatch.setVirNumInc(0L);
-							} else {
-								System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " " + goodsSpec.getSpecName() + " 设置为同步虚拟库存。");
-								apiSysMatch.setVirNumFlag(1L);
-								apiSysMatch.setVirNumBase(1L);
-								apiSysMatch.setVirNumTop(10L);
-								apiSysMatch.setVirNumInc(10L);
-							}
-							goodsDao.saveOrUpdate(apiSysMatch);
-						}
-					}
+			List<ApiSysMatch> apiSysMatchList = getApiSysMatch(goodsSpec.getGoodsId(), goodsSpec.getSpecId());
+			for (ApiSysMatch apiSysMatch : apiSysMatchList) {
+				if (goods.getStock() > 50 || (goods.getFlagId() != null && goods.getFlagId() == 13) || (goodsSpec.getFlagId() != null && goodsSpec.getFlagId() == 13)) {
+					System.out.println(goods.getGoodsNo() + " " + goods.getGoodsName() + " " + goodsSpec.getSpecName() + " 设置为同步实际库存。");
+					apiSysMatch.setVirNumFlag(0L);
+					apiSysMatch.setVirNumBase(0L);
+					apiSysMatch.setVirNumTop(0L);
+					apiSysMatch.setVirNumInc(0L);
 				} else {
-					String outerId = goods.getGoodsNo();
-					List<Item> items = taobaoApiManager.getTaobaoItemsByOuterId(outerId, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), sessionKey);
-					if (items != null) {
-						for (Item item : items) {
-							ApiSysMatch apiSysMatch = getApiSysMatch(item.getNumIid().toString(), "0");
-							if (apiSysMatch == null) {
-								apiSysMatch = new ApiSysMatch();
-								apiSysMatch.setNumIid(item.getNumIid().toString());
-								apiSysMatch.setSkuId("0");
-								apiSysMatch.setStopFlag(0L);
-							}
-							apiSysMatch.setGoodsId(goodsSpec.getGoodsId());
-							apiSysMatch.setSpecId(goodsSpec.getSpecId());
-							apiSysMatch.setSkuOuterId("");
-							apiSysMatch.setTbName(item.getTitle());
-							apiSysMatch.setTbSku("");
-							apiSysMatch.setTbOuterId(item.getOuterId());
-							apiSysMatch.setShopId(shop.getShopId());
-							apiSysMatch.setTbGoods(1L);
-							apiSysMatch.setIsSys(1L);
-							apiSysMatch.setFixNumFlag(0L);
-							apiSysMatch.setFixNum(0L);
-							if (goods.getStock() > 50 || (goods.getFlagId() != null && goods.getFlagId() == 13) || (goodsSpec.getFlagId() != null && goodsSpec.getFlagId() == 13)) {
-								System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " 设置为同步实际库存。");
-								apiSysMatch.setVirNumFlag(0L);
-								apiSysMatch.setVirNumBase(0L);
-								apiSysMatch.setVirNumTop(0L);
-								apiSysMatch.setVirNumInc(0L);
-							} else {
-								System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " 设置为同步虚拟库存。");
-								apiSysMatch.setVirNumFlag(1L);
-								apiSysMatch.setVirNumBase(1L);
-								apiSysMatch.setVirNumTop(10L);
-								apiSysMatch.setVirNumInc(10L);
-							}
-							goodsDao.saveOrUpdate(apiSysMatch);
-						}
-					}
+					System.out.println(goods.getGoodsNo() + " " + goods.getGoodsName() + " " + goodsSpec.getSpecName() + " 设置为同步虚拟库存。");
+					apiSysMatch.setVirNumFlag(1L);
+					apiSysMatch.setVirNumBase(1L);
+					apiSysMatch.setVirNumTop(10L);
+					apiSysMatch.setVirNumInc(10L);
 				}
+				apiSysMatch.setIsSys(1L);
+				goodsDao.saveOrUpdate(apiSysMatch);
 			}
 		}
 	}
 
-	public ApiSysMatch getApiSysMatch(String numIid, String skuIid) {
-		return goodsDao.getApiSysMatch(numIid, skuIid);
+	public List<ApiSysMatch> getApiSysMatch(Long goodsId, Long specId) {
+		return goodsDao.getApiSysMatch(goodsId, specId);
 	}
 
 	public List<GoodsSpecDTO> getOutOfStockGoods() {

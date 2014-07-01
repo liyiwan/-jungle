@@ -5,7 +5,9 @@ import org.apache.tapestry5.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
+import com.taobao.api.domain.Trade;
 import com.taobao.api.internal.tmc.Message;
 import com.taobao.api.internal.tmc.MessageHandler;
 import com.taobao.api.internal.tmc.MessageStatus;
@@ -17,9 +19,16 @@ public class DefaultMessageHandler implements MessageHandler {
 	
 	@Autowired
 	private TradeManager tradeManager;
+	
+	@Autowired
+	private TaobaoApiManager taobaoApiManager;
 
 	public void setTradeManager(TradeManager tradeManager) {
 		this.tradeManager = tradeManager;
+	}
+
+	public void setTaobaoApiManager(TaobaoApiManager taobaoApiManager) {
+		this.taobaoApiManager = taobaoApiManager;
 	}
 
 	public void onMessage(Message message, MessageStatus status) throws Exception {
@@ -46,19 +55,17 @@ public class DefaultMessageHandler implements MessageHandler {
 	
 	private void onTradeBuyerPay(Message message) {
 		
-//		JSONObject jsonObject = new JSONObject(message.getContent());
-//		//String buyerNick = jsonObject.getString("buyer_nick");
-//		String sellerNick = jsonObject.getString("seller_nick");
-//		Long tid = jsonObject.getLong("tid");
-//		try {
-//			Trade trade = taobaoService.getTradeFullInfo(sellerNick, tid);
-//			logger.info("trade="+trade);
-//			if (trade != null) {
-//				tradeService.emailNotify(trade);
-//			}
-//		} catch (Throwable t) {
-//	    	logger.error("处理消息异常", t);
-//	    }
+		JSONObject jsonObject = new JSONObject(message.getContent());
+		String sellerNick = jsonObject.getString("seller_nick");
+		Long tid = jsonObject.getLong("tid");
+		try {
+			Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(sellerNick));
+			if (trade != null) {
+				tradeManager.notifyByEmail(trade);
+			}
+		} catch (Throwable t) {
+	    	logger.error("处理消息异常", t);
+	    }
 	}
 
 	private void onItemAdd(Message message) {

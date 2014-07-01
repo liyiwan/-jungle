@@ -16,4 +16,6 @@ public interface TradeManager {
 
 	void onTradeMemoModified(String nick, Long tid);
 
+	void notifyByEmail(com.taobao.api.domain.Trade trade);
+
 }

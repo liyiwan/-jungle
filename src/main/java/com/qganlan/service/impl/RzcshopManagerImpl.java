@@ -74,6 +74,8 @@ public class RzcshopManagerImpl implements RzcshopManager {
 			Date fromDate = sdf.parse(sDate);
 			
 			final WebClient webClient = new WebClient();
+			webClient.getOptions().setTimeout(180000);
+			webClient.getOptions().setThrowExceptionOnScriptError(false);
 			CookieManager cookieManager = webClient.getCookieManager();
 			List<Cookie> cookies = parseCookies("www.rzcshop.com", cookie);
 			for (Cookie aCookie : cookies) {

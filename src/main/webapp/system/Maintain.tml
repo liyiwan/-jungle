@@ -1,0 +1,5 @@
+<html t:type="layout" title="literal:货品档案"
+    heading="literal:货品档案" menu="GoodsMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+    
+</html>
