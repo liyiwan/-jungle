@@ -80,4 +80,9 @@ public class GoodsDetail {
         	goodsManager.deleteGoodsSpec(aGoodsSpec.getGoodsId(), aGoodsSpec.getSpecId());
         }
 	}
+	
+	public void onDisableStockWarning() {
+		goodsManager.disableStockWarning(goodsId);
+	}
+
 }

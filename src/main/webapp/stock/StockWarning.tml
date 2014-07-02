@@ -72,6 +72,10 @@
 								<td align="left" valign="top">${goods.stock}</td>
 							</tr>
 							<tr>
+								<td align="left" valign="top" nowrap="true">最大补货量：</td>
+								<td align="left" valign="top">${maxShortStock}</td>
+							</tr>
+							<tr>
 								<td align="left" valign="top" nowrap="true">进货价：</td>
 								<td align="left" valign="top">${goods.costPrice}</td>
 							</tr>

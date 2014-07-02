@@ -1,16 +1,13 @@
 package com.qganlan.service.impl;
 
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.qganlan.common.PropertyValueAlias;
 import com.qganlan.dao.GoodsDao;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
@@ -20,8 +17,6 @@ import com.qganlan.service.GoodsManager;
 import com.qganlan.service.ShopManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.taobao.api.domain.Item;
-import com.taobao.api.domain.Sku;
-import com.qganlan.model.Shop;
 
 @Service("goodsManager")
 public class GoodsManagerImpl implements GoodsManager {
@@ -81,6 +76,19 @@ public class GoodsManagerImpl implements GoodsManager {
 
 	public void disableStockWarning(Long goodsId) {
 		goodsDao.disableStockWarning(goodsId);
+		List<GoodsSpecDTO> goodsSpecs = goodsDao.getGoodsSpecList(goodsId);
+		for (GoodsSpecDTO goodsSpec : goodsSpecs) {
+			List<ApiSysMatch> apiSysMatchList = getApiSysMatch(goodsSpec.getGoodsId(), goodsSpec.getSpecId());
+			for (ApiSysMatch apiSysMatch : apiSysMatchList) {
+				System.out.println(goodsId + " 设置为同步实际库存。");
+				apiSysMatch.setVirNumFlag(0L);
+				apiSysMatch.setVirNumBase(0L);
+				apiSysMatch.setVirNumTop(0L);
+				apiSysMatch.setVirNumInc(0L);
+				apiSysMatch.setIsSys(1L);
+				goodsDao.saveOrUpdate(apiSysMatch);
+			}
+		}
 	}
 
 	public void hideOneDay(Long goodsId) {

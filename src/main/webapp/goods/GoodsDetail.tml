@@ -30,6 +30,11 @@
 				<td>${goods.costPrice}</td>
 			</tr>
 		</table>
+		<table>
+			<tr>
+				<td><a t:type="eventlink" event="disableStockWarning" id="disableStockWarning" class="btn btn-primary" t:mixins="Confirm" t:message="关闭库存警告，请确认！"><i class="icon-plus icon-white"></i>&#160;关闭警告&#160;</a></td>
+			</tr>
+		</table>
 		<table width="320">
 			<tr>
 				<th align="left">选择</th>

@@ -103,6 +103,11 @@ public class StockWarning {
 				Provider p = providerManager.getProvider(providerId);
 				if (p != null) {
 					providerList.add(p);
+				} else {
+					p = new Provider();
+					p.setProviderId(0L);
+					p.setProviderName("无供货商");
+					providerList.add(p);
 				}
 			}
 			list.add(goods);
@@ -132,6 +137,10 @@ public class StockWarning {
 		} else {
 			return "";
 		}
+	}
+	
+	public Long getMaxShortStock() {
+		return goods.getSellCountMonth() - goods.getStock() > 0 ? goods.getSellCountMonth() - goods.getStock() : 0;
 	}
 
 	public String getStockSpecStyle() {
