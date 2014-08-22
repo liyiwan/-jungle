@@ -8,6 +8,7 @@ import org.slf4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qganlan.common.PropertyValueAlias;
 import com.qganlan.dao.GoodsDao;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
@@ -17,6 +18,8 @@ import com.qganlan.service.GoodsManager;
 import com.qganlan.service.ShopManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.taobao.api.domain.Item;
+import com.taobao.api.domain.Sku;
+import com.qganlan.model.Shop;
 
 @Service("goodsManager")
 public class GoodsManagerImpl implements GoodsManager {
@@ -141,7 +144,7 @@ public class GoodsManagerImpl implements GoodsManager {
 	}
 
 	public GoodsSpecDTO getGoodsSpec(Long goodsId, Long specId) {
-		return goodsDao.getGoodsSpecList(goodsId, specId);
+		return goodsDao.getGoodsSpec(goodsId, specId);
 	}
 
 	public GoodsDTO getGoods(Long goodsId) {
@@ -158,5 +161,108 @@ public class GoodsManagerImpl implements GoodsManager {
 
 	public List<GoodsDTO> getGoodsList(String searchTerm) {
 		return goodsDao.getGoodsList(searchTerm);
+	}
+
+	@Override
+	public void resolveApiSysMatch(Item item) {
+		Shop shop = shopManager.getShopByNick(item.getNick());
+		List<Sku> skus = item.getSkus();
+		if (skus == null || skus.size() == 0) {
+			if (item.getOuterId() != null && !item.getOuterId().trim().equals("")) {
+				GoodsSpecDTO goodsSpec = goodsDao.getGoodsSpecBySkuOuterId(item.getOuterId());
+				if (goodsSpec != null) {
+					GoodsDTO goods = goodsDao.getGoods(goodsSpec.getGoodsId());
+					ApiSysMatch apiSysMatch = goodsDao.getApiSysMatch(item.getNumIid().toString(), "0");
+					if (apiSysMatch == null) {
+						apiSysMatch = new ApiSysMatch();
+						apiSysMatch.setNumIid(item.getNumIid().toString());
+						apiSysMatch.setSkuId("0");
+						apiSysMatch.setStopFlag(0L);
+					}
+					apiSysMatch.setGoodsId(goodsSpec.getGoodsId());
+					apiSysMatch.setSpecId(goodsSpec.getSpecId());
+					apiSysMatch.setSkuOuterId("");
+					apiSysMatch.setTbName(item.getTitle());
+					apiSysMatch.setTbSku("");
+					apiSysMatch.setTbOuterId(item.getOuterId());
+					apiSysMatch.setShopId(shop.getShopId());
+					apiSysMatch.setTbGoods(1L);
+					apiSysMatch.setIsSys(1L);
+					apiSysMatch.setFixNumFlag(0L);
+					apiSysMatch.setFixNum(0L);
+					if (goods.getStock() > 50 || (goods.getFlagId() != null && goods.getFlagId() == 13) || (goodsSpec.getFlagId() != null && goodsSpec.getFlagId() == 13)) {
+						System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " 设置为同步实际库存。");
+						apiSysMatch.setVirNumFlag(0L);
+						apiSysMatch.setVirNumBase(0L);
+						apiSysMatch.setVirNumTop(0L);
+						apiSysMatch.setVirNumInc(0L);
+					} else {
+						System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " 设置为同步虚拟库存。");
+						apiSysMatch.setVirNumFlag(1L);
+						apiSysMatch.setVirNumBase(1L);
+						apiSysMatch.setVirNumTop(10L);
+						apiSysMatch.setVirNumInc(10L);
+					}
+					apiSysMatch.setIsSys(1L);
+					goodsDao.saveOrUpdate(apiSysMatch);
+				} else {
+					goodsDao.deleteStaleApiSysMatch(item.getNumIid(), 0L);
+				}
+			}
+		} else {
+			for (Sku sku : skus) {
+				GoodsSpecDTO goodsSpec = goodsDao.getGoodsSpecBySkuOuterId(sku.getOuterId());
+				if (goodsSpec != null) {
+					GoodsDTO goods = goodsDao.getGoods(goodsSpec.getGoodsId());
+					PropertyValueAlias pva = new PropertyValueAlias(item == null ? "" : item.getPropertyAlias());
+					ApiSysMatch apiSysMatch = goodsDao.getApiSysMatch(sku.getNumIid().toString(), sku.getSkuId().toString());
+					if (apiSysMatch == null) {
+						apiSysMatch = new ApiSysMatch();
+						apiSysMatch.setNumIid(sku.getNumIid().toString());
+						apiSysMatch.setSkuId(sku.getSkuId().toString());
+						apiSysMatch.setStopFlag(0L);
+					}
+					apiSysMatch.setGoodsId(goodsSpec.getGoodsId());
+					apiSysMatch.setSpecId(goodsSpec.getSpecId());
+					apiSysMatch.setSkuOuterId(sku.getOuterId());
+					apiSysMatch.setTbName(item == null ? "" : item.getTitle());
+					apiSysMatch.setTbSku(pva.translate(sku.getPropertiesName() == null ? "" : sku.getPropertiesName()));
+					apiSysMatch.setTbOuterId(item == null ? "" : item.getOuterId());
+					apiSysMatch.setShopId(shop.getShopId());
+					apiSysMatch.setTbGoods(1L);
+					apiSysMatch.setIsSys(1L);
+					apiSysMatch.setFixNumFlag(0L);
+					apiSysMatch.setFixNum(0L);
+					if (goods.getStock() > 50 || (goods.getFlagId() != null && goods.getFlagId() == 13) || (goodsSpec.getFlagId() != null && goodsSpec.getFlagId() == 13)) {
+						System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " " + goodsSpec.getSpecName() + " 设置为同步实际库存。");
+						apiSysMatch.setVirNumFlag(0L);
+						apiSysMatch.setVirNumBase(0L);
+						apiSysMatch.setVirNumTop(0L);
+						apiSysMatch.setVirNumInc(0L);
+					} else {
+						System.out.println(shop.getShopName() + " " + goods.getGoodsNo() + " " + goods.getGoodsName() + " " + goodsSpec.getSpecName() + " 设置为同步虚拟库存。");
+						apiSysMatch.setVirNumFlag(1L);
+						apiSysMatch.setVirNumBase(1L);
+						apiSysMatch.setVirNumTop(10L);
+						apiSysMatch.setVirNumInc(10L);
+					}
+					goodsDao.saveOrUpdate(apiSysMatch);
+				} else {
+					goodsDao.deleteStaleApiSysMatch(sku.getNumIid(), sku.getSkuId());
+				}
+			}
+		}
+		
+	}
+
+	@Override
+	public void deleteApiSysMatch(Long numIid) {
+		
+	}
+
+	@Override
+	public void recordItemUpdate(Long numIid, String nick) {
+		// TODO Auto-generated method stub
+		
 	}
 }

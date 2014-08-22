@@ -10,4 +10,6 @@ public interface ShopManager {
 
 	Shop getShop(Long shopId);
 
+	Shop getShopByNick(String nick);
+
 }

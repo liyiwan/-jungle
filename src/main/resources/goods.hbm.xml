@@ -58,6 +58,22 @@
 			 WHERE G_Goods_GoodsList.GoodsID = :goodsId
 		]]>
 	</sql-query>
+	<sql-query name="SingleGoodsByGoodsNo">
+		<![CDATA[
+			SELECT G_Goods_GoodsList.GoodsID AS GoodsId,
+			       G_Goods_GoodsList.GoodsNO AS GoodsNo,
+			       G_Goods_GoodsList.GoodsName AS GoodsName,
+			       G_Goods_GoodsList.bMultiSpec AS MultiSpec,
+			       J_MyGoods.PicPath AS PicPath,
+			       (SELECT ISNULL(SUM(stock),0) FROM G_Stock_Spec WHERE GoodsID = G_Goods_GoodsList.GoodsID) AS Stock,
+			       (SELECT ISNULL(SUM(SellCount),0) FROM G_sta_SellDay WHERE GoodsID = G_Goods_GoodsList.GoodsID AND datediff(day, staDay, getdate()) < 31) AS SellCountMonth,
+			       (CASE WHEN G_Goods_GoodsList.bFixCost = 1 THEN G_Goods_GoodsList.FixCostPrice ELSE ISNULL(G_Goods_PriceCost.PriceCost,0) END) AS CostPrice
+			 FROM G_Goods_GoodsList 
+			      LEFT JOIN J_MyGoods ON J_MyGoods.GoodsID = G_Goods_GoodsList.GoodsID
+			      LEFT JOIN G_Goods_PriceCost ON G_Goods_PriceCost.GoodsID = G_Goods_GoodsList.GoodsID AND G_Goods_PriceCost.WareHouseID = 1000
+			 WHERE G_Goods_GoodsList.GoodsNO = :goodsNo
+		]]>
+	</sql-query>
 	<sql-query name="GoodsSpecList">
 		<![CDATA[
 			SELECT GoodsID AS GoodsId, 

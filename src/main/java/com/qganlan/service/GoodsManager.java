@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
+import com.taobao.api.domain.Item;
 
 public interface GoodsManager {
 	public List<GoodsDTO> getGoodsToCheck();
@@ -20,4 +21,7 @@ public interface GoodsManager {
 	public List<GoodsSpecDTO> getGoodsSpecList(Long goodsId);
 	public void deleteGoodsSpec(Long goodsId, Long specId);
 	public List<GoodsDTO> getGoodsList(String searchTerm);
+	public void resolveApiSysMatch(Item item);
+	public void deleteApiSysMatch(Long numIid);
+	public void recordItemUpdate(Long numIid, String nick);
 }

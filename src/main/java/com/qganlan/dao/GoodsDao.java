@@ -28,8 +28,12 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public List<ApiSysMatch> getApiSysMatch(Long goodsId, Long specId);
 	public void saveOrUpdate(ApiSysMatch apiSysMatch);
 	public List<GoodsSpecDTO> getOutOfStockGoods();
-	public GoodsSpecDTO getGoodsSpecList(Long goodsId, Long specId);
+	public GoodsSpecDTO getGoodsSpec(Long goodsId, Long specId);
 	public GoodsDTO getGoods(Long goodsId);
 	public void deleteGoodsSpec(Long goodsId, Long specId);
 	public List<GoodsDTO> getGoodsList(String searchTerm);
+	public GoodsSpecDTO getGoodsSpecBySkuOuterId(String outerId);
+	public ApiSysMatch getApiSysMatch(String numIid, String skuId);
+	public GoodsDTO getGoodsByGoodsNo(String outerId);
+	public void deleteStaleApiSysMatch(Long numIid, Long skuId);
 }

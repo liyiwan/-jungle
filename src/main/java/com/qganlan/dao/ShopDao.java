@@ -10,4 +10,6 @@ public interface ShopDao extends GenericDao<Shop, Long> {
 
 	List<Shop> getTaobaoShopList();
 
+	Shop getShopByNick(String nick);
+
 }

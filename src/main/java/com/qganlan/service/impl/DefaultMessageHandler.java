@@ -5,8 +5,10 @@ import org.apache.tapestry5.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qganlan.service.GoodsManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
+import com.taobao.api.domain.Item;
 import com.taobao.api.domain.Trade;
 import com.taobao.api.internal.tmc.Message;
 import com.taobao.api.internal.tmc.MessageHandler;
@@ -22,6 +24,9 @@ public class DefaultMessageHandler implements MessageHandler {
 	
 	@Autowired
 	private TaobaoApiManager taobaoApiManager;
+	
+	@Autowired
+	private GoodsManager goodsManager;
 
 	public void setTradeManager(TradeManager tradeManager) {
 		this.tradeManager = tradeManager;
@@ -29,6 +34,10 @@ public class DefaultMessageHandler implements MessageHandler {
 
 	public void setTaobaoApiManager(TaobaoApiManager taobaoApiManager) {
 		this.taobaoApiManager = taobaoApiManager;
+	}
+	
+	public void setGoodsManager(GoodsManager goodsManager) {
+		this.goodsManager = goodsManager;
 	}
 
 	public void onMessage(Message message, MessageStatus status) throws Exception {
@@ -69,116 +78,64 @@ public class DefaultMessageHandler implements MessageHandler {
 	}
 
 	private void onItemAdd(Message message) {
-//		JSONObject jsonObject = new JSONObject(message.getContent());
-//    	Long numIid = jsonObject.getLong("num_iid");
-//    	String nick = jsonObject.getString("nick");
-//		Item item = null;
-//	    try {
-//	    	item = taobaoService.getItemFromTaobao(numIid, nick);
-//	    } catch (Throwable t) {
-//	    	logger.error("处理消息异常", t);
-//	    }
-//    	if (item != null) {
-//    		try {
-//    			goodsService.resolveApiSysMatch(item);
-//    		} catch (Throwable t) {
-//    			logger.error("RESOLVE API SYS MATCH ERROR.", t);
-//    			logger.error(message.getTopic());
-//                logger.error(message.getContent());
-//    		}
-//			try {
-//				goodsService.saveTaobaoItem(item);
-//			} catch (Throwable t) {
-//				logger.error("SAVE TAOBAO ITEM ERROR.", t);
-//				logger.error(message.getTopic());
-//                logger.error(message.getContent());
-//			}
-//    	}
+		JSONObject jsonObject = new JSONObject(message.getContent());
+    	Long numIid = jsonObject.getLong("num_iid");
+    	String nick = jsonObject.getString("nick");
+		Item item = null;
+	    try {
+	    	item = taobaoApiManager.getTaobaoItemByNumIid(numIid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(nick));
+	    } catch (Throwable t) {
+	    	logger.error("处理消息异常", t);
+	    }
+    	if (item != null) {
+    		try {
+    			goodsManager.resolveApiSysMatch(item);
+    		} catch (Throwable t) {
+    			logger.error("RESOLVE API SYS MATCH ERROR.", t);
+    			logger.error(message.getTopic());
+                logger.error(message.getContent());
+    		}
+    	}
 	}
 	
 	private void onItemDelete(Message message) {
-//		JSONObject jsonObject = new JSONObject(message.getContent());
-//    	Long numIid = jsonObject.getLong("num_iid");
-//		try {
-//			goodsService.deleteApiSysMatch(numIid);
-//		} catch (Throwable t) {
-//			logger.error("RESOLVE API SYS MATCH ERROR.", t);
-//			logger.error(message.getTopic());
-//            logger.error(message.getContent());
-//		}
-//
-//		try {
-//			goodsService.deleteTaobaoItem(numIid);
-//		} catch (Throwable t) {
-//			logger.error("SAVE TAOBAO ITEM ERROR.", t);
-//			logger.error(message.getTopic());
-//            logger.error(message.getContent());
-//		}
+		JSONObject jsonObject = new JSONObject(message.getContent());
+    	Long numIid = jsonObject.getLong("num_iid");
+		try {
+			goodsManager.deleteApiSysMatch(numIid);
+		} catch (Throwable t) {
+			logger.error("RESOLVE API SYS MATCH ERROR.", t);
+			logger.error(message.getTopic());
+            logger.error(message.getContent());
+		}
 	}
 
 	private void onItemUpdate(Message message) {
-//		
-//		JSONObject jsonObject = new JSONObject(message.getContent());
-//    	Long numIid = jsonObject.getLong("num_iid");
-//    	String nick = jsonObject.getString("nick");
-//    	String changedFields = jsonObject.getString("changed_fields");
-//		
-//    	Item item = null;
-//    	if (nick != null && !nick.trim().equals("")) {
-//		    try {
-//		    	item = taobaoService.getItemFromTaobao(numIid, nick);
-//		    } catch (Throwable t) {
-//		    	logger.error("处理消息异常", t);
-//		    }
-//    	}
-//
-//	    if (item == null) {
-//	    	return;
-//	    }
-//
-//    	if (changedFields.contains("sku")) {
-//    		logger.info("宝贝变更（SKU） " + item.getNumIid() + " " + item.getOuterId() + " " + item.getTitle());
-//    		Long skuId = jsonObject.getLong("sku_id");
-//    		Sku sku = taobaoService.getTaobaoItemSku(nick, numIid, skuId);
-//    		if (sku != null && sku.getStatus().equals("normal")) {
-//    			logger.info("SKU变更 重新匹配 " + sku.getSkuId() + " " + sku.getPropertiesName() + " " + sku.getOuterId());
-//    			goodsService.resolveApiSysMatch(item, sku);
-//    		} else {
-//    			logger.info("SKU删除，删除匹配。" + sku.getSkuId() + " " + sku.getPropertiesName() + " " + sku.getOuterId());
-//    			goodsService.deleteApiSysMatch(numIid.toString(), skuId.toString());
-//    		}
-//    	} else {
-//    		logger.info("宝贝变更（非SKU） 全部重新匹配 " + item.getNumIid() + " " + item.getOuterId() + " " + item.getTitle());
-//    		goodsService.resolveApiSysMatch(item);
-//    	}
+		JSONObject jsonObject = new JSONObject(message.getContent());
+    	Long numIid = jsonObject.getLong("num_iid");
+    	String nick = jsonObject.getString("nick");
+		goodsManager.recordItemUpdate(numIid, nick);
 	}
 	
 	private void onItemUpshelf(Message message) {
-//		JSONObject jsonObject = new JSONObject(message.getContent());
-//    	Long numIid = jsonObject.getLong("num_iid");
-//    	String nick = jsonObject.getString("nick");
-//		Item item = null;
-//	    try {
-//	    	item = taobaoService.getItemFromTaobao(numIid, nick);
-//	    } catch (Throwable t) {
-//	    	logger.error("处理消息异常", t);
-//	    }
-//	    if (item != null) {
-//    		try {
-//    			goodsService.resolveApiSysMatch(item);
-//    		} catch (Throwable t) {
-//    			logger.error("RESOLVE API SYS MATCH ERROR.", t);
-//    			logger.error(message.getTopic());
-//                logger.error(message.getContent());
-//    		}
-//			try {
-//				goodsService.saveTaobaoItem(item);
-//			} catch (Throwable t) {
-//				logger.error("SAVE TAOBAO ITEM ERROR.", t);
-//				logger.error(message.getTopic());
-//                logger.error(message.getContent());
-//			}
-//    	}
+		JSONObject jsonObject = new JSONObject(message.getContent());
+    	Long numIid = jsonObject.getLong("num_iid");
+    	String nick = jsonObject.getString("nick");
+		Item item = null;
+	    try {
+	    	item = taobaoApiManager.getTaobaoItemByNumIid(numIid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(nick));
+	    } catch (Throwable t) {
+	    	logger.error("处理消息异常", t);
+	    }
+	    if (item != null) {
+    		try {
+    			goodsManager.resolveApiSysMatch(item);
+    		} catch (Throwable t) {
+    			logger.error("RESOLVE API SYS MATCH ERROR.", t);
+    			logger.error(message.getTopic());
+                logger.error(message.getContent());
+    		}
+    	}
 	}
 	
 	private void onTradeMemoModified(Message message) {

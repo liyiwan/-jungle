@@ -32,4 +32,8 @@ public class ShopManagerImpl implements ShopManager {
 		return shopDao.get(shopId);
 	}
 
+	public Shop getShopByNick(String nick) {
+		return shopDao.getShopByNick(nick);
+	}
+
 }

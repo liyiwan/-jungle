@@ -189,7 +189,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		return query.list();
 	}
 
-	public GoodsSpecDTO getGoodsSpecList(Long goodsId, Long specId) {
+	public GoodsSpecDTO getGoodsSpec(Long goodsId, Long specId) {
 		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT G_Goods_GoodsSpec.GoodsID AS GoodsId, G_Goods_GoodsSpec.SpecID AS SpecId, G_Goods_GoodsSpec.SpecCode AS SpecCode, G_Goods_GoodsSpec.SpecName AS SpecName, G_Goods_GoodsList.GoodsNo AS GoodsNo, G_Goods_GoodsList.GoodsName AS GoodsName FROM G_Goods_GoodsSpec, G_Goods_GoodsList WHERE G_Goods_GoodsList.GoodsID=G_Goods_GoodsSpec.GoodsID AND G_Goods_GoodsSpec.GoodsID = :goodsId AND G_Goods_GoodsSpec.SpecID = :specId");
 		query.addScalar("GoodsId", StandardBasicTypes.LONG);
 		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
@@ -246,5 +246,51 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.setString("searchTerm", searchTerm == null ? "%" : searchTerm + "%");
 		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
 		return query.list();
+	}
+
+	@Override
+	public GoodsSpecDTO getGoodsSpecBySkuOuterId(String outerId) {
+		SQLQuery query = (SQLQuery) getSession().createSQLQuery("G_Goods_GoodsSpec.GoodsID AS GoodsId, G_Goods_GoodsSpec.SpecID AS SpecId, G_Goods_GoodsSpec.SpecCode AS SpecCode, G_Goods_GoodsSpec.SpecName AS SpecName, G_Goods_GoodsList.GoodsNo AS GoodsNo, G_Goods_GoodsList.GoodsName AS GoodsName FROM G_Goods_GoodsSpec, G_Goods_GoodsList WHERE G_Goods_GoodsSpec.GoodsID = G_Goods_GoodsList.GoodsID AND (G_Goods_GoodsList.GoodsNO || G_Goods_GoodsSpec.SpecCode) LIKE :outerId");
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
+		query.addScalar("GoodsName", StandardBasicTypes.STRING);
+		query.addScalar("SpecId", StandardBasicTypes.LONG);
+		query.addScalar("SpecCode", StandardBasicTypes.STRING);
+		query.addScalar("SpecName", StandardBasicTypes.STRING);
+		query.setString("outerId", outerId);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsSpecDTO.class));
+		return (GoodsSpecDTO) query.uniqueResult();
+	}
+
+	@Override
+	public ApiSysMatch getApiSysMatch(String numIid, String skuId) {
+		Query query = getSession().createQuery("FROM ApiSysMatch WHERE numIid = :numIid AND skuId = :skuId");
+		query.setString("numIid", numIid);
+		query.setString("skuId", skuId);
+		return (ApiSysMatch) query.uniqueResult();
+	}
+
+	@Override
+	public GoodsDTO getGoodsByGoodsNo(String outerId) {
+		SQLQuery query = (SQLQuery) getSession().getNamedQuery("SingleGoodsByGoodsNo");
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
+		query.addScalar("GoodsName", StandardBasicTypes.STRING);
+		query.addScalar("PicPath", StandardBasicTypes.STRING);
+		query.addScalar("MultiSpec", StandardBasicTypes.LONG);
+		query.addScalar("Stock", StandardBasicTypes.LONG);
+		query.addScalar("SellCountMonth", StandardBasicTypes.LONG);
+		query.addScalar("CostPrice", StandardBasicTypes.BIG_DECIMAL);
+		query.setString("goodsNo", outerId);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
+		return (GoodsDTO) query.uniqueResult();
+	}
+
+	@Override
+	public void deleteStaleApiSysMatch(Long numIid, Long skuId) {
+		SQLQuery query = getSession().createSQLQuery("DELETE FROM G_API_SysMatch WHERE Numiid = :numIid AND Skuid = :skuId");
+		query.setLong("numIid", numIid);
+		query.setLong("skuId", skuId);
+		query.executeUpdate();
 	}
 }
