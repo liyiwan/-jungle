@@ -164,7 +164,7 @@ public class AppModule {
 
 	@Startup
 	public static void startMessageHandler(final TmcManager tmcManager) {
-		//tmcManager.run();
+		tmcManager.run();
 	}
 
 }
