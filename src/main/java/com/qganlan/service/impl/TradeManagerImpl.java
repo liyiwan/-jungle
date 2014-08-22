@@ -143,7 +143,7 @@ public class TradeManagerImpl implements TradeManager {
 		
 		String subject = trade.getBuyerNick() + " " + trade.getTid() + " " + trade.getSellerNick() + " " + trade.getPayment();
 		String content = sb.toString();
-		String[] toMails = { "1106628276@qq.com"};
+		String[] toMails = { "9394908@qq.com"};
 		try {
 			emailManager.sentHtml(subject, content, toMails);
 			System.out.println("邮件发送成功");
