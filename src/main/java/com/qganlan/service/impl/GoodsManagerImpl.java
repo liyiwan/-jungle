@@ -15,6 +15,7 @@ import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.MyGoods;
 import com.qganlan.service.GoodsManager;
+import com.qganlan.model.ItemUpdate;
 import com.qganlan.service.ShopManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.taobao.api.domain.Item;
@@ -257,12 +258,26 @@ public class GoodsManagerImpl implements GoodsManager {
 
 	@Override
 	public void deleteApiSysMatch(Long numIid) {
-		
+		goodsDao.deleteApiSysMatch(numIid.toString());
 	}
 
 	@Override
 	public void recordItemUpdate(Long numIid, String nick) {
-		// TODO Auto-generated method stub
-		
+		goodsDao.recordItemUpdate(numIid, nick);
+	}
+
+	@Override
+	public List<ItemUpdate> getItemUpdateList() {
+		return goodsDao.getItemUpdateList();
+	}
+
+	@Override
+	public void deleteItemUpdate(ItemUpdate itemUpdate) {
+		goodsDao.deleteItemUpdate(itemUpdate);		
+	}
+
+	@Override
+	public void saveItemUpdate(ItemUpdate itemUpdate) {
+		goodsDao.saveItemUpdate(itemUpdate);
 	}
 }

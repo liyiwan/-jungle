@@ -20,6 +20,7 @@
         <mapping class="com.qganlan.model.TaobaoItem"/>
         <mapping class="com.qganlan.model.TaobaoItemPropImg"/>
         <mapping class="com.qganlan.model.TaobaoItemSku"/>
+        <mapping class="com.qganlan.model.ItemUpdate"/>
         <mapping resource="stock.hbm.xml"/>
         <mapping resource="goods.hbm.xml"/>
     </session-factory>

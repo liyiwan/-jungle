@@ -9,12 +9,14 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.qganlan.dto.GoodsDTO;
+import com.qganlan.model.ItemUpdate;
 import com.qganlan.service.AccountManager;
 import com.qganlan.service.EmailManager;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.JobManager;
 import com.qganlan.service.RzcshopManager;
 import com.qganlan.service.TaobaoApiManager;
+import com.taobao.api.domain.Item;
 
 @Service("jobManager")
 public class JobManagerImpl implements JobManager {
@@ -58,7 +60,30 @@ public class JobManagerImpl implements JobManager {
 	@Scheduled(cron = "0 0 20 ? * *")
 	public void dailyJob() {
 		sendAccountBalanceReport();
+		matchGoods();
 		checkGoods();
+	}
+	
+	private void matchGoods() {
+		try {
+			List<ItemUpdate> itemUpdates = goodsManager.getItemUpdateList();
+			for (ItemUpdate itemUpdate : itemUpdates) {
+				Item item = taobaoApiManager.getTaobaoItemByNumIid(itemUpdate.getNumIid(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(itemUpdate.getNick()));
+				if (item != null) {
+					goodsManager.resolveApiSysMatch(item);
+					goodsManager.deleteItemUpdate(itemUpdate);
+				} else {
+					if (itemUpdate.getTryCount() >= 2) {
+						goodsManager.deleteItemUpdate(itemUpdate);
+					} else {
+						itemUpdate.setTryCount(itemUpdate.getTryCount() + 1);
+						goodsManager.saveItemUpdate(itemUpdate);
+					}
+				}
+			}
+		} catch (Throwable t) {
+			t.printStackTrace();
+		}
 	}
 
 	private void checkGoods() {

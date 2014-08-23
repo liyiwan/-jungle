@@ -9,6 +9,7 @@ import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.StockSpecDTO;
 import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.Goods;
+import com.qganlan.model.ItemUpdate;
 import com.qganlan.model.MyGoods;
 
 public interface GoodsDao extends GenericDao<Goods, Long> {
@@ -36,4 +37,9 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public ApiSysMatch getApiSysMatch(String numIid, String skuId);
 	public GoodsDTO getGoodsByGoodsNo(String outerId);
 	public void deleteStaleApiSysMatch(Long numIid, Long skuId);
+	public void recordItemUpdate(Long numIid, String nick);
+	public List<ItemUpdate> getItemUpdateList();
+	public void deleteItemUpdate(ItemUpdate itemUpdate);
+	public void saveItemUpdate(ItemUpdate itemUpdate);
+	public void deleteApiSysMatch(String string);
 }

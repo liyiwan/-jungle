@@ -17,6 +17,7 @@ import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.StockSpecDTO;
 import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.Goods;
+import com.qganlan.model.ItemUpdate;
 import com.qganlan.model.MyGoods;
 
 @Repository("goodsDao")
@@ -292,5 +293,41 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.setLong("numIid", numIid);
 		query.setLong("skuId", skuId);
 		query.executeUpdate();
+	}
+
+	@Override
+	public void recordItemUpdate(Long numIid, String nick) {
+		Session session = getSession();
+		ItemUpdate itemUpdate = (ItemUpdate) session.get(ItemUpdate.class, numIid);
+		if (itemUpdate == null) {
+			itemUpdate = new ItemUpdate();
+			itemUpdate.setNumIid(numIid);
+		}
+		itemUpdate.setNick(nick);
+		itemUpdate.setTryCount(0);
+		session.saveOrUpdate(itemUpdate);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ItemUpdate> getItemUpdateList() {
+		return getSession().createQuery("FROM ItemUpdate").list();
+	}
+
+	@Override
+	public void deleteItemUpdate(ItemUpdate itemUpdate) {
+		getSession().delete(itemUpdate);		
+	}
+
+	@Override
+	public void saveItemUpdate(ItemUpdate itemUpdate) {
+		getSession().save(itemUpdate);
+	}
+
+	@Override
+	public void deleteApiSysMatch(String numIid) {
+		Query q = getSession().createQuery("DELETE ApiSysMatch WHERE numIid LIKE :numIid");
+		q.setString("numIid", numIid);
+		q.executeUpdate();
 	}
 }
