@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
-import com.taobao.api.domain.Item;
+
 import com.taobao.api.domain.Trade;
 import com.taobao.api.internal.tmc.Message;
 import com.taobao.api.internal.tmc.MessageHandler;
@@ -81,7 +81,9 @@ public class DefaultMessageHandler implements MessageHandler {
 		JSONObject jsonObject = new JSONObject(message.getContent());
     	Long numIid = jsonObject.getLong("num_iid");
     	String nick = jsonObject.getString("nick");
-    	goodsManager.recordItemUpdate(numIid, nick);
+    	if (nick != null && !nick.equals("")) {
+    		goodsManager.recordItemUpdate(numIid, nick);
+    	}
 	}
 	
 	private void onItemDelete(Message message) {
@@ -100,7 +102,9 @@ public class DefaultMessageHandler implements MessageHandler {
 		JSONObject jsonObject = new JSONObject(message.getContent());
     	Long numIid = jsonObject.getLong("num_iid");
     	String nick = jsonObject.getString("nick");
-		goodsManager.recordItemUpdate(numIid, nick);
+    	if (nick != null && !nick.equals("")) {
+    		goodsManager.recordItemUpdate(numIid, nick);
+    	}
 	}
 	
 	private void onItemUpshelf(Message message) {

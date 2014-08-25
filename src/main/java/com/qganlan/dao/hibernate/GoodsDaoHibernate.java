@@ -214,6 +214,7 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.addScalar("Stock", StandardBasicTypes.LONG);
 		query.addScalar("SellCountMonth", StandardBasicTypes.LONG);
 		query.addScalar("CostPrice", StandardBasicTypes.BIG_DECIMAL);
+		query.addScalar("FlagId", StandardBasicTypes.LONG);
 		query.setLong("goodsId", goodsId);
 		query.setResultTransformer(Transformers.aliasToBean(GoodsDTO.class));
 		return (GoodsDTO) query.uniqueResult();
@@ -251,13 +252,14 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 
 	@Override
 	public GoodsSpecDTO getGoodsSpecBySkuOuterId(String outerId) {
-		SQLQuery query = (SQLQuery) getSession().createSQLQuery("G_Goods_GoodsSpec.GoodsID AS GoodsId, G_Goods_GoodsSpec.SpecID AS SpecId, G_Goods_GoodsSpec.SpecCode AS SpecCode, G_Goods_GoodsSpec.SpecName AS SpecName, G_Goods_GoodsList.GoodsNo AS GoodsNo, G_Goods_GoodsList.GoodsName AS GoodsName FROM G_Goods_GoodsSpec, G_Goods_GoodsList WHERE G_Goods_GoodsSpec.GoodsID = G_Goods_GoodsList.GoodsID AND (G_Goods_GoodsList.GoodsNO || G_Goods_GoodsSpec.SpecCode) LIKE :outerId");
+		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT G_Goods_GoodsSpec.GoodsID AS GoodsId, G_Goods_GoodsSpec.SpecID AS SpecId, G_Goods_GoodsSpec.SpecCode AS SpecCode, G_Goods_GoodsSpec.FlagId AS FlagId, G_Goods_GoodsSpec.SpecName AS SpecName, G_Goods_GoodsList.GoodsNo AS GoodsNo, G_Goods_GoodsList.GoodsName AS GoodsName FROM G_Goods_GoodsSpec, G_Goods_GoodsList WHERE G_Goods_GoodsSpec.GoodsID = G_Goods_GoodsList.GoodsID AND (G_Goods_GoodsList.GoodsNO + G_Goods_GoodsSpec.SpecCode) LIKE :outerId");
 		query.addScalar("GoodsId", StandardBasicTypes.LONG);
 		query.addScalar("GoodsNo", StandardBasicTypes.STRING);
 		query.addScalar("GoodsName", StandardBasicTypes.STRING);
 		query.addScalar("SpecId", StandardBasicTypes.LONG);
 		query.addScalar("SpecCode", StandardBasicTypes.STRING);
 		query.addScalar("SpecName", StandardBasicTypes.STRING);
+		query.addScalar("FlagId", StandardBasicTypes.LONG);
 		query.setString("outerId", outerId);
 		query.setResultTransformer(Transformers.aliasToBean(GoodsSpecDTO.class));
 		return (GoodsSpecDTO) query.uniqueResult();
@@ -296,16 +298,22 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 	}
 
 	@Override
-	public void recordItemUpdate(Long numIid, String nick) {
-		Session session = getSession();
-		ItemUpdate itemUpdate = (ItemUpdate) session.get(ItemUpdate.class, numIid);
-		if (itemUpdate == null) {
-			itemUpdate = new ItemUpdate();
-			itemUpdate.setNumIid(numIid);
-		}
-		itemUpdate.setNick(nick);
-		itemUpdate.setTryCount(0);
-		session.saveOrUpdate(itemUpdate);
+	public void recordItemUpdate(final Long numIid, final String nick) {
+		new Thread(new Runnable() {
+            public void run() {
+            	synchronized(this) {
+	        		Session session = getSession();
+	        		ItemUpdate itemUpdate = (ItemUpdate) session.get(ItemUpdate.class, numIid);
+	        		if (itemUpdate == null) {
+	        			itemUpdate = new ItemUpdate();
+	        			itemUpdate.setNumIid(numIid);
+	        		}
+	        		itemUpdate.setNick(nick);
+	        		itemUpdate.setTryCount(0);
+	        		session.saveOrUpdate(itemUpdate);
+            	}
+            }
+        }).start();
 	}
 
 	@SuppressWarnings("unchecked")
@@ -316,7 +324,9 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 
 	@Override
 	public void deleteItemUpdate(ItemUpdate itemUpdate) {
-		getSession().delete(itemUpdate);		
+		Query q = getSession().createQuery("DELETE ItemUpdate WHERE numIid = :numIid");
+		q.setLong("numIid", itemUpdate.getNumIid());
+		q.executeUpdate();
 	}
 
 	@Override

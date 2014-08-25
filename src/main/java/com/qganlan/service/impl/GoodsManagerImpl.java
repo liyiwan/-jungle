@@ -214,12 +214,13 @@ public class GoodsManagerImpl implements GoodsManager {
 			for (Sku sku : skus) {
 				GoodsSpecDTO goodsSpec = goodsDao.getGoodsSpecBySkuOuterId(sku.getOuterId());
 				if (goodsSpec != null) {
+					System.out.println("goodsId="+goodsSpec.getGoodsId());
 					GoodsDTO goods = goodsDao.getGoods(goodsSpec.getGoodsId());
 					PropertyValueAlias pva = new PropertyValueAlias(item == null ? "" : item.getPropertyAlias());
-					ApiSysMatch apiSysMatch = goodsDao.getApiSysMatch(sku.getNumIid().toString(), sku.getSkuId().toString());
+					ApiSysMatch apiSysMatch = goodsDao.getApiSysMatch(item.getNumIid().toString(), sku.getSkuId().toString());
 					if (apiSysMatch == null) {
 						apiSysMatch = new ApiSysMatch();
-						apiSysMatch.setNumIid(sku.getNumIid().toString());
+						apiSysMatch.setNumIid(item.getNumIid().toString());
 						apiSysMatch.setSkuId(sku.getSkuId().toString());
 						apiSysMatch.setStopFlag(0L);
 					}
@@ -249,7 +250,7 @@ public class GoodsManagerImpl implements GoodsManager {
 					}
 					goodsDao.saveOrUpdate(apiSysMatch);
 				} else {
-					goodsDao.deleteStaleApiSysMatch(sku.getNumIid(), sku.getSkuId());
+					goodsDao.deleteStaleApiSysMatch(item.getNumIid(), sku.getSkuId());
 				}
 			}
 		}

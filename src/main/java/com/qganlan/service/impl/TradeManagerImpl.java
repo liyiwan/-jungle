@@ -118,7 +118,7 @@ public class TradeManagerImpl implements TradeManager {
 			sb.append("<img width='100' src='" + order.getPicPath() + "'>");
 			sb.append("</td>");
 			sb.append("<td align='left' valign='top'>");//标题
-			sb.append(order.getTitle());
+			sb.append("<a target='_blank' href='http://item.taobao.com/item.html?id=" + order.getNumIid() + "'>" + order.getTitle() + "</a>");
 			sb.append("<br>" + order.getSkuPropertiesName());
 			sb.append("</td>");
 			BigDecimal unitPrice = (new BigDecimal(order.getPayment())).divide(new BigDecimal(order.getNum()), 2, RoundingMode.HALF_DOWN);

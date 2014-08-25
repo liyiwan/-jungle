@@ -54,7 +54,6 @@ public class JobManagerImpl implements JobManager {
 
 	@Scheduled(initialDelay = 600000, fixedDelay = 3600000)
 	public void hourlyJob() {
-
 	}
 
 	@Scheduled(cron = "0 0 20 ? * *")
@@ -63,7 +62,7 @@ public class JobManagerImpl implements JobManager {
 		matchGoods();
 		checkGoods();
 	}
-	
+
 	private void matchGoods() {
 		try {
 			List<ItemUpdate> itemUpdates = goodsManager.getItemUpdateList();
