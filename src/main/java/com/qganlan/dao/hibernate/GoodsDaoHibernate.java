@@ -299,21 +299,18 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 
 	@Override
 	public void recordItemUpdate(final Long numIid, final String nick) {
-		new Thread(new Runnable() {
-            public void run() {
-            	synchronized(this) {
-	        		Session session = getSession();
-	        		ItemUpdate itemUpdate = (ItemUpdate) session.get(ItemUpdate.class, numIid);
-	        		if (itemUpdate == null) {
-	        			itemUpdate = new ItemUpdate();
-	        			itemUpdate.setNumIid(numIid);
-	        		}
-	        		itemUpdate.setNick(nick);
-	        		itemUpdate.setTryCount(0);
-	        		session.saveOrUpdate(itemUpdate);
-            	}
-            }
-        }).start();
+		synchronized(this) {
+		Session session = getSession();
+			ItemUpdate itemUpdate = (ItemUpdate) session.get(ItemUpdate.class, numIid);
+			if (itemUpdate == null) {
+				itemUpdate = new ItemUpdate();
+				itemUpdate.setNumIid(numIid);
+				itemUpdate.setNick(nick);
+	    		itemUpdate.setTryCount(0);
+	    		session.save(itemUpdate);
+	    		session.flush();
+			}
+		}
 	}
 
 	@SuppressWarnings("unchecked")
