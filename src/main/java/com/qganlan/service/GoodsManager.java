@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
+import com.qganlan.dto.ThirdPartyGoods;
 import com.qganlan.model.ItemUpdate;
 import com.taobao.api.domain.Item;
 
@@ -28,4 +29,5 @@ public interface GoodsManager {
 	public List<ItemUpdate> getItemUpdateList();
 	public void deleteItemUpdate(ItemUpdate itemUpdate);
 	public void saveItemUpdate(ItemUpdate itemUpdate);
+	public List<ThirdPartyGoods> getTirdPartyGoodsList();
 }

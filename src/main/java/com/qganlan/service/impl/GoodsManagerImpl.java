@@ -12,6 +12,7 @@ import com.qganlan.common.PropertyValueAlias;
 import com.qganlan.dao.GoodsDao;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
+import com.qganlan.dto.ThirdPartyGoods;
 import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.MyGoods;
 import com.qganlan.service.GoodsManager;
@@ -172,6 +173,7 @@ public class GoodsManagerImpl implements GoodsManager {
 			if (item.getOuterId() != null && !item.getOuterId().trim().equals("")) {
 				GoodsSpecDTO goodsSpec = goodsDao.getGoodsSpecBySkuOuterId(item.getOuterId());
 				if (goodsSpec != null) {
+					
 					GoodsDTO goods = goodsDao.getGoods(goodsSpec.getGoodsId());
 					ApiSysMatch apiSysMatch = goodsDao.getApiSysMatch(item.getNumIid().toString(), "0");
 					if (apiSysMatch == null) {
@@ -280,5 +282,10 @@ public class GoodsManagerImpl implements GoodsManager {
 	@Override
 	public void saveItemUpdate(ItemUpdate itemUpdate) {
 		goodsDao.saveItemUpdate(itemUpdate);
+	}
+
+	@Override
+	public List<ThirdPartyGoods> getTirdPartyGoodsList() {
+		return goodsDao.getThirdPartyGoodsList();
 	}
 }

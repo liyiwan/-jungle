@@ -119,6 +119,7 @@ public class TradeManagerImpl implements TradeManager {
 			sb.append("</td>");
 			sb.append("<td align='left' valign='top'>");//标题
 			sb.append("<a target='_blank' href='http://item.taobao.com/item.html?id=" + order.getNumIid() + "'>" + order.getTitle() + "</a>");
+			sb.append("<br>" + order.getOuterIid());
 			sb.append("<br>" + order.getSkuPropertiesName());
 			sb.append("</td>");
 			BigDecimal unitPrice = (new BigDecimal(order.getPayment())).divide(new BigDecimal(order.getNum()), 2, RoundingMode.HALF_DOWN);
@@ -143,7 +144,7 @@ public class TradeManagerImpl implements TradeManager {
 		
 		String subject = trade.getBuyerNick() + " " + trade.getTid() + " " + trade.getSellerNick() + " " + trade.getPayment();
 		String content = sb.toString();
-		String[] toMails = { "9394908@qq.com"};
+		String[] toMails = { "9394908@qq.com", "1043436304@qq.com"};
 		try {
 			emailManager.sentHtml(subject, content, toMails);
 			System.out.println("邮件发送成功");

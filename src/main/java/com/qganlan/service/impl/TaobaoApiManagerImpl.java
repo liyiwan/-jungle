@@ -18,15 +18,18 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.Sku;
+import com.taobao.api.domain.TbkItem;
 import com.taobao.api.domain.Trade;
 import com.taobao.api.request.ItemGetRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
 import com.taobao.api.request.SkusCustomGetRequest;
+import com.taobao.api.request.TbkItemsConvertRequest;
 import com.taobao.api.request.TradeFullinfoGetRequest;
 import com.taobao.api.request.TradeGetRequest;
 import com.taobao.api.response.ItemGetResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
 import com.taobao.api.response.SkusCustomGetResponse;
+import com.taobao.api.response.TbkItemsConvertResponse;
 import com.taobao.api.response.TradeFullinfoGetResponse;
 import com.taobao.api.response.TradeGetResponse;
 
@@ -222,6 +225,24 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 		}
 
 		return trade;
+	}
+
+	@Override
+	public List<TbkItem> getTbkItems(String numIid) {
+		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
+		TbkItemsConvertRequest req = new TbkItemsConvertRequest();
+		req.setFields("click_url");
+		req.setNick("lovebluecore");
+		req.setNumIids(numIid);
+		req.setPid(123456L);
+		req.setReferType(1L);
+		try {
+			TbkItemsConvertResponse response = taobaoClient.execute(req);
+			return response.getTbkItems();
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

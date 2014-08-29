@@ -15,6 +15,7 @@ import com.qganlan.dao.GoodsDao;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.StockSpecDTO;
+import com.qganlan.dto.ThirdPartyGoods;
 import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.Goods;
 import com.qganlan.model.ItemUpdate;
@@ -336,5 +337,17 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		Query q = getSession().createQuery("DELETE ApiSysMatch WHERE numIid LIKE :numIid");
 		q.setString("numIid", numIid);
 		q.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<ThirdPartyGoods> getThirdPartyGoodsList() {
+		SQLQuery query = (SQLQuery) getSession().getNamedQuery("ThirdPartyGoodsList");
+		query.addScalar("TradeGoodsNO", StandardBasicTypes.STRING);
+		query.addScalar("TradeGoodsName", StandardBasicTypes.STRING);
+		query.addScalar("TradeGoodsSpec", StandardBasicTypes.STRING);
+		query.addScalar("GoodsCount", StandardBasicTypes.LONG);
+		query.setResultTransformer(Transformers.aliasToBean(ThirdPartyGoods.class));
+		return query.list();
 	}
 }

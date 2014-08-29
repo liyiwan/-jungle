@@ -1,0 +1,34 @@
+<html t:type="layout" title="literal:外部货品"
+    heading="literal:外部货品" menu="StockMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+
+<h2>外部货品</h2>
+
+<table class="table table-striped table-hover" width="320">
+	<tr t:type="loop" t:source="thirdPartyGoodsList" t:value="thirdPartyGoods">
+		<table>
+			<tr>
+				<td>名称：</td>
+				<td>${thirdPartyGoods.TradeGoodsName}</td>
+			</tr>
+			<tr>
+				<td>编码：</td>
+				<td>${thirdPartyGoods.TradeGoodsNO}</td>
+			</tr>
+			<tr>
+				<td>规格：</td>
+				<td>${thirdPartyGoods.TradeGoodsSpec}</td>
+			</tr>
+			<tr>
+				<td>数量：</td>
+				<td>${thirdPartyGoods.GoodsCount}</td>
+			</tr>
+			<tr>
+				<td>下单链接：</td>
+				<td>${taobaoKeLink}</td>
+			</tr>
+		</table>
+	</tr>
+</table>
+
+</html>

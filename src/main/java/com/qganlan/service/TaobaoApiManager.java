@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.Sku;
+import com.taobao.api.domain.TbkItem;
 import com.taobao.api.domain.Trade;
 
 public interface TaobaoApiManager {
@@ -18,4 +19,5 @@ public interface TaobaoApiManager {
 	public Item getTaobaoItemByNumIid(Long numIid, String appkey, String appsecret, String sessionkey);
 	public com.taobao.api.domain.Trade getTaobaoTrade(Long tid, String appKey, String appSecret, String sessionKey);
 	public Trade getTradeFullInfo(Long tid, String appKey, String appSecret,String sessionKey);
+	public List<TbkItem> getTbkItems(String numIid);
 }

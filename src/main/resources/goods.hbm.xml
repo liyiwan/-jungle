@@ -88,4 +88,19 @@
 		    WHERE  GoodsID = :goodsId
 		]]>
 	</sql-query>
+	<sql-query name="ThirdPartyGoodsList">
+		<![CDATA[
+			SELECT TradeGoodsNO,TradeGoodsName,TradeGoodsSpec,SUM(GoodsCount) AS GoodsCount
+			FROM
+				(
+				SELECT G_API_TradeGoods.* FROM G_API_TradeGoods, G_API_TradeList
+				WHERE G_API_TradeGoods.BillID = G_API_TradeList.BillID AND G_API_TradeList.curStatus = 4 AND G_API_TradeList.SynStatus = 0 AND G_API_TradeList.TradeID = 0
+				UNION
+				SELECT G_API_TradeGoods.* FROM G_API_TradeGoods, G_API_TradeList, G_Trade_TradeList
+				WHERE G_API_TradeGoods.BillID = G_API_TradeList.BillID AND G_API_TradeList.TradeID = G_Trade_TradeList.TradeID AND G_API_TradeList.curStatus = 4 AND G_API_TradeList.SynStatus = 0 AND G_API_TradeList.TradeID <> 0 AND (G_Trade_TradeList.TradeStatus >= 2 AND G_Trade_TradeList.TradeStatus <= 5)
+				) T
+			WHERE TradeGoodsNO LIKE 'ID-%'
+			GROUP BY TradeGoodsNO,TradeGoodsName,TradeGoodsSpec
+		]]>
+	</sql-query>
 </hibernate-mapping>

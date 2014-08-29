@@ -7,6 +7,7 @@ import org.appfuse.dao.GenericDao;
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.StockSpecDTO;
+import com.qganlan.dto.ThirdPartyGoods;
 import com.qganlan.model.ApiSysMatch;
 import com.qganlan.model.Goods;
 import com.qganlan.model.ItemUpdate;
@@ -42,4 +43,5 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public void deleteItemUpdate(ItemUpdate itemUpdate);
 	public void saveItemUpdate(ItemUpdate itemUpdate);
 	public void deleteApiSysMatch(String string);
+	public List<ThirdPartyGoods> getThirdPartyGoodsList();
 }
