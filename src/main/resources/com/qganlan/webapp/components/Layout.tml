@@ -96,6 +96,7 @@
 	<t:menuitem name="GoodsSoldOut" title="literal:卖完货品" page="goods/soldout"/>
 	<t:menuitem name="GoodsOutOfStock" title="literal:超卖货品" page="goods/outofstock"/>
 	<t:menuitem name="GoodsNotOnSale" title="literal:未在售货品" page="goods/notonsale"/>
+	<t:menuitem name="TaobaoKe" title="literal:淘宝客" page="goods/taobaoke"/>
 </t:block>
 
 <t:block id="stockItemsBlock">

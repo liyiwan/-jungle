@@ -2,6 +2,7 @@ package com.qganlan.service.impl;
 
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 
@@ -228,21 +229,77 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 	}
 
 	@Override
-	public List<TbkItem> getTbkItems(String numIid) {
+	public TbkItem getTbkItem(String numIid) {
 		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
 		TbkItemsConvertRequest req = new TbkItemsConvertRequest();
-		req.setFields("click_url");
+		req.setFields("click_url,item_url,nick,num_iid,pic_url");
 		req.setNick("lovebluecore");
 		req.setNumIids(numIid);
-		req.setPid(123456L);
 		req.setReferType(1L);
-		try {
-			TbkItemsConvertResponse response = taobaoClient.execute(req);
-			return response.getTbkItems();
-		} catch (ApiException e) {
-			e.printStackTrace();
+		int tryCount = 0;
+		while (tryCount < 3) {
+			tryCount++;
+			try {
+				TbkItemsConvertResponse response = taobaoClient.execute(req);
+				List<TbkItem> tbkItems = response.getTbkItems();
+				if (tbkItems != null && tbkItems.size() == 1) {
+					return tbkItems.get(0);
+				} else {
+					return null;
+				}
+			} catch (ApiException e) {
+				e.printStackTrace();
+			}
 		}
 		return null;
+	}
+	
+	@Override
+	public List<TbkItem> getTbkItems(List<String> numIids) {
+		List<TbkItem> rtnTbkItems = new ArrayList<TbkItem>();
+		String numIidsStr = "";
+		int count = 0;
+		Iterator<String> iter = numIids.iterator();
+		while (iter.hasNext()) {
+			String numIid = iter.next();
+			System.out.println("numIid:" + numIid);
+			numIidsStr = numIidsStr + numIid;
+			count++;
+			if (count >= 30 || !iter.hasNext()) {
+				TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, "21675427", "7b12462c06fe0b5eab021ea79a207b50");
+				TbkItemsConvertRequest req = new TbkItemsConvertRequest();
+				req.setFields("click_url,item_url,nick,num_iid,pic_url");
+				req.setNick("lovebluecore");
+				System.out.println("numIidsStr:" + numIidsStr);
+				req.setNumIids(numIidsStr);
+				req.setReferType(1L);
+				int tryCount = 0;
+				while (tryCount < 3) {
+					tryCount++;
+					try {
+						TbkItemsConvertResponse response = taobaoClient.execute(req);
+						System.out.println("errorCode：" + response.getErrorCode());
+						System.out.println("msg：" + response.getMsg());
+						System.out.println("返回淘宝客链接数量：" + response.getTotalResults());
+						List<TbkItem> tbkItems = response.getTbkItems();
+						if (tbkItems != null && tbkItems.size() > 0) {
+							rtnTbkItems.addAll(tbkItems);
+						} else {
+							break;
+						}
+					} catch (ApiException e) {
+						e.printStackTrace();
+					}
+				}
+				count = 0;
+				numIidsStr = "";
+			} else {
+				if (iter.hasNext()) {
+					numIidsStr = numIidsStr + ",";
+				}
+			}
+		}
+		return rtnTbkItems;
 	}
 
 }

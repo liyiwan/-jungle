@@ -4,7 +4,7 @@ public class ThirdPartyGoods {
 	private String TradeGoodsNO;
 	private String TradeGoodsName;
 	private String TradeGoodsSpec;
-	private String GoodsCount;
+	private Long GoodsCount;
 	public String getTradeGoodsNO() {
 		return TradeGoodsNO;
 	}
@@ -23,10 +23,10 @@ public class ThirdPartyGoods {
 	public void setTradeGoodsSpec(String tradeGoodsSpec) {
 		TradeGoodsSpec = tradeGoodsSpec;
 	}
-	public String getGoodsCount() {
+	public Long getGoodsCount() {
 		return GoodsCount;
 	}
-	public void setGoodsCount(String goodsCount) {
+	public void setGoodsCount(Long goodsCount) {
 		GoodsCount = goodsCount;
 	}
 }

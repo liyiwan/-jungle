@@ -3,6 +3,10 @@
     xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 
 <h2>外部货品</h2>
+<p>下单前，用购买账户登录，先点击下面链接：</p>
+<t:loop source="clickUrls.entrySet" value="clickUrlEntry">
+	<a target="_blank" href="${clickUrlEntry.value}">${clickUrlEntry.key}</a>&#160;&#160;&#160;&#160;
+</t:loop>
 
 <table class="table table-striped table-hover" width="320">
 	<tr t:type="loop" t:source="thirdPartyGoodsList" t:value="thirdPartyGoods">
@@ -25,7 +29,7 @@
 			</tr>
 			<tr>
 				<td>下单链接：</td>
-				<td>${taobaoKeLink}</td>
+				<td><a target="_blank" href="${itemUrl}">${itemUrl}</a></td>
 			</tr>
 		</table>
 	</tr>

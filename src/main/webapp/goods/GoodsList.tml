@@ -2,7 +2,7 @@
     heading="literal:货品档案" menu="GoodsMenu"
     xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
 	<div class="col-sm-10">
-		<h2>卖完货品</h2>
+		<h2>货品</h2>
 		<form t:type="form" t:id="GoodsListForm">
 			<table width="320">	
 				<tr>

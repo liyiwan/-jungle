@@ -9,13 +9,16 @@ import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qganlan.common.TbkUtil;
 import com.qganlan.dao.TradeDao;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 import com.qganlan.service.EmailManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
+import com.taobao.api.domain.Item;
 import com.taobao.api.domain.Order;
+import org.apache.commons.lang3.StringUtils;
 
 @Service("tradeManager")
 public class TradeManagerImpl implements TradeManager {
@@ -113,6 +116,20 @@ public class TradeManagerImpl implements TradeManager {
 		sb.append("</tr>");
 		
 		for (Order order : trade.getOrders()) {
+			String nick = null;
+			String clickUrl = null;
+			String outerNumIid = null;
+			if (order.getOuterIid() != null && order.getOuterIid().toUpperCase().startsWith("ID-")) {
+				String[] id = order.getOuterIid().split("-");
+				if (id.length == 2) {
+					outerNumIid = id[1];
+					if (StringUtils.isNumeric(outerNumIid)) {
+						Item item = taobaoApiManager.getTaobaoItemByNumIid(Long.valueOf(outerNumIid), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), null);
+						nick = item.getNick();
+						clickUrl = TbkUtil.getClickUrl(item.getNick());
+					}
+				}
+			}
 			sb.append("<tr>");
 			sb.append("<td align='left' valign='top'>");//图片
 			sb.append("<img width='100' src='" + order.getPicPath() + "'>");
@@ -120,6 +137,12 @@ public class TradeManagerImpl implements TradeManager {
 			sb.append("<td align='left' valign='top'>");//标题
 			sb.append("<a target='_blank' href='http://item.taobao.com/item.html?id=" + order.getNumIid() + "'>" + order.getTitle() + "</a>");
 			sb.append("<br>" + order.getOuterIid());
+			if (nick != null && clickUrl != null) {
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("<a target='_blank' href='" + clickUrl + "'>" + nick + "</a>");
+				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("<a target='_blank' href='http://item.taobao.com/item.html?id=" + outerNumIid + "'>下单地址</a>");
+			}
 			sb.append("<br>" + order.getSkuPropertiesName());
 			sb.append("</td>");
 			BigDecimal unitPrice = (new BigDecimal(order.getPayment())).divide(new BigDecimal(order.getNum()), 2, RoundingMode.HALF_DOWN);
@@ -142,16 +165,22 @@ public class TradeManagerImpl implements TradeManager {
 
 		sb.append("</table>");
 		
-		String subject = trade.getBuyerNick() + " " + trade.getTid() + " " + trade.getSellerNick() + " " + trade.getPayment();
+		String subject = "交易通知【" + trade.getSellerNick() + "】：" + trade.getBuyerNick() + " " + trade.getTid() + " " + trade.getPayment();
 		String content = sb.toString();
 		String[] toMails = { "9394908@qq.com", "1043436304@qq.com"};
-		try {
-			emailManager.sentHtml(subject, content, toMails);
-			System.out.println("邮件发送成功");
-		} catch (Throwable t) {
-			t.printStackTrace();
-			System.out.println("邮件发送失败");
+		for (String mail : toMails) {
+			try {
+				String[] to = new String[1];
+				to[0] = mail;
+				emailManager.sentHtml(subject, content, to);
+				System.out.println("邮件发送成功，发送给" + mail);
+				Thread.sleep(15000L);
+			} catch (Throwable t) {
+				t.printStackTrace();
+				System.out.println("邮件发送失败");
+			}
 		}
+		
 	}
 
 }

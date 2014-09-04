@@ -50,10 +50,6 @@ public class StockWarning {
 	@Property
     private User currentUser;
 	
-	@Property
-    @Persist(PersistenceConstants.FLASH)
-    private String q;
-	
 	private String infoMessage;
 	
 	@Property
@@ -75,7 +71,7 @@ public class StockWarning {
 	private StockSpecDTO stockSpec;
 	
 	@Property
-	@Persist(PersistenceConstants.FLASH)
+	@Persist(PersistenceConstants.SESSION)
 	private Long classId;
 	
 	@Property

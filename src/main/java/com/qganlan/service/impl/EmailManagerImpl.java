@@ -46,5 +46,4 @@ public class EmailManagerImpl implements EmailManager {
 		}
     	((JavaMailSender) mailEngine.getMailSender()).send(mimeMessage);
     }
-
 }

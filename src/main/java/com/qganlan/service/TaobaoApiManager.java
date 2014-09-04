@@ -19,5 +19,6 @@ public interface TaobaoApiManager {
 	public Item getTaobaoItemByNumIid(Long numIid, String appkey, String appsecret, String sessionkey);
 	public com.taobao.api.domain.Trade getTaobaoTrade(Long tid, String appKey, String appSecret, String sessionKey);
 	public Trade getTradeFullInfo(Long tid, String appKey, String appSecret,String sessionKey);
-	public List<TbkItem> getTbkItems(String numIid);
+	public TbkItem getTbkItem(String numIid);
+	public List<TbkItem> getTbkItems(List<String> numIids);
 }
