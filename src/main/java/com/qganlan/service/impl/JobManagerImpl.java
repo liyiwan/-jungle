@@ -67,9 +67,12 @@ public class JobManagerImpl implements JobManager {
 		try {
 			List<ItemUpdate> itemUpdates = goodsManager.getItemUpdateList();
 			for (ItemUpdate itemUpdate : itemUpdates) {
+				System.out.println("ITEM UPDATE " + itemUpdate.getNumIid());
 				Item item = taobaoApiManager.getTaobaoItemByNumIid(itemUpdate.getNumIid(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(itemUpdate.getNick()));
 				if (item != null) {
-					goodsManager.resolveApiSysMatch(item);
+					if (item.getOuterId() != null && !item.getOuterId().toUpperCase().startsWith("ID-")) {
+						goodsManager.resolveApiSysMatch(item);
+					}
 					goodsManager.deleteItemUpdate(itemUpdate);
 				} else {
 					if (itemUpdate.getTryCount() >= 2) {

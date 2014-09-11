@@ -2,8 +2,11 @@ package com.qganlan.common;
 
 public class TbkUtil {
 	
-	public static final String[][] clickUrls = {{"乖乖杨梅", "http://s.click.taobao.com/t?e=m%3D2%26s%3DnwtwIMVI0jQcQipKwQzePDAVflQIoZepLKpWJ%2Bin0XJRAdhuF14FMaB%2F7TzCAWhC5x%2BIUlGKNpX8VAM6jS9CnywI3fRdpdmTWRuY2RuUsBis7eqx%2FieWMeiPdb5GJTeL"}};
-	
+	public static final String[][] clickUrls = {
+		{"乖乖杨梅", "http://s.click.taobao.com/t?e=m%3D2%26s%3DnwtwIMVI0jQcQipKwQzePDAVflQIoZepLKpWJ%2Bin0XJRAdhuF14FMaB%2F7TzCAWhC5x%2BIUlGKNpX8VAM6jS9CnywI3fRdpdmTWRuY2RuUsBis7eqx%2FieWMeiPdb5GJTeL"},
+		{"ezkaoyan_newbook", "http://s.click.taobao.com/t?e=m%3D2%26s%3DaYV7tHMZlqocQipKwQzePDAVflQIoZepLKpWJ%2Bin0XJRAdhuF14FMTAK1JndVmIn1aH1Hk3GeOj8VAM6jS9CnywI3fRdpdmTWRuY2RuUsBgNUb1uPYYCYMikvqrJb9Vk"}
+	};
+
 	public static String getClickUrl(String nick) {
 		for (int x = 0; x < clickUrls.length; x++) {
 			if (clickUrls[x][0].equals(nick)) {

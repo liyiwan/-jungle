@@ -137,13 +137,13 @@ public class TradeManagerImpl implements TradeManager {
 			sb.append("<td align='left' valign='top'>");//标题
 			sb.append("<a target='_blank' href='http://item.taobao.com/item.html?id=" + order.getNumIid() + "'>" + order.getTitle() + "</a>");
 			sb.append("<br>" + order.getOuterIid());
+			sb.append("<br>" + order.getSkuPropertiesName());
 			if (nick != null && clickUrl != null) {
-				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
+				sb.append("<br>");
 				sb.append("<a target='_blank' href='" + clickUrl + "'>" + nick + "</a>");
 				sb.append("&nbsp;&nbsp;&nbsp;&nbsp;");
 				sb.append("<a target='_blank' href='http://item.taobao.com/item.html?id=" + outerNumIid + "'>下单地址</a>");
 			}
-			sb.append("<br>" + order.getSkuPropertiesName());
 			sb.append("</td>");
 			BigDecimal unitPrice = (new BigDecimal(order.getPayment())).divide(new BigDecimal(order.getNum()), 2, RoundingMode.HALF_DOWN);
 			sb.append("<td align='left' valign='top'>");//价格
