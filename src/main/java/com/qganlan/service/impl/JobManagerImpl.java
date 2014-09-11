@@ -54,12 +54,12 @@ public class JobManagerImpl implements JobManager {
 
 	@Scheduled(initialDelay = 600000, fixedDelay = 3600000)
 	public void hourlyJob() {
+		matchGoods();
 	}
 
 	@Scheduled(cron = "0 0 20 ? * *")
 	public void dailyJob() {
 		sendAccountBalanceReport();
-		matchGoods();
 		checkGoods();
 	}
 
