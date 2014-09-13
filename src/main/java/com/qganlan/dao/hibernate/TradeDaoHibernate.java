@@ -10,6 +10,8 @@ import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import com.qganlan.dao.TradeDao;
+import com.qganlan.model.JRawOrder;
+import com.qganlan.model.JRawTrade;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 
@@ -68,6 +70,18 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 		query.setString("freezeReason", freezeReason);
 		query.setLong("tradeId", tradeId);
 		query.executeUpdate();
+		
+	}
+
+	@Override
+	public void saveRawTrade(JRawTrade rawTrade) {
+		getSession().save(rawTrade);
+		
+	}
+
+	@Override
+	public void saveRawOrder(JRawOrder rawOrder) {
+		getSession().save(rawOrder);
 		
 	}
 

@@ -71,6 +71,7 @@ public class DefaultMessageHandler implements MessageHandler {
 			Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(sellerNick));
 			if (trade != null) {
 				tradeManager.notifyByEmail(trade);
+				tradeManager.recordThirdPartyTrade(trade);
 			}
 		} catch (Throwable t) {
 	    	logger.error("处理消息异常", t);

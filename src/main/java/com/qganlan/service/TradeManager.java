@@ -18,4 +18,6 @@ public interface TradeManager {
 
 	void notifyByEmail(com.taobao.api.domain.Trade trade);
 
+	void recordThirdPartyTrade(com.taobao.api.domain.Trade trade);
+
 }

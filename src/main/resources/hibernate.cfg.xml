@@ -21,7 +21,10 @@
         <mapping class="com.qganlan.model.TaobaoItemPropImg"/>
         <mapping class="com.qganlan.model.TaobaoItemSku"/>
         <mapping class="com.qganlan.model.ItemUpdate"/>
+        <mapping class="com.qganlan.model.JRawTrade"/>
+        <mapping class="com.qganlan.model.JRawOrder"/>
         <mapping resource="stock.hbm.xml"/>
         <mapping resource="goods.hbm.xml"/>
+        <mapping resource="trade.hbm.xml"/>
     </session-factory>
 </hibernate-configuration>

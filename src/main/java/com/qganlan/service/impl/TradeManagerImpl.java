@@ -6,11 +6,15 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
+import net.sf.cglib.beans.BeanCopier;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.qganlan.common.TbkUtil;
 import com.qganlan.dao.TradeDao;
+import com.qganlan.model.JRawOrder;
+import com.qganlan.model.JRawTrade;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 import com.qganlan.service.EmailManager;
@@ -115,6 +119,10 @@ public class TradeManagerImpl implements TradeManager {
 		sb.append("</td>");
 		sb.append("</tr>");
 		
+		boolean single = false;
+		if (trade.getOrders().size() == 1) {
+			single = true;
+		}
 		for (Order order : trade.getOrders()) {
 			String nick = null;
 			String clickUrl = null;
@@ -153,13 +161,17 @@ public class TradeManagerImpl implements TradeManager {
 			sb.append(order.getNum());
 			sb.append("</td>");
 			sb.append("<td align='left' valign='top'>");//金额
-			sb.append(order.getPayment());
+			if (single) {
+				sb.append(new BigDecimal(order.getPayment()!=null?order.getPayment():"0").subtract(new BigDecimal(trade.getPostFee()!=null?trade.getPostFee():"0")));
+			} else {
+				sb.append(order.getPayment());
+			}
 			sb.append("</td>");
 			sb.append("</tr>");
 		}
 		sb.append("<tr>");
 		sb.append("<td colspan='5'>");
-		sb.append("邮费：" + (trade.getPostFee()!=null?trade.getPostFee():""));
+		sb.append("邮费：" + (trade.getPostFee()!=null?trade.getPostFee():"0"));
 		sb.append("</td>");
 		sb.append("</tr>");
 
@@ -181,6 +193,41 @@ public class TradeManagerImpl implements TradeManager {
 			}
 		}
 		
+	}
+	
+	public void recordThirdPartyTrade(com.taobao.api.domain.Trade trade) {
+		boolean record = false;
+		List<Order> orders = trade.getOrders();
+		for (Order order : orders) {
+			if (order.getOuterIid() != null) {
+				String outerIid = order.getOuterIid().toUpperCase();
+				if (outerIid.startsWith("ID-") || outerIid.startsWith("TB-") || outerIid.startsWith("TM-")) {
+					record = true;
+					break;
+				}
+			}
+			if (order.getOuterSkuId() != null) {
+				String outerSkuIid = order.getOuterSkuId().toUpperCase();
+				if (outerSkuIid.startsWith("ID-") || outerSkuIid.startsWith("TB-") || outerSkuIid.startsWith("TM-")) {
+					record = true;
+					break;
+				}
+			}
+		}
+		if (record) {
+			JRawTrade rawTrade = new JRawTrade();
+			BeanCopier tradeCopier = BeanCopier.create(trade.getClass(), rawTrade.getClass(), false);
+			tradeCopier.copy(trade, rawTrade, null);
+			rawTrade.setCurStatus(0);
+			tradeDao.saveRawTrade(rawTrade);
+			for (Order order : orders) {
+				JRawOrder rawOrder = new JRawOrder();
+				BeanCopier orderCopier = BeanCopier.create(order.getClass(), rawOrder.getClass(), false);
+				orderCopier.copy(order, rawOrder, null);
+				rawOrder.setCurStatus(0);
+				tradeDao.saveRawOrder(rawOrder);
+			}
+		}
 	}
 
 }
