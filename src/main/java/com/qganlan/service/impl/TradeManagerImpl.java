@@ -119,7 +119,7 @@ public class TradeManagerImpl implements TradeManager {
 			String nick = null;
 			String clickUrl = null;
 			String outerNumIid = null;
-			if (order.getOuterIid() != null && order.getOuterIid().toUpperCase().startsWith("ID-")) {
+			if (order.getOuterIid() != null && (order.getOuterIid().toUpperCase().startsWith("ID-") || order.getOuterIid().toUpperCase().startsWith("TB-") || order.getOuterIid().toUpperCase().startsWith("TM-"))) {
 				String[] id = order.getOuterIid().split("-");
 				if (id.length == 2) {
 					outerNumIid = id[1];
