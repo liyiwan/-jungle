@@ -2,6 +2,11 @@
     heading="literal:委外订单" menu="TradeMenu"
     xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
     <h2>委外订单</h2>
+    <table>
+    	<tr>
+    		<td><a target="_blank" href="http://member1.taobao.com/member/fresh/deliver_address.htm" class="btn btn-primary">我的地址</a></td>
+    	</tr>
+    </table>
     <table class="table table-striped table-hover">
     	<tr t:type="loop" t:source="rawTrades" t:value="rawTrade">
     		<table>
@@ -11,7 +16,7 @@
     					<span>买家：</span>${rawTrade.buyerNick}<br/>
 						<span>总金额：</span>${rawTrade.payment}&#160;&#160;<span>付款时间：</span>${rawTrade.payTime}<br/>
 						<span>买家留言：</span>${rawTrade.buyerMessage}<br/>
-						<span>收件地址：</span>${rawTrade.receiverName},${rawTrade.receiverMobile},${rawTrade.receiverPhone},${rawTrade.receiverState},${rawTrade.receiverCity},${rawTrade.receiverDistrict},${rawTrade.receiverAddress}<br/>
+						<span>收件地址：</span>${rawTrade.receiverName},${rawTrade.receiverMobile},${rawTrade.receiverPhone},${rawTrade.receiverState}&#160;${rawTrade.receiverCity}&#160;${rawTrade.receiverDistrict}&#160;${rawTrade.receiverAddress}<br/>
     				</td>
     			</tr>
     			<tr>

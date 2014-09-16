@@ -99,7 +99,7 @@ public class TradeManagerImpl implements TradeManager {
 		sb.append("<br>总金额：" + rawTrade.getPayment());
 		sb.append("&nbsp;&nbsp;付款时间：" + sdf.format(rawTrade.getPayTime()));
 		sb.append("<br>买家留言：" + (rawTrade.getBuyerMessage()==null?"":rawTrade.getBuyerMessage()));
-		sb.append("<br>收件地址：" + rawTrade.getReceiverName() + "," + (rawTrade.getReceiverMobile()==null?"":rawTrade.getReceiverMobile()) + "," + (rawTrade.getReceiverPhone()==null?"":rawTrade.getReceiverPhone()) + "," + rawTrade.getReceiverState() + "," + rawTrade.getReceiverCity() + "," + rawTrade.getReceiverDistrict() + "," + rawTrade.getReceiverAddress());
+		sb.append("<br>收件地址：" + rawTrade.getReceiverName() + "," + (rawTrade.getReceiverMobile()==null?"":rawTrade.getReceiverMobile()) + "," + (rawTrade.getReceiverPhone()==null?"":rawTrade.getReceiverPhone()) + "," + rawTrade.getReceiverState() + " " + rawTrade.getReceiverCity() + " " + rawTrade.getReceiverDistrict() + " " + rawTrade.getReceiverAddress());
 		sb.append("</td>");
 		sb.append("</tr>");
 		
