@@ -26,6 +26,12 @@
         <t:if test="prop:loggedIn">
             <t:menuitem name="Home" title="literal:首页" page="home" roles="ROLE_ADMIN,ROLE_USER"/>
             
+            <t:menuitem name="TradeMenu" title="literal:交易管理" roles="ROLE_ADMIN,ROLE_USER" class="dropdown" data-toggle="dropdown">
+            	<ul class="dropdown-menu">
+            		<t:delegate to="block:tradeBlock"/>
+            	</ul>
+            </t:menuitem>
+            
             <t:menuitem name="GoodsMenu" title="literal:货品管理" roles="ROLE_ADMIN,ROLE_USER" class="dropdown" data-toggle="dropdown">
             	<ul class="dropdown-menu">
             		<t:delegate to="block:goodsItemsBlock"/>
@@ -89,6 +95,10 @@
     <t:menuitem name="ActiveUsers" title="literal:在线用户" page="admin/activeusers"/>
     <t:menuitem name="ReloadContext" title="literal:重载选项" page="admin/reload"/>
     <t:menuitem name="FileUpload" title="literal:上传文件" page="fileupload"/>
+</t:block>
+
+<t:block id="tradeBlock">
+	<t:menuitem name="ThirdPartyTradeList" title="literal:委外订单" page="trade/thirdpartytradelist"/>
 </t:block>
 
 <t:block id="goodsItemsBlock">

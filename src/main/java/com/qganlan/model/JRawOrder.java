@@ -212,5 +212,37 @@ public class JRawOrder implements Serializable {
 	public void setCurStatus(Integer curStatus) {
 		this.curStatus = curStatus;
 	}
+	
+	private String statusMessage;
 
+	@Column(name = "STATUS_MESSAGE")
+	public String getStatusMessage() {
+		return statusMessage;
+	}
+
+	public void setStatusMessage(String statusMessage) {
+		this.statusMessage = statusMessage;
+	}
+	
+	private String providerNick;
+
+	@Column(name = "PROVIDER_NICK")
+	public String getProviderNick() {
+		return providerNick;
+	}
+
+	public void setProviderNick(String providerNick) {
+		this.providerNick = providerNick;
+	}
+	
+	private Long providerNumIid;
+
+	@Column(name = "PROVIDER_NUM_IID")
+	public Long getProviderNumIid() {
+		return providerNumIid;
+	}
+
+	public void setProviderNumIid(Long providerNumIid) {
+		this.providerNumIid = providerNumIid;
+	}
 }

@@ -23,6 +23,7 @@
         <mapping class="com.qganlan.model.ItemUpdate"/>
         <mapping class="com.qganlan.model.JRawTrade"/>
         <mapping class="com.qganlan.model.JRawOrder"/>
+        <mapping class="com.qganlan.model.JTbkShopUrl"/>
         <mapping resource="stock.hbm.xml"/>
         <mapping resource="goods.hbm.xml"/>
         <mapping resource="trade.hbm.xml"/>

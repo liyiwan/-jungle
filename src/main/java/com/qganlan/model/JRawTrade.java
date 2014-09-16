@@ -2,39 +2,19 @@ package com.qganlan.model;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.List;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.persistence.Transient;
 
 @Entity
 @Table(name = "J_RAW_TRADE")
 public class JRawTrade implements Serializable {
 
 	private static final long serialVersionUID = 1L;
-	
-	@Column(name = "SELLER_NICK")
-	private String sellerNick;
-
-	public String getSellerNick() {
-		return sellerNick;
-	}
-
-	public void setSellerNick(String sellerNick) {
-		this.sellerNick = sellerNick;
-	};
-	
-	private String buyerNick;
-
-	@Column(name = "BUYER_NICK")
-	public String getBuyerNick() {
-		return buyerNick;
-	}
-
-	public void setBuyerNick(String buyerNick) {
-		this.buyerNick = buyerNick;
-	}
 	
 	private Long tid;
 
@@ -47,7 +27,29 @@ public class JRawTrade implements Serializable {
 	public void setTid(Long tid) {
 		this.tid = tid;
 	}
+
+	private String sellerNick;
+
+	@Column(name = "SELLER_NICK")
+	public String getSellerNick() {
+		return sellerNick;
+	}
+
+	public void setSellerNick(String sellerNick) {
+		this.sellerNick = sellerNick;
+	}
 	
+	private String buyerNick;
+
+	@Column(name = "BUYER_NICK")
+	public String getBuyerNick() {
+		return buyerNick;
+	}
+
+	public void setBuyerNick(String buyerNick) {
+		this.buyerNick = buyerNick;
+	}
+		
 	private String payment;
 
 	@Column(name = "PAYMENT")
@@ -223,7 +225,16 @@ public class JRawTrade implements Serializable {
 	public void setCurStatus(Integer curStatus) {
 		this.curStatus = curStatus;
 	}
-
 	
+	private List<JRawOrder> orders;
+
+	@Transient
+	public List<JRawOrder> getOrders() {
+		return orders;
+	}
+
+	public void setOrders(List<JRawOrder> orders) {
+		this.orders = orders;
+	}
 
 }

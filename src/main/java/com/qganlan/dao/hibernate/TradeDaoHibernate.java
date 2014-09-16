@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.qganlan.dao.TradeDao;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
+import com.qganlan.model.JTbkShopUrl;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 
@@ -83,6 +84,33 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	public void saveRawOrder(JRawOrder rawOrder) {
 		getSession().save(rawOrder);
 		
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JRawTrade> getRawTradeList(Integer curStatus) {
+		Query query = getSession().createQuery("FROM JRawTrade WHERE curStatus = :curStatus ORDER BY payTime DESC");
+		query.setInteger("curStatus", curStatus);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JRawOrder> getRawOrderList(Long tid) {
+		Query query = getSession().createQuery("FROM JRawOrder WHERE tid = :tid");
+		query.setLong("tid", tid);
+		return query.list();
+	}
+
+	@Override
+	public String getTbkShopUrl(String providerNick) {
+		if (providerNick != null) {
+			JTbkShopUrl tbkShopUrl = (JTbkShopUrl) getSession().get(JTbkShopUrl.class, providerNick);
+			if (tbkShopUrl != null) {
+				return tbkShopUrl.getTbkShopUrl();
+			}
+		}
+		return "";
 	}
 
 }

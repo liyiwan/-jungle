@@ -5,6 +5,8 @@ import org.apache.tapestry5.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.qganlan.model.JRawOrder;
+import com.qganlan.model.JRawTrade;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
@@ -70,8 +72,9 @@ public class DefaultMessageHandler implements MessageHandler {
 		try {
 			Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(sellerNick));
 			if (trade != null) {
-				tradeManager.notifyByEmail(trade);
-				tradeManager.recordThirdPartyTrade(trade);
+				JRawTrade rawTrade = tradeManager.recordThirdPartyTrade(trade);
+				tradeManager.notifyByEmail(rawTrade);
+				
 			}
 		} catch (Throwable t) {
 	    	logger.error("处理消息异常", t);

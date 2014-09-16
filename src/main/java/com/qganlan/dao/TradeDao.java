@@ -12,18 +12,24 @@ import com.qganlan.model.TradeGoods;
 
 public interface TradeDao extends GenericDao<Trade, Long> {
 
-	List<Trade> getSndTradeList(Date startDate, Date endDate);
+	public List<Trade> getSndTradeList(Date startDate, Date endDate);
 
-	List<TradeGoods> getTradeGoodsList(Long tradeId);
+	public List<TradeGoods> getTradeGoodsList(Long tradeId);
 
-	List<Trade> getTradeByTradeNO2(String string);
+	public List<Trade> getTradeByTradeNO2(String string);
 
-	void updateRemark(Long tradeId, String remark);
+	public void updateRemark(Long tradeId, String remark);
 
-	void freezeTrade(Long tradeId, String string);
+	public void freezeTrade(Long tradeId, String string);
 
-	void saveRawTrade(JRawTrade rawTrade);
+	public void saveRawTrade(JRawTrade rawTrade);
 
-	void saveRawOrder(JRawOrder rawOrder);
+	public void saveRawOrder(JRawOrder rawOrder);
+
+	public List<JRawTrade> getRawTradeList(Integer curStatus);
+
+	public List<JRawOrder> getRawOrderList(Long tid);
+
+	public String getTbkShopUrl(String providerNick);
 
 }
