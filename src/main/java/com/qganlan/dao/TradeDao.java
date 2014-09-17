@@ -32,4 +32,14 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 
 	public String getTbkShopUrl(String providerNick);
 
+	public JRawTrade getRawTrade(Long tid);
+
+	public void fillOrder(JRawOrder rawOrder);
+
+	public void completeTrade(Long tid);
+
+	public List<JRawTrade> getRecentRawTradeList();
+
+	public List<JRawTrade> getInProgressThirdPartyRawTradeList();
+
 }

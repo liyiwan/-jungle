@@ -99,7 +99,7 @@ public class TradeManagerImpl implements TradeManager {
 		sb.append("<br>总金额：" + rawTrade.getPayment());
 		sb.append("&nbsp;&nbsp;付款时间：" + sdf.format(rawTrade.getPayTime()));
 		sb.append("<br>买家留言：" + (rawTrade.getBuyerMessage()==null?"":rawTrade.getBuyerMessage()));
-		sb.append("<br>收件地址：" + rawTrade.getReceiverName() + "," + (rawTrade.getReceiverMobile()==null?"":rawTrade.getReceiverMobile()) + "," + (rawTrade.getReceiverPhone()==null?"":rawTrade.getReceiverPhone()) + "," + rawTrade.getReceiverState() + " " + rawTrade.getReceiverCity() + " " + rawTrade.getReceiverDistrict() + " " + rawTrade.getReceiverAddress());
+		sb.append("<br>收件地址：" + rawTrade.getReceiverName() + "," + (rawTrade.getReceiverMobile()==null?"":rawTrade.getReceiverMobile()) + "," + (rawTrade.getReceiverPhone()==null?"":rawTrade.getReceiverPhone()) + "," + rawTrade.getReceiverState() + " " + rawTrade.getReceiverCity() + " " + rawTrade.getReceiverDistrict() + " " + rawTrade.getReceiverAddress() + "," + rawTrade.getReceiverZip());
 		sb.append("</td>");
 		sb.append("</tr>");
 		
@@ -257,11 +257,11 @@ public class TradeManagerImpl implements TradeManager {
 	}
 	
 	public List<JRawTrade> getInProgressThirdPartyRawTradeList() {
-		return tradeDao.getRawTradeList(0);
+		return tradeDao.getInProgressThirdPartyRawTradeList();
 	}
 	
 	public List<JRawTrade> getCompletedThirdPartyRawTradeList() {
-		return tradeDao.getRawTradeList(1);
+		return tradeDao.getRawTradeList(11);
 	}
 
 	@Override
@@ -273,6 +273,28 @@ public class TradeManagerImpl implements TradeManager {
 	@Override
 	public String getTbkShopUrl(String providerNick) {
 		return tradeDao.getTbkShopUrl(providerNick);
+	}
+
+	@Override
+	public JRawTrade getRawTrade(Long tid) {
+		return tradeDao.getRawTrade(tid);
+	}
+
+	@Override
+	public void fillTrade(JRawTrade rawTrade, List<JRawOrder> rawOrders) {
+		for (JRawOrder rawOrder : rawOrders) {
+			tradeDao.fillOrder(rawOrder);
+		}
+	}
+
+	@Override
+	public void completeTrade(Long tid) {
+		tradeDao.completeTrade(tid);
+	}
+
+	@Override
+	public List<JRawTrade> getRecentRawTradeList() {
+		return tradeDao.getRecentRawTradeList();
 	}
 
 }

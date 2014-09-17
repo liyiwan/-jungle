@@ -245,4 +245,26 @@ public class JRawOrder implements Serializable {
 	public void setProviderNumIid(Long providerNumIid) {
 		this.providerNumIid = providerNumIid;
 	}
+	
+	private String purchaseNick;
+	
+	@Column(name = "PURCHASE_NICK")
+	public String getPurchaseNick() {
+		return purchaseNick;
+	}
+
+	public void setPurchaseNick(String purchaseNick) {
+		this.purchaseNick = purchaseNick;
+	}
+
+	private Long purchaseTid;
+
+	@Column(name = "PURCHASE_TID")
+	public Long getPurchaseTid() {
+		return purchaseTid;
+	}
+
+	public void setPurchaseTid(Long purchaseTid) {
+		this.purchaseTid = purchaseTid;
+	}
 }

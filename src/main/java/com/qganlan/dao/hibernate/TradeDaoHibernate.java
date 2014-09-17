@@ -113,4 +113,43 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 		return "";
 	}
 
+	@Override
+	public JRawTrade getRawTrade(Long tid) {
+		return (JRawTrade) getSession().get(JRawTrade.class, tid);
+	}
+
+	@Override
+	public void fillOrder(JRawOrder rawOrder) {
+		Query query = getSession().createQuery("UPDATE JRawOrder SET purchaseNick = :purchaseNick, purchaseTid = :purchaseTid WHERE tid = :tid AND oid = :oid");
+		query.setString("purchaseNick", rawOrder.getPurchaseNick()==null?"":rawOrder.getPurchaseNick());
+		query.setLong("purchaseTid", rawOrder.getPurchaseTid()==null?0:rawOrder.getPurchaseTid());
+		query.setLong("tid", rawOrder.getTid());
+		query.setLong("oid", rawOrder.getOid());
+		query.executeUpdate();
+	}
+
+	@Override
+	public void completeTrade(Long tid) {
+		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = :curStatus WHERE tid = :tid");
+		query.setInteger("curStatus", 11);
+		query.setLong("tid", tid);
+		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JRawTrade> getRecentRawTradeList() {
+		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE CUR_STATUS <> 11 OR DATEDIFF(DAY, CONVERT(VARCHAR(100), PAY_TIME,20), GETDATE()) <=30 ORDER BY PAY_TIME DESC");
+		query.addEntity(JRawTrade.class);
+		return query.list();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JRawTrade> getInProgressThirdPartyRawTradeList() {
+		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE CUR_STATUS <> 11 ORDER BY PAY_TIME DESC");
+		query.addEntity(JRawTrade.class);
+		return query.list();
+	}
+
 }

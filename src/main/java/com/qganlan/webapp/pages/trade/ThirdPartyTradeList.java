@@ -3,6 +3,7 @@ package com.qganlan.webapp.pages.trade;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.tapestry5.annotations.PageActivationContext;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
@@ -11,6 +12,9 @@ import com.qganlan.model.JRawTrade;
 import com.qganlan.service.TradeManager;
 
 public class ThirdPartyTradeList {
+	
+	@PageActivationContext
+	private int type = 1;
 
 	@Property
 	private List<JRawTrade> rawTrades;
@@ -25,7 +29,11 @@ public class ThirdPartyTradeList {
 	private JRawOrder rawOrder;
 	
 	public void setUpRender() {
-		rawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
+		if (type == 1) {
+			rawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
+		} else {
+			rawTrades = tradeManager.getRecentRawTradeList();
+		}
 	}
 	
 	public List<JRawOrder> getRawOrderList() {
@@ -50,5 +58,25 @@ public class ThirdPartyTradeList {
 	
 	public BigDecimal getPrice() {
 		return new BigDecimal("0");
+	}
+	
+	public void onCompleteTrade(Long tid) {
+		tradeManager.completeTrade(tid);
+	}
+	
+	public String getRowStyle() {
+		if (rawTrade.getCurStatus().equals(11)) {
+			return "background-color:#dddddd";
+		} else {
+			return "background-color:#ffffff";
+		}
+	}
+	
+	public String getRowStyle2() {
+		if (rawOrder.getPurchaseNick() != null && !rawOrder.getPurchaseNick().equals("") && rawOrder.getPurchaseTid() != null && !rawOrder.getPurchaseTid().equals("")) {
+			return "background-color:#FFEC8B";
+		} else {
+			return "background-color:#ffffff";
+		}
 	}
 }

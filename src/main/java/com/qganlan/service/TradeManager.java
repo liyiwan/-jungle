@@ -28,4 +28,12 @@ public interface TradeManager {
 
 	public String getTbkShopUrl(String providerNick);
 
+	public JRawTrade getRawTrade(Long tid);
+
+	public void fillTrade(JRawTrade rawTrade, List<JRawOrder> rawOrders);
+
+	public void completeTrade(Long tid);
+
+	public List<JRawTrade> getRecentRawTradeList();
+
 }

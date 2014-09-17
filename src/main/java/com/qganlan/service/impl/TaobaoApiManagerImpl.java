@@ -205,7 +205,7 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 	public Trade getTradeFullInfo(Long tid, String appKey, String appSecret, String sessionKey) {
 		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
 		TradeFullinfoGetRequest req = new TradeFullinfoGetRequest();
-		req.setFields("seller_nick,buyer_nick,title,type,created,tid,seller_rate,status,payment,adjust_fee,has_post_fee,post_fee,total_fee,pay_time,buyer_message,receiver_address,receiver_name,receiver_mobile,receiver_phone,receiver_state,receiver_city,receiver_district,orders");
+		req.setFields("seller_nick,buyer_nick,title,type,created,tid,seller_rate,status,payment,adjust_fee,has_post_fee,post_fee,total_fee,pay_time,buyer_message,receiver_address,receiver_name,receiver_mobile,receiver_phone,receiver_state,receiver_city,receiver_district,receiver_zip,orders");
 		req.setTid(tid);
 		Trade trade = null;
 		int tryCount = 0;
