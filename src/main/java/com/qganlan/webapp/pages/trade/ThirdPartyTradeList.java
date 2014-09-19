@@ -47,9 +47,13 @@ public class ThirdPartyTradeList {
 	public String getTbkShopUrl() {
 		return tradeManager.getTbkShopUrl(rawOrder.getProviderNick());
 	}
-	
+
 	public String getBuyUrl() {
-		return "http://item.taobao.com/item.htm?id=" + rawOrder.getProviderNumIid();
+		if (rawOrder.getProviderNumIid() != null) {
+			return "http://item.taobao.com/item.htm?id=" + rawOrder.getProviderNumIid();
+		} else {
+			return "";
+		}
 	}
 	
 	public String getFromNick() {
@@ -75,8 +79,21 @@ public class ThirdPartyTradeList {
 	public String getRowStyle2() {
 		if (rawOrder.getPurchaseNick() != null && !rawOrder.getPurchaseNick().equals("") && rawOrder.getPurchaseTid() != null && !rawOrder.getPurchaseTid().equals("")) {
 			return "background-color:#FFEC8B";
+		} else if (rawOrder.getProviderNumIid() == null) {
+			return "background-color:#dddddd";
 		} else {
 			return "background-color:#ffffff";
+		}
+	}
+	
+	public void onAutoSendTrade(Long tid) {
+		tradeManager.autoSendTrade(tid);
+	}
+	
+	public void onAutoSendTradeAll() {
+		List<JRawTrade> inprogressRawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
+		for (JRawTrade aRawTrade : inprogressRawTrades) {
+			tradeManager.autoSendTrade(aRawTrade.getTid());
 		}
 	}
 }

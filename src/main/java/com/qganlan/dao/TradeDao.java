@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.appfuse.dao.GenericDao;
 
+import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
 import com.qganlan.model.Trade;
@@ -41,5 +42,15 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 	public List<JRawTrade> getRecentRawTradeList();
 
 	public List<JRawTrade> getInProgressThirdPartyRawTradeList();
+
+	public void saveOrUpdate(JLogisticsCompany jcomp);
+
+	public List<JLogisticsCompany> getLogisticsCompanyList();
+
+	public String getLogisticsCompanyCode(String logisticsCompany);
+
+	public void markSent(JRawOrder rawOrder);
+
+	public void markSent(JRawTrade rawTrade);
 
 }

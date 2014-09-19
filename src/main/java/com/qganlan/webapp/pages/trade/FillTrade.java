@@ -68,4 +68,14 @@ public class FillTrade {
 		Link link = pageRenderLinkSource.createPageRenderLink(ThirdPartyTradeList.class);
 		return link;
 	}
+	
+	public String getRowStyle() {
+		if (rawOrder.getPurchaseNick() != null && !rawOrder.getPurchaseNick().equals("") && rawOrder.getPurchaseTid() != null && !rawOrder.getPurchaseTid().equals("")) {
+			return "background-color:#FFEC8B";
+		} else if (rawOrder.getProviderNumIid() == null) {
+			return "background-color:#dddddd";
+		} else {
+			return "background-color:#ffffff";
+		}
+	}
 }

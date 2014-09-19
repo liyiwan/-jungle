@@ -1,0 +1,19 @@
+<html t:type="layout" title="literal:数据维护"
+    heading="literal:数据维护" menu="MaintainMenu"
+    xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
+	<a t:type="eventlink" event="DownloadLogisticsCompanyList" class="btn btn-primary">下载快递公司信息</a>
+	<table>
+		<tr>
+			<td>ID</td>
+			<td>CODE</td>
+			<td>NAME</td>
+			<td>REG_MAIL_NO</td>
+		</tr>
+		<tr t:type="loop" t:source="logisticsCompanyList" t:value="logisticsCompany">
+			<td>${logisticsCompany.id}</td>
+			<td>${logisticsCompany.code}</td>
+			<td>${logisticsCompany.name}</td>
+			<td>${logisticsCompany.regMailNo}</td>
+		</tr>
+	</table>
+</html>

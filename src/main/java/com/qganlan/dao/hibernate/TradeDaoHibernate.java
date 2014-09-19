@@ -10,6 +10,7 @@ import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import com.qganlan.dao.TradeDao;
+import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
 import com.qganlan.model.JTbkShopUrl;
@@ -150,6 +151,41 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE CUR_STATUS <> 11 ORDER BY PAY_TIME DESC");
 		query.addEntity(JRawTrade.class);
 		return query.list();
+	}
+
+	@Override
+	public void saveOrUpdate(JLogisticsCompany jcomp) {
+		getSession().saveOrUpdate(jcomp);
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JLogisticsCompany> getLogisticsCompanyList() {
+		Query query = getSession().createQuery("FROM JLogisticsCompany");
+		return query.list();
+	}
+
+	@Override
+	public String getLogisticsCompanyCode(String logisticsCompany) {
+		Query query = getSession().createQuery("FROM JLogisticsCompany WHERE name = :name");
+		query.setString("name", logisticsCompany);
+		JLogisticsCompany comp = (JLogisticsCompany) query.uniqueResult();
+		return comp.getCode();
+	}
+
+	@Override
+	public void markSent(JRawOrder rawOrder) {
+		Query query = getSession().createQuery("UPDATE JRawOrder SET curStatus = 11 WHERE tid = :tid AND oid = :oid");
+		query.setLong("tid", rawOrder.getTid());
+		query.setLong("oid", rawOrder.getOid());
+		query.executeUpdate();
+	}
+
+	@Override
+	public void markSent(JRawTrade rawTrade) {
+		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = 11 WHERE tid = :tid");
+		query.setLong("tid", rawTrade.getTid());
+		query.executeUpdate();
 	}
 
 }

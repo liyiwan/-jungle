@@ -27,18 +27,17 @@
 	    			<tr t:type="loop" t:source="rawOrders" t:value="rawOrder" t:formstate="ITERATION">
 	    				<t:hidden value="rawOrder.tid" />
 						<t:hidden value="rawOrder.oid" />
-	    				<td align="left" valign="top"><img width="100" src="${rawOrder.picPath}"/></td>
-	    				<td align="left" valign="top">
+	    				<td align="left" valign="top"><img width="100" src="${rawOrder.picPath}" style="${rowStyle}"/></td>
+	    				<td align="left" valign="top" style="${rowStyle}">
 	    					<a target="_blank" href="${itemUrl}">${rawOrder.title}</a><br/>
 	    					${rawOrder.outerIid}<br/>
 	    					${rawOrder.SkuPropertiesName}<br/>
-	    					<a target="_blank" href="${tbkShopUrl}">${fromNick}</a>&#160;&#160;<a target="_blank" href="${buyUrl}">下单地址</a>
 	    				</td>
-	    				<td align="left" valign="top">${price}</td>
-	    				<td align="left" valign="top">${rawOrder.num}</td>
-	    				<td align="left" valign="top">${rawOrder.payment}</td>
-	    				<td align="left" valign="top"><input t:type="textfield" t:value="rawOrder.purchaseNick" /></td>
-	    				<td align="left" valign="top"><input t:type="textfield" t:value="rawOrder.purchaseTid" /></td>
+	    				<td align="left" valign="top" style="${rowStyle}">${price}</td>
+	    				<td align="left" valign="top" style="${rowStyle}">${rawOrder.num}</td>
+	    				<td align="left" valign="top" style="${rowStyle}">${rawOrder.payment}</td>
+	    				<td align="left" valign="top" style="${rowStyle}"><input t:type="textfield" t:value="rawOrder.purchaseNick" /></td>
+	    				<td align="left" valign="top" style="${rowStyle}"><input t:type="textfield" t:value="rawOrder.purchaseTid" /></td>
 	    			</tr>
 	    			<tr>
 	    				<td colspan="5">

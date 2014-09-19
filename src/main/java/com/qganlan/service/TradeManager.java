@@ -3,6 +3,7 @@ package com.qganlan.service;
 import java.util.Date;
 import java.util.List;
 
+import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
 import com.qganlan.model.Trade;
@@ -35,5 +36,11 @@ public interface TradeManager {
 	public void completeTrade(Long tid);
 
 	public List<JRawTrade> getRecentRawTradeList();
+
+	public void downloadLogisticsCompanyList();
+
+	public List<JLogisticsCompany> getLogisticsCompanyList();
+
+	public void autoSendTrade(Long tid);
 
 }

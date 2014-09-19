@@ -18,17 +18,22 @@ import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.Item;
+import com.taobao.api.domain.LogisticsCompany;
 import com.taobao.api.domain.Sku;
 import com.taobao.api.domain.TbkItem;
 import com.taobao.api.domain.Trade;
 import com.taobao.api.request.ItemGetRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
+import com.taobao.api.request.LogisticsCompaniesGetRequest;
+import com.taobao.api.request.LogisticsOfflineSendRequest;
 import com.taobao.api.request.SkusCustomGetRequest;
 import com.taobao.api.request.TbkItemsConvertRequest;
 import com.taobao.api.request.TradeFullinfoGetRequest;
 import com.taobao.api.request.TradeGetRequest;
 import com.taobao.api.response.ItemGetResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
+import com.taobao.api.response.LogisticsCompaniesGetResponse;
+import com.taobao.api.response.LogisticsOfflineSendResponse;
 import com.taobao.api.response.SkusCustomGetResponse;
 import com.taobao.api.response.TbkItemsConvertResponse;
 import com.taobao.api.response.TradeFullinfoGetResponse;
@@ -300,6 +305,40 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 			}
 		}
 		return rtnTbkItems;
+	}
+
+	@Override
+	public List<LogisticsCompany> getLogisticsCompanyList() {
+		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
+		LogisticsCompaniesGetRequest req = new LogisticsCompaniesGetRequest();
+		req.setFields("id,code,name,reg_mail_no");
+		req.setOrderMode("offline");
+		try {
+			LogisticsCompaniesGetResponse response = taobaoClient.execute(req);
+			return response.getLogisticsCompanies();
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		return null;
+	}
+	
+	public boolean sendTrade(Long tid, String subTid, String invoiceNo, String companyCode, String sessionKey) {
+		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
+		LogisticsOfflineSendRequest req = new LogisticsOfflineSendRequest();
+		req.setTid(tid);
+		if (subTid != null) {
+			req.setSubTid(subTid);
+			req.setIsSplit(1L);
+		}
+		req.setOutSid(invoiceNo);
+		req.setCompanyCode(companyCode);
+		try {
+			LogisticsOfflineSendResponse response = taobaoClient.execute(req , sessionKey);
+			return response.isSuccess();
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		return false;
 	}
 
 }

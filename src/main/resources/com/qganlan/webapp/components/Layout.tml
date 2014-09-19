@@ -55,6 +55,11 @@
                     <t:delegate to="block:adminItemsBlock"/>
                 </ul>
             </t:menuitem>
+            <t:menuitem name="MaintainMenu" title="literal:数据维护" roles="ROLE_ADMIN" class="dropdown" data-toggle="dropdown">
+                <ul class="dropdown-menu">
+                    <t:delegate to="block:maintainItemsBlock"/>
+                </ul>
+            </t:menuitem>
             <t:menuitem name="UserMenu" title="literal:编辑信息" page="home.editprofile" roles="ROLE_ADMIN,ROLE_USER"/>
             <t:menuitem name="Logout" title="literal:退出" page="logout" roles="ROLE_ADMIN,ROLE_USER"/>
 
@@ -95,6 +100,10 @@
     <t:menuitem name="ActiveUsers" title="literal:在线用户" page="admin/activeusers"/>
     <t:menuitem name="ReloadContext" title="literal:重载选项" page="admin/reload"/>
     <t:menuitem name="FileUpload" title="literal:上传文件" page="fileupload"/>
+</t:block>
+
+<t:block id="maintainItemsBlock">
+    <t:menuitem name="LogisticsCompanyList" title="literal:快递公司信息" page="system/logisticscompanylist"/>
 </t:block>
 
 <t:block id="tradeBlock">
