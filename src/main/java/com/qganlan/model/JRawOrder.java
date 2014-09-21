@@ -47,6 +47,28 @@ public class JRawOrder implements Serializable {
 		this.invoiceNo = invoiceNo;
 	}
 	
+	private String companyCode;
+	
+	@Column(name = "COMPANY_CODE")
+	public String getCompanyCode() {
+		return companyCode;
+	}
+
+	public void setCompanyCode(String companyCode) {
+		this.companyCode = companyCode;
+	}
+	
+	private String logisticsCompany;
+
+	@Column(name = "LOGISTICS_COMPANY")
+	public String getLogisticsCompany() {
+		return logisticsCompany;
+	}
+
+	public void setLogisticsCompany(String logisticsCompany) {
+		this.logisticsCompany = logisticsCompany;
+	}
+
 	private Long num;
 
 	@Column(name = "NUM")

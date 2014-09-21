@@ -16,6 +16,7 @@ import org.springframework.stereotype.Service;
 
 import com.qganlan.common.TbkUtil;
 import com.qganlan.dao.TradeDao;
+import com.qganlan.dto.LogisticsInfo;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -319,60 +320,150 @@ public class TradeManagerImpl implements TradeManager {
 		return tradeDao.getLogisticsCompanyList();
 	}
 
-	@Override
+	
 	public void autoSendTrade(Long tid) {
 		JRawTrade rawTrade = tradeDao.getRawTrade(tid);
 		List<JRawOrder> rawOrders = tradeDao.getRawOrderList(tid);
 		HashMap<Long, com.taobao.api.domain.Trade> purchaseTradeMap = new HashMap<Long, com.taobao.api.domain.Trade>();
 		for (JRawOrder rawOrder : rawOrders) {
-			if (rawOrder.getCurStatus() == 11) {
-				continue;
-			}
-			String purchaseNick = rawOrder.getPurchaseNick();
-			Long purchaseTid = rawOrder.getPurchaseTid();
-			if (purchaseNick != null && !purchaseNick.trim().equals("")) {
-				if (purchaseTid != null && purchaseTid != 0) {
-					com.taobao.api.domain.Trade purchaseTrade = purchaseTradeMap.get(purchaseTid);
+			if (rawOrder.getCurStatus() != 11) {
+				com.taobao.api.domain.Trade purchaseTrade = null;
+				String purchaseNick = rawOrder.getPurchaseNick();
+				Long purchaseTid = rawOrder.getPurchaseTid();
+				if (purchaseNick != null && !purchaseNick.trim().equals("") && purchaseTid != null && purchaseTid != 0) {
+					purchaseTrade = purchaseTradeMap.get(purchaseTid);
 					if (purchaseTrade == null) {
 						purchaseTrade = taobaoApiManager.getTradeFullInfo(purchaseTid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(purchaseNick));
 						if (purchaseTrade != null) {
 							purchaseTradeMap.put(purchaseTid, purchaseTrade);
 						}
 					}
-					if (purchaseTrade != null) {
-						List<Order> purchaseOrders = purchaseTrade.getOrders();
-						String invoiceNo = purchaseOrders.get(0).getInvoiceNo();
-						String logisticsCompany = purchaseOrders.get(0).getLogisticsCompany();
-						if (logisticsCompany != null && !logisticsCompany.equals("") && invoiceNo != null && !invoiceNo.equals("")) {
-							String companyCode = getLogisticsCompanyCode(logisticsCompany);
-							boolean isSuccess = false;
-							if (rawOrders.size() > 1) {
-								isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), rawOrder.getOid()+"", invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
-							} else {
-								isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
-							}
-							if (isSuccess) {
-								tradeDao.markSent(rawOrder);
-								rawOrder.setCurStatus(11);
-							}
-						}
+				}
+				if (purchaseTrade != null) {
+					List<Order> purchaseOrders = purchaseTrade.getOrders();
+					String invoiceNo = purchaseOrders.get(0).getInvoiceNo();
+					String companyCode = null;
+					String logisticsCompany = purchaseOrders.get(0).getLogisticsCompany();
+					if (logisticsCompany != null && !logisticsCompany.equals("") && invoiceNo != null && !invoiceNo.equals("")) {
+						companyCode = getLogisticsCompanyCode(logisticsCompany);
+						rawOrder.setInvoiceNo(invoiceNo);
+						rawOrder.setCompanyCode(companyCode);
+						rawOrder.setLogisticsCompany(logisticsCompany);
+						tradeDao.updateLogistics(rawOrder);
 					}
 				}
 			}
 		}
-		boolean markTradeSent = true;
+		List<LogisticsInfo> logisticsInfoList = new ArrayList<LogisticsInfo>();
+		int count = 0;
 		for (JRawOrder rawOrder : rawOrders) {
 			if (rawOrder.getCurStatus() != 11) {
-				markTradeSent = false;
+				String outSid = rawOrder.getInvoiceNo();
+				if (outSid != null && !outSid.equals("")) {
+					count = count + 1;
+					LogisticsInfo logisticsInfo = null;
+					for (LogisticsInfo info : logisticsInfoList) {
+						if (outSid.equals(info.getOutSid())) {
+							logisticsInfo = info;
+							break;
+						}
+					}
+					if (logisticsInfo == null) {
+						logisticsInfo = new LogisticsInfo();
+						logisticsInfo.setOutSid(outSid);
+						logisticsInfo.setCompanyCode(rawOrder.getCompanyCode());
+						logisticsInfo.setTid(rawOrder.getTid());
+						logisticsInfo.setSubTid(rawOrder.getOid()+"");
+						logisticsInfoList.add(logisticsInfo);
+					} else {
+						logisticsInfo.setSubTid(logisticsInfo.getSubTid() + "," + rawOrder.getOid());
+					}
+				}
 			}
 		}
-		if (markTradeSent) {
-			tradeDao.markSent(rawTrade);
+		if (rawOrders.size() == count && logisticsInfoList.size() ==1) {
+			String invoiceNo = logisticsInfoList.get(0).getOutSid();
+			String companyCode = logisticsInfoList.get(0).getCompanyCode();
+			boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
+			if (isSuccess) {
+				tradeDao.markSent(rawTrade);
+			}
+		} else {
+			for (LogisticsInfo info : logisticsInfoList) {
+				boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), info.getSubTid(), info.getOutSid(), info.getCompanyCode(), taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
+				if (isSuccess) {
+					tradeDao.markSent(rawTrade, info.getSubTid());
+				}
+			}
 		}
 	}
 	
+//	@Override
+//	public void autoSendTrade(Long tid) {
+//		JRawTrade rawTrade = tradeDao.getRawTrade(tid);
+//		List<JRawOrder> rawOrders = tradeDao.getRawOrderList(tid);
+//		HashMap<Long, com.taobao.api.domain.Trade> purchaseTradeMap = new HashMap<Long, com.taobao.api.domain.Trade>();
+//		for (JRawOrder rawOrder : rawOrders) {
+//			if (rawOrder.getCurStatus() == 11) {
+//				continue;
+//			}
+//			String purchaseNick = rawOrder.getPurchaseNick();
+//			Long purchaseTid = rawOrder.getPurchaseTid();
+//			if (purchaseNick != null && !purchaseNick.trim().equals("")) {
+//				if (purchaseTid != null && purchaseTid != 0) {
+//					com.taobao.api.domain.Trade purchaseTrade = purchaseTradeMap.get(purchaseTid);
+//					if (purchaseTrade == null) {
+//						purchaseTrade = taobaoApiManager.getTradeFullInfo(purchaseTid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(purchaseNick));
+//						if (purchaseTrade != null) {
+//							purchaseTradeMap.put(purchaseTid, purchaseTrade);
+//						}
+//					}
+//					if (purchaseTrade != null) {
+//						List<Order> purchaseOrders = purchaseTrade.getOrders();
+//						String invoiceNo = purchaseOrders.get(0).getInvoiceNo();
+//						String logisticsCompany = purchaseOrders.get(0).getLogisticsCompany();
+//						if (logisticsCompany != null && !logisticsCompany.equals("") && invoiceNo != null && !invoiceNo.equals("")) {
+//							String companyCode = getLogisticsCompanyCode(logisticsCompany);
+//							boolean isSuccess = false;
+//							if (rawOrders.size() > 1) {
+//								isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), rawOrder.getOid()+"", invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
+//							} else {
+//								isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
+//							}
+//							if (isSuccess) {
+//								tradeDao.markSent(rawOrder);
+//								rawOrder.setCurStatus(11);
+//							}
+//						}
+//					}
+//				}
+//			}
+//		}
+//		boolean markTradeSent = true;
+//		for (JRawOrder rawOrder : rawOrders) {
+//			if (rawOrder.getCurStatus() != 11) {
+//				markTradeSent = false;
+//			}
+//		}
+//		if (markTradeSent) {
+//			tradeDao.markSent(rawTrade);
+//		}
+//	}
+	
 	public String getLogisticsCompanyCode(String logisticsCompany) {
 		return tradeDao.getLogisticsCompanyCode(logisticsCompany);
+	}
+
+	@Override
+	public void saveTradeFromTaobao(String nick, Long tid) {
+		try {
+			com.taobao.api.domain.Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(nick));
+			if (trade != null) {
+				recordThirdPartyTrade(trade);
+			}
+		} catch (Throwable t) {
+	    	t.printStackTrace();
+	    }
 	}
 
 }

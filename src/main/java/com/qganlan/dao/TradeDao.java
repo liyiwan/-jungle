@@ -49,8 +49,10 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 
 	public String getLogisticsCompanyCode(String logisticsCompany);
 
-	public void markSent(JRawOrder rawOrder);
-
 	public void markSent(JRawTrade rawTrade);
+
+	public void markSent(JRawTrade rawTrade, String subTid);
+	
+	public void updateLogistics(JRawOrder rawOrder);
 
 }

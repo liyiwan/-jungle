@@ -174,17 +174,30 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	}
 
 	@Override
-	public void markSent(JRawOrder rawOrder) {
-		Query query = getSession().createQuery("UPDATE JRawOrder SET curStatus = 11 WHERE tid = :tid AND oid = :oid");
-		query.setLong("tid", rawOrder.getTid());
-		query.setLong("oid", rawOrder.getOid());
+	public void markSent(JRawTrade rawTrade) {
+		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = 11 WHERE tid = :tid");
+		query.setLong("tid", rawTrade.getTid());
 		query.executeUpdate();
 	}
 
 	@Override
-	public void markSent(JRawTrade rawTrade) {
-		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = 11 WHERE tid = :tid");
+	public void markSent(JRawTrade rawTrade, String subTid) {
+		Query query = getSession().createQuery("UPDATE JRawOrder SET curStatus = 11 WHERE tid = :tid AND oid = :oid");
+		String[] aSubTid = subTid.split(",");
 		query.setLong("tid", rawTrade.getTid());
+		for (String oid : aSubTid) {
+			query.setLong("oid", Long.valueOf(oid));
+			query.executeUpdate();
+		}
+	}
+
+	@Override
+	public void updateLogistics(JRawOrder rawOrder) {
+		Query query = getSession().createQuery("UPDATE JRawOrder SET invoiceNo = :invoiceNo, companyCode = :companyCode, logisticsCompany = :logisticsCompany WHERE tid = :tid");
+		query.setString("invoiceNo", rawOrder.getInvoiceNo());
+		query.setString("companyCode", rawOrder.getCompanyCode());
+		query.setString("logisticsCompany", rawOrder.getLogisticsCompany());
+		query.setLong("tid", rawOrder.getTid());
 		query.executeUpdate();
 	}
 

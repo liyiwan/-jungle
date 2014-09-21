@@ -3,12 +3,16 @@ package com.qganlan.webapp.pages.trade;
 import java.math.BigDecimal;
 import java.util.List;
 
+import org.apache.commons.lang.StringUtils;
+import org.apache.tapestry5.PersistenceConstants;
 import org.apache.tapestry5.annotations.PageActivationContext;
+import org.apache.tapestry5.annotations.Persist;
 import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.annotations.Inject;
 
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
+import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
 
 public class ThirdPartyTradeList {
@@ -27,6 +31,14 @@ public class ThirdPartyTradeList {
 	
 	@Property
 	private JRawOrder rawOrder;
+	
+	@Property
+	@Persist(PersistenceConstants.FLASH)
+	private String tradeId;
+	
+	@Property
+	@Persist(PersistenceConstants.FLASH)
+	private String nick;
 	
 	public void setUpRender() {
 		if (type == 1) {
@@ -94,6 +106,15 @@ public class ThirdPartyTradeList {
 		List<JRawTrade> inprogressRawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
 		for (JRawTrade aRawTrade : inprogressRawTrades) {
 			tradeManager.autoSendTrade(aRawTrade.getTid());
+		}
+	}
+	
+	public void onSubmitFromGetTradeForm() {
+		if (tradeId != null && !tradeId.equals("")) {
+			if (StringUtils.isNumeric(tradeId.trim())) {
+				Long tid = Long.valueOf(tradeId.trim());
+				tradeManager.saveTradeFromTaobao(nick, tid);
+			}
 		}
 	}
 }

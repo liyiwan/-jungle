@@ -2,6 +2,15 @@
     heading="literal:委外订单" menu="TradeMenu"
     xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd" xmlns:p="tapestry:parameter">
     <h2>委外订单</h2>
+    <form t:type="form" t:id="GetTradeForm">
+	    <table>
+	    	<tr>
+	    		<td>昵称：<input t:type="textfield" t:id="nick" t:value="nick"/></td>
+	    		<td>订单号：<input t:type="textfield" t:id="tradeId" t:value="tradeId"/></td>
+				<td><input t:id="GetButton" type="submit" t:type="submit" class="btn btn-primary" value="提交"/></td>
+	    	</tr>
+	    </table>
+	</form>
     <table>
     	<tr>
     		<td><a target="_blank" href="http://member1.taobao.com/member/fresh/deliver_address.htm" class="btn btn-primary">&#160;我的地址&#160;</a></td>
@@ -49,9 +58,9 @@
     				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.payment}</td>
     				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.purchaseNick}</td>
     				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.purchaseTid}</td>
-    				<td align="left" valign="top" style="${rowStyle2}"></td>
-    				<td align="left" valign="top" style="${rowStyle2}"></td>
-    				<td align="left" valign="top" style="${rowStyle2}"></td>
+    				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.logisticsCompany}</td>
+    				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.invoiceNo}</td>
+    				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.curStatus}</td>
     			</tr>
     			<tr>
     				<td colspan="8">

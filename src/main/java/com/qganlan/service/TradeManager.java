@@ -42,5 +42,9 @@ public interface TradeManager {
 	public List<JLogisticsCompany> getLogisticsCompanyList();
 
 	public void autoSendTrade(Long tid);
+	
+	public String getLogisticsCompanyCode(String logisticsCompany);
+
+	public void saveTradeFromTaobao(String nick, Long tid);
 
 }
