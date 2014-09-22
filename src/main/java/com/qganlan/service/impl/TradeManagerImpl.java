@@ -381,12 +381,12 @@ public class TradeManagerImpl implements TradeManager {
 				}
 			}
 		}
-		if (rawOrders.size() == count && logisticsInfoList.size() ==1) {
+		if (rawOrders.size() == count && logisticsInfoList.size() == 1) {
 			String invoiceNo = logisticsInfoList.get(0).getOutSid();
 			String companyCode = logisticsInfoList.get(0).getCompanyCode();
 			boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
 			if (isSuccess) {
-				tradeDao.markSent(rawTrade);
+				tradeDao.markSent(rawTrade, logisticsInfoList.get(0).getSubTid());
 			}
 		} else {
 			for (LogisticsInfo info : logisticsInfoList) {
@@ -395,6 +395,17 @@ public class TradeManagerImpl implements TradeManager {
 					tradeDao.markSent(rawTrade, info.getSubTid());
 				}
 			}
+		}
+		rawOrders = tradeDao.getRawOrderList(tid);
+		boolean allcomplete = true;
+		for (JRawOrder rawOrder : rawOrders) {
+			if (rawOrder.getCurStatus() != 11) {
+				allcomplete = false;
+				break;
+			}
+		}
+		if (allcomplete) {
+			tradeDao.markSent(rawTrade);
 		}
 	}
 	

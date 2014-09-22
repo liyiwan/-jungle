@@ -193,11 +193,12 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 
 	@Override
 	public void updateLogistics(JRawOrder rawOrder) {
-		Query query = getSession().createQuery("UPDATE JRawOrder SET invoiceNo = :invoiceNo, companyCode = :companyCode, logisticsCompany = :logisticsCompany WHERE tid = :tid");
+		Query query = getSession().createQuery("UPDATE JRawOrder SET invoiceNo = :invoiceNo, companyCode = :companyCode, logisticsCompany = :logisticsCompany WHERE tid = :tid AND oid = :oid");
 		query.setString("invoiceNo", rawOrder.getInvoiceNo());
 		query.setString("companyCode", rawOrder.getCompanyCode());
 		query.setString("logisticsCompany", rawOrder.getLogisticsCompany());
 		query.setLong("tid", rawOrder.getTid());
+		query.setLong("oid", rawOrder.getOid());
 		query.executeUpdate();
 	}
 
