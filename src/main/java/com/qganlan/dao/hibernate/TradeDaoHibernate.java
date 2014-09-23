@@ -175,7 +175,7 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 
 	@Override
 	public void markSent(JRawTrade rawTrade) {
-		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = 11 WHERE tid = :tid");
+		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_TRADE SET CUR_STATUS = 11 WHERE TID = :tid AND NOT EXISTS (SELECT * FROM J_RAW_ORDER WHERE CUR_STATUS <> 11 AND TID = :tid)");
 		query.setLong("tid", rawTrade.getTid());
 		query.executeUpdate();
 	}

@@ -319,7 +319,6 @@ public class TradeManagerImpl implements TradeManager {
 	public List<JLogisticsCompany> getLogisticsCompanyList() {
 		return tradeDao.getLogisticsCompanyList();
 	}
-
 	
 	public void autoSendTrade(Long tid) {
 		JRawTrade rawTrade = tradeDao.getRawTrade(tid);
@@ -386,80 +385,20 @@ public class TradeManagerImpl implements TradeManager {
 			String companyCode = logisticsInfoList.get(0).getCompanyCode();
 			boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
 			if (isSuccess) {
-				tradeDao.markSent(rawTrade, logisticsInfoList.get(0).getSubTid());
+				String subTid = logisticsInfoList.get(0).getSubTid();
+				tradeDao.markSent(rawTrade, subTid);
 			}
 		} else {
 			for (LogisticsInfo info : logisticsInfoList) {
 				boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), info.getSubTid(), info.getOutSid(), info.getCompanyCode(), taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
 				if (isSuccess) {
-					tradeDao.markSent(rawTrade, info.getSubTid());
+					String subTid = info.getSubTid();
+					tradeDao.markSent(rawTrade, subTid);
 				}
 			}
 		}
-		rawOrders = tradeDao.getRawOrderList(tid);
-		boolean allcomplete = true;
-		for (JRawOrder rawOrder : rawOrders) {
-			if (rawOrder.getCurStatus() != 11) {
-				allcomplete = false;
-				break;
-			}
-		}
-		if (allcomplete) {
-			tradeDao.markSent(rawTrade);
-		}
+		tradeDao.markSent(rawTrade);
 	}
-	
-//	@Override
-//	public void autoSendTrade(Long tid) {
-//		JRawTrade rawTrade = tradeDao.getRawTrade(tid);
-//		List<JRawOrder> rawOrders = tradeDao.getRawOrderList(tid);
-//		HashMap<Long, com.taobao.api.domain.Trade> purchaseTradeMap = new HashMap<Long, com.taobao.api.domain.Trade>();
-//		for (JRawOrder rawOrder : rawOrders) {
-//			if (rawOrder.getCurStatus() == 11) {
-//				continue;
-//			}
-//			String purchaseNick = rawOrder.getPurchaseNick();
-//			Long purchaseTid = rawOrder.getPurchaseTid();
-//			if (purchaseNick != null && !purchaseNick.trim().equals("")) {
-//				if (purchaseTid != null && purchaseTid != 0) {
-//					com.taobao.api.domain.Trade purchaseTrade = purchaseTradeMap.get(purchaseTid);
-//					if (purchaseTrade == null) {
-//						purchaseTrade = taobaoApiManager.getTradeFullInfo(purchaseTid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(purchaseNick));
-//						if (purchaseTrade != null) {
-//							purchaseTradeMap.put(purchaseTid, purchaseTrade);
-//						}
-//					}
-//					if (purchaseTrade != null) {
-//						List<Order> purchaseOrders = purchaseTrade.getOrders();
-//						String invoiceNo = purchaseOrders.get(0).getInvoiceNo();
-//						String logisticsCompany = purchaseOrders.get(0).getLogisticsCompany();
-//						if (logisticsCompany != null && !logisticsCompany.equals("") && invoiceNo != null && !invoiceNo.equals("")) {
-//							String companyCode = getLogisticsCompanyCode(logisticsCompany);
-//							boolean isSuccess = false;
-//							if (rawOrders.size() > 1) {
-//								isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), rawOrder.getOid()+"", invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
-//							} else {
-//								isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
-//							}
-//							if (isSuccess) {
-//								tradeDao.markSent(rawOrder);
-//								rawOrder.setCurStatus(11);
-//							}
-//						}
-//					}
-//				}
-//			}
-//		}
-//		boolean markTradeSent = true;
-//		for (JRawOrder rawOrder : rawOrders) {
-//			if (rawOrder.getCurStatus() != 11) {
-//				markTradeSent = false;
-//			}
-//		}
-//		if (markTradeSent) {
-//			tradeDao.markSent(rawTrade);
-//		}
-//	}
 	
 	public String getLogisticsCompanyCode(String logisticsCompany) {
 		return tradeDao.getLogisticsCompanyCode(logisticsCompany);
