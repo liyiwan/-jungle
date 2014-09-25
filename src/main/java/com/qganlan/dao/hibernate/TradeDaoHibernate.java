@@ -131,8 +131,7 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 
 	@Override
 	public void completeTrade(Long tid) {
-		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = :curStatus WHERE tid = :tid");
-		query.setInteger("curStatus", 11);
+		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_TRADE SET CUR_STATUS = 11 WHERE tid = :tid");
 		query.setLong("tid", tid);
 		query.executeUpdate();
 	}
@@ -174,26 +173,23 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	}
 
 	@Override
-	public void markSent(JRawTrade rawTrade) {
+	public void markSent(Long tid) {
 		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_TRADE SET CUR_STATUS = 11 WHERE TID = :tid AND NOT EXISTS (SELECT * FROM J_RAW_ORDER WHERE CUR_STATUS <> 11 AND TID = :tid)");
-		query.setLong("tid", rawTrade.getTid());
+		query.setLong("tid", tid);
 		query.executeUpdate();
 	}
 
 	@Override
-	public void markSent(JRawTrade rawTrade, String subTid) {
-		Query query = getSession().createQuery("UPDATE JRawOrder SET curStatus = 11 WHERE tid = :tid AND oid = :oid");
-		String[] aSubTid = subTid.split(",");
-		query.setLong("tid", rawTrade.getTid());
-		for (String oid : aSubTid) {
-			query.setLong("oid", Long.valueOf(oid));
-			query.executeUpdate();
-		}
+	public void markSent(Long tid, Long oid) {
+		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_ORDER SET CUR_STATUS = 11 WHERE TID = :tid AND OID = :oid");
+		query.setLong("tid", tid);
+		query.setLong("oid", oid);
+		query.executeUpdate();
 	}
 
 	@Override
 	public void updateLogistics(JRawOrder rawOrder) {
-		Query query = getSession().createQuery("UPDATE JRawOrder SET invoiceNo = :invoiceNo, companyCode = :companyCode, logisticsCompany = :logisticsCompany WHERE tid = :tid AND oid = :oid");
+		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_ORDER SET INVOICE_NO = :invoiceNo, COMPANY_CODE = :companyCode, LOGISTICS_COMPANY = :logisticsCompany WHERE tid = :tid AND oid = :oid");
 		query.setString("invoiceNo", rawOrder.getInvoiceNo());
 		query.setString("companyCode", rawOrder.getCompanyCode());
 		query.setString("logisticsCompany", rawOrder.getLogisticsCompany());

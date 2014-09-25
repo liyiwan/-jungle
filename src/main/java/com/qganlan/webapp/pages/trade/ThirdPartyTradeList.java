@@ -12,7 +12,6 @@ import org.apache.tapestry5.ioc.annotations.Inject;
 
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
-import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
 
 public class ThirdPartyTradeList {

@@ -10,7 +10,7 @@
         <mapping class="com.qganlan.model.Shop"/>
         <mapping class="com.qganlan.model.Provider"/>
         <mapping class="com.qganlan.model.ProviderClass"/>
-        <mapping class="com.qganlan.model.TaobaoSessionKey"/>
+        <mapping class="com.qganlan.model.JTaobaoSessionKey"/>
         <mapping class="com.qganlan.model.MyConfig"/>
         <mapping class="com.qganlan.model.Trade"/>
         <mapping class="com.qganlan.model.TradeGoods"/>

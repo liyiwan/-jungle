@@ -184,6 +184,9 @@ public class TradeManagerImpl implements TradeManager {
 		String content = sb.toString();
 		String[] toMails = { "9394908@qq.com", "1043436304@qq.com"};
 		for (String mail : toMails) {
+			if ("丹丹284272539".equals(rawTrade.getSellerNick()) && !mail.equals("9394908@qq.com")) {
+				continue;
+			}
 			try {
 				String[] to = new String[1];
 				to[0] = mail;
@@ -386,18 +389,26 @@ public class TradeManagerImpl implements TradeManager {
 			boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
 			if (isSuccess) {
 				String subTid = logisticsInfoList.get(0).getSubTid();
-				tradeDao.markSent(rawTrade, subTid);
+				System.out.println("发货完成:" + rawTrade.getTid() + ":" + subTid);
+				String[] aSubTid = subTid.split(",");
+				for (String oid : aSubTid) {
+					tradeDao.markSent(rawTrade.getTid(), Long.valueOf(oid));
+				}
 			}
 		} else {
 			for (LogisticsInfo info : logisticsInfoList) {
 				boolean isSuccess = taobaoApiManager.sendTrade(rawTrade.getTid(), info.getSubTid(), info.getOutSid(), info.getCompanyCode(), taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
 				if (isSuccess) {
-					String subTid = info.getSubTid();
-					tradeDao.markSent(rawTrade, subTid);
+					String subTid = info.getSubTid();				
+					System.out.println("发货完成:" + rawTrade.getTid() + ":" + subTid);
+					String[] aSubTid = subTid.split(",");
+					for (String oid : aSubTid) {
+						tradeDao.markSent(rawTrade.getTid(), Long.valueOf(oid));
+					}
 				}
 			}
 		}
-		tradeDao.markSent(rawTrade);
+		tradeDao.markSent(rawTrade.getTid());
 	}
 	
 	public String getLogisticsCompanyCode(String logisticsCompany) {

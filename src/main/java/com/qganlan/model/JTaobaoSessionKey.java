@@ -8,14 +8,16 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "J_TaobaoSessionKey")
-public class TaobaoSessionKey {
+@Table(name = "J_TAOBAO_SESSION_KEY")
+public class JTaobaoSessionKey {
 	private String nick;
 	private String sessionKey;
 	private Date createDate;
+	private String refreshToken;
+	private Integer isTmc;
 	
 	@Id
-	@Column(name = "Nick", unique = true, nullable = false)
+	@Column(name = "NICK", unique = true, nullable = false)
 	public String getNick() {
 		return nick;
 	}
@@ -24,7 +26,7 @@ public class TaobaoSessionKey {
 		this.nick = nick;
 	}
 	
-	@Column(name = "SessionKey")
+	@Column(name = "SESSION_KEY")
 	public String getSessionKey() {
 		return sessionKey;
 	}
@@ -33,12 +35,30 @@ public class TaobaoSessionKey {
 		this.sessionKey = sessionKey;
 	}
 
-	@Column(name = "CreateDate")
+	@Column(name = "REFRESH_TOKEN")
+	public String getRefreshToken() {
+		return refreshToken;
+	}
+
+	public void setRefreshToken(String refreshToken) {
+		this.refreshToken = refreshToken;
+	}
+
+	@Column(name = "CREATE_DATE")
 	public Date getCreateDate() {
 		return createDate;
 	}
 	
 	public void setCreateDate(Date createDate) {
 		this.createDate = createDate;
+	}
+
+	@Column(name = "IS_TMC")
+	public Integer getIsTmc() {
+		return isTmc;
+	}
+
+	public void setIsTmc(Integer isTmc) {
+		this.isTmc = isTmc;
 	}
 }

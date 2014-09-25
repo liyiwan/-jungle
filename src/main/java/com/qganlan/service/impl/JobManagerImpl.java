@@ -10,12 +10,14 @@ import org.springframework.stereotype.Service;
 
 import com.qganlan.dto.GoodsDTO;
 import com.qganlan.model.ItemUpdate;
+import com.qganlan.model.JRawTrade;
 import com.qganlan.service.AccountManager;
 import com.qganlan.service.EmailManager;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.JobManager;
 import com.qganlan.service.RzcshopManager;
 import com.qganlan.service.TaobaoApiManager;
+import com.qganlan.service.TradeManager;
 import com.taobao.api.domain.Item;
 
 @Service("jobManager")
@@ -31,6 +33,8 @@ public class JobManagerImpl implements JobManager {
 	private RzcshopManager rzcshopManager;
 	@Autowired
 	private AccountManager accountManager;
+	@Autowired
+	private TradeManager tradeManager;
 
 	public void setAccountManager(AccountManager accountManager) {
 		this.accountManager = accountManager;
@@ -52,6 +56,10 @@ public class JobManagerImpl implements JobManager {
 		this.rzcshopManager = rzcshopManager;
 	}
 
+	public void setTradeManager(TradeManager tradeManager) {
+		this.tradeManager = tradeManager;
+	}
+
 	@Scheduled(initialDelay = 600000, fixedDelay = 3600000)
 	public void hourlyJob() {
 		//matchGoods();
@@ -61,6 +69,14 @@ public class JobManagerImpl implements JobManager {
 	public void dailyJob() {
 		sendAccountBalanceReport();
 		//checkGoods();
+	}
+
+	@Scheduled(cron = "0 0 12,16,17,18,19,20 * * ?")
+	public void syncLogistics() {
+		List<JRawTrade> inprogressRawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
+		for (JRawTrade aRawTrade : inprogressRawTrades) {
+			tradeManager.autoSendTrade(aRawTrade.getTid());
+		}
 	}
 
 	private void matchGoods() {

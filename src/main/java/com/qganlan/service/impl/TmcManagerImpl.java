@@ -34,7 +34,7 @@ public class TmcManagerImpl implements TmcManager {
 	}
 
 	public void run() {
-		List<String> authorizedSellers = taobaoApiManager.getAuthorizedSellers();
+		List<String> authorizedSellers = taobaoApiManager.getTmcAuthorizedSellers();
 		for (String nick : authorizedSellers) {
 			String sessionKey = taobaoApiManager.getSessionKey(nick);
 			TaobaoClient taobaoClient = new DefaultTaobaoClient(TaobaoApiManager.TAOBAO_API_URL, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), "xml");

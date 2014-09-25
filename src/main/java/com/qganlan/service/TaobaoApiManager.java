@@ -24,4 +24,5 @@ public interface TaobaoApiManager {
 	public List<TbkItem> getTbkItems(List<String> numIids);
 	public List<LogisticsCompany> getLogisticsCompanyList();
 	public boolean sendTrade(Long tid, String subTid, String invoiceNo, String companyCode, String sessionKey);
+	public List<String> getTmcAuthorizedSellers();
 }

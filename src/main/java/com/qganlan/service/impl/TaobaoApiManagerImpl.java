@@ -12,7 +12,7 @@ import org.springframework.stereotype.Service;
 import com.qganlan.dao.MyConfigDao;
 import com.qganlan.dao.TaobaoSessionKeyDao;
 import com.qganlan.model.MyConfig;
-import com.qganlan.model.TaobaoSessionKey;
+import com.qganlan.model.JTaobaoSessionKey;
 import com.qganlan.service.TaobaoApiManager;
 import com.taobao.api.ApiException;
 import com.taobao.api.DefaultTaobaoClient;
@@ -92,7 +92,7 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 	public String getSessionKey(String nick) {
 		String key = sessionKeyMap.get(nick);
 		if (key == null) {
-			TaobaoSessionKey taobaoSessionKey = taobaoSessionKeyDao.get(nick);
+			JTaobaoSessionKey taobaoSessionKey = taobaoSessionKeyDao.get(nick);
 			if (taobaoSessionKey != null) {
 				key = taobaoSessionKey.getSessionKey();
 				sessionKeyMap.put(nick, key);
@@ -103,10 +103,23 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 	
 	public List<String> getAuthorizedSellers() {
 		if (authorizedSellers == null) {
-			List<TaobaoSessionKey> keys = taobaoSessionKeyDao.getAll();
+			List<JTaobaoSessionKey> keys = taobaoSessionKeyDao.getAll();
 			authorizedSellers = new ArrayList<String>();
-			for (TaobaoSessionKey key : keys) {
+			for (JTaobaoSessionKey key : keys) {
 				authorizedSellers.add(key.getNick());
+			}
+		}
+		return authorizedSellers;
+	}
+	
+	public List<String> getTmcAuthorizedSellers() {
+		if (authorizedSellers == null) {
+			List<JTaobaoSessionKey> keys = taobaoSessionKeyDao.getAll();
+			authorizedSellers = new ArrayList<String>();
+			for (JTaobaoSessionKey key : keys) {
+				if (key.getIsTmc() == 1) {
+					authorizedSellers.add(key.getNick());
+				}
 			}
 		}
 		return authorizedSellers;
@@ -334,7 +347,7 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 		req.setCompanyCode(companyCode);
 		try {
 			LogisticsOfflineSendResponse response = taobaoClient.execute(req , sessionKey);
-			return response.isSuccess();
+			return response.getShipping() != null && response.getShipping().getIsSuccess();
 		} catch (ApiException e) {
 			e.printStackTrace();
 		}
