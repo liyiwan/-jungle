@@ -16,7 +16,9 @@
     		<td><a target="_blank" href="http://member1.taobao.com/member/fresh/deliver_address.htm" class="btn btn-primary">&#160;我的地址&#160;</a></td>
     		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="1" class="btn btn-primary">&#160;处理中订单&#160;</a></td>
     		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="2" class="btn btn-primary">&#160;一个月内订单&#160;</a></td>
-    		<td><a target="pagelink" t:type="eventlink" event="autoSendTradeAll" id="autosendtradeall" class="btn btn-primary" t:mixins="Confirm" t:message="自动同步发货单号，请确认！">&#160;自动同步发货单号&#160;</a></td>
+    		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="3" class="btn btn-primary">&#160;售后订单&#160;</a></td>
+    		<td><a target="_blank" t:type="eventlink" event="autoSendTradeAll" id="autosendtradeall" class="btn btn-primary" t:mixins="Confirm" t:message="自动同步发货单号，请确认！">&#160;自动同步发货单号&#160;</a></td>
+    		<td><a target="_blank" t:type="pagelink" page="trade/tbkshopurl" class="btn btn-primary">&#160;添加淘客链接&#160;</a></td>
     	</tr>
     </table>
     <table class="table table-striped table-hover">
@@ -25,10 +27,10 @@
     			<tr>
     				<td colspan="8">
     					<span>店铺：</span>${rawTrade.sellerNick}&#160;&#160;<span>订单号：</span>${rawTrade.tid}<br/>
-    					<span>买家：</span>${rawTrade.buyerNick}&#160;&#160;<a target="_blank" href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid=${rawTrade.buyerNick}&amp;siteid=cntaobao&amp;status=1&amp;charset=utf-8"><img border="0" src="http://amos.alicdn.com/online.aw?v=2&amp;uid=${rawTrade.buyerNick}&amp;site=cntaobao&amp;s=1&amp;charset=utf-8" alt="点这里给我发消息"/></a><br/>
+    					<span>买家：</span>${rawTrade.buyerNick}&#160;&#160;&#160;&#160;<a target="_blank" href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid=${rawTrade.buyerNick}&amp;siteid=cntaobao&amp;status=1&amp;charset=utf-8"><img border="0" src="http://amos.alicdn.com/online.aw?v=2&amp;uid=${rawTrade.buyerNick}&amp;site=cntaobao&amp;s=1&amp;charset=utf-8" alt="点这里给我发消息"/></a><br/>
 						<span>总金额：</span>${rawTrade.payment}&#160;&#160;<span>付款时间：</span>${rawTrade.payTime}<br/>
 						<span>买家留言：</span>${rawTrade.buyerMessage}<br/>
-						<span>收件地址：</span>${rawTrade.receiverName},${rawTrade.receiverMobile},${rawTrade.receiverPhone},${rawTrade.receiverState}&#160;${rawTrade.receiverCity}&#160;${rawTrade.receiverDistrict}&#160;${rawTrade.receiverAddress},${rawTrade.receiverZip}<br/>
+						<span>收件地址：</span>${rawTrade.receiverName}，${rawTrade.receiverMobile}，${rawTrade.receiverPhone}，${rawTrade.receiverState}&#160;${rawTrade.receiverCity}&#160;${rawTrade.receiverDistrict}&#160;${rawTrade.receiverAddress}，${rawTrade.receiverZip}<br/>
     				</td>
     			</tr>
     			<tr>
@@ -50,7 +52,13 @@
     					${rawOrder.outerIid}<br/>
     					${rawOrder.SkuPropertiesName}<br/>
     					<t:if test="rawOrder.providerNumIid">
-    						<a target="_blank" href="${tbkShopUrl}">${fromNick}</a>&#160;&#160;<a target="_blank" href="${buyUrl}">下单地址</a>
+    						<a target="_blank" href="${tbkShopUrl}">${fromNick}</a>&#160;&#160;&#160;&#160;<a target="_blank" href="http://www.taobao.com/webww/ww.php?ver=3&amp;touid=${fromNick}&amp;siteid=cntaobao&amp;status=1&amp;charset=utf-8"><img border="0" src="http://amos.alicdn.com/online.aw?v=2&amp;uid=${fromNick}&amp;site=cntaobao&amp;s=1&amp;charset=utf-8" alt="点这里给我发消息"/></a>&#160;&#160;&#160;&#160;<a target="_blank" href="${buyUrl}">下单地址</a>
+    					</t:if><br/>
+    					<t:if test="rawOrder.refundId">
+    						<span>退款编号：</span>${rawOrder.refundId}<br/>
+    						<span>退款状态：</span>${rawOrder.refundStatus}<br/>
+    						<span>退回快递：</span>${rawOrder.refundCompanyName}<br/>
+    						<span>快递单号：</span>${rawOrder.refundSid}<br/>
     					</t:if>
     				</td>
     				<td align="left" valign="top" style="${rowStyle2}">${price}</td>
@@ -69,6 +77,7 @@
     							<td><a target="_blank" t:type="pagelink" page="trade/fill" context="rawTrade.tid" id="filltrade" class="btn btn-primary">&#160;填单&#160;</a></td>
     							<td><a target="_blank" t:type="eventlink" event="autoSendTrade" context="rawTrade.tid" id="autosendtrade" class="btn btn-primary" t:mixins="Confirm" t:message="自动同步发货单号，请确认！">&#160;自动同步发货单号&#160;</a></td>
     							<td><a target="_blank" t:type="eventlink" event="completeTrade" context="rawTrade.tid" id="completetrade" class="btn btn-primary" t:mixins="Confirm" t:message="标记完成，请确认！">&#160;标记完成&#160;</a></td>
+    							<td><a target="_blank" t:type="eventlink" event="refundTrade" context="rawTrade.tid" id="refundtrade" class="btn btn-primary" t:mixins="Confirm" t:message="标记售后，请确认！">&#160;标记售后/更新退款状态&#160;</a></td>
     						</tr>
     					</table>
     				</td>

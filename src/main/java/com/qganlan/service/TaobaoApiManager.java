@@ -4,6 +4,7 @@ import java.util.List;
 
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.LogisticsCompany;
+import com.taobao.api.domain.Refund;
 import com.taobao.api.domain.Sku;
 import com.taobao.api.domain.TbkItem;
 import com.taobao.api.domain.Trade;
@@ -25,4 +26,5 @@ public interface TaobaoApiManager {
 	public List<LogisticsCompany> getLogisticsCompanyList();
 	public boolean sendTrade(Long tid, String subTid, String invoiceNo, String companyCode, String sessionKey);
 	public List<String> getTmcAuthorizedSellers();
+	public Refund getRefund(Long refund_id, String appKey, String appSecret, String sessionKey);
 }

@@ -8,6 +8,7 @@ import org.appfuse.dao.GenericDao;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
+import com.qganlan.model.JTbkShopUrl;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 
@@ -48,11 +49,21 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 	public List<JLogisticsCompany> getLogisticsCompanyList();
 
 	public String getLogisticsCompanyCode(String logisticsCompany);
-
-	public void markSent(Long tid);
-
-	public void markSent(Long tid, Long oid);
 	
 	public void updateLogistics(JRawOrder rawOrder);
+
+	public List<JTbkShopUrl> getTbkShopUrlList();
+
+	public void saveTbkShopUrl(String nick, String tbkUrl);
+
+	public List<JRawTrade> getReFundRawTradeList();
+
+	public void refundTrade(com.taobao.api.domain.Trade trade);
+
+	public void refundBuyerReturnGoods(Long tid, Long oid, String companyName, String sid);
+
+	public void refundCreated(Long tid, Long oid, Long refund_id);
+
+	public void setRawOrderStatus(JRawOrder rawOrder, long l);
 
 }

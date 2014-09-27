@@ -19,6 +19,7 @@ import com.taobao.api.DefaultTaobaoClient;
 import com.taobao.api.TaobaoClient;
 import com.taobao.api.domain.Item;
 import com.taobao.api.domain.LogisticsCompany;
+import com.taobao.api.domain.Refund;
 import com.taobao.api.domain.Sku;
 import com.taobao.api.domain.TbkItem;
 import com.taobao.api.domain.Trade;
@@ -26,6 +27,7 @@ import com.taobao.api.request.ItemGetRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
 import com.taobao.api.request.LogisticsCompaniesGetRequest;
 import com.taobao.api.request.LogisticsOfflineSendRequest;
+import com.taobao.api.request.RefundGetRequest;
 import com.taobao.api.request.SkusCustomGetRequest;
 import com.taobao.api.request.TbkItemsConvertRequest;
 import com.taobao.api.request.TradeFullinfoGetRequest;
@@ -34,6 +36,7 @@ import com.taobao.api.response.ItemGetResponse;
 import com.taobao.api.response.ItemsCustomGetResponse;
 import com.taobao.api.response.LogisticsCompaniesGetResponse;
 import com.taobao.api.response.LogisticsOfflineSendResponse;
+import com.taobao.api.response.RefundGetResponse;
 import com.taobao.api.response.SkusCustomGetResponse;
 import com.taobao.api.response.TbkItemsConvertResponse;
 import com.taobao.api.response.TradeFullinfoGetResponse;
@@ -352,6 +355,21 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 			e.printStackTrace();
 		}
 		return false;
+	}
+
+	@Override
+	public Refund getRefund(Long refund_id, String appKey, String appSecret, String sessionKey) {
+		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
+		RefundGetRequest req = new RefundGetRequest();
+		req.setFields("title,address,good_return_time,created,company_name,sid");
+		req.setRefundId(refund_id);
+		try {
+			RefundGetResponse response = taobaoClient.execute(req , sessionKey);
+			return response.getRefund();
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
+		return null;
 	}
 
 }

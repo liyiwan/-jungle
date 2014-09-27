@@ -5,12 +5,11 @@ import org.apache.tapestry5.json.JSONObject;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
-
+import com.taobao.api.domain.Refund;
 import com.taobao.api.domain.Trade;
 import com.taobao.api.internal.tmc.Message;
 import com.taobao.api.internal.tmc.MessageHandler;
@@ -57,6 +56,10 @@ public class DefaultMessageHandler implements MessageHandler {
             	onTradeMemoModified(message);
             } else if ("taobao_trade_TradeBuyerPay".equals(message.getTopic())) {
             	onTradeBuyerPay(message);
+            } else if ("taobao_refund_RefundCreated".equals(message.getTopic())) {
+            	onRefundCreated(message);
+            } else if ("taobao_refund_RefundBuyerReturnGoods".equals(message.getTopic())) {
+            	onRefundBuyerReturnGoods(message);
             }
         } catch (Exception e) {  
             e.printStackTrace();  
@@ -64,6 +67,35 @@ public class DefaultMessageHandler implements MessageHandler {
         }  
 	}
 	
+	private void onRefundBuyerReturnGoods(Message message) {
+		JSONObject jsonObject = new JSONObject(message.getContent());
+		String buyer_nick = jsonObject.getString("buyer_nick");
+		Long oid = jsonObject.getLong("oid");
+		String refund_fee = jsonObject.getString("refund_fee");
+		Long refund_id = jsonObject.getLong("refund_id");
+		String seller_nick = jsonObject.getString("seller_nick");
+		Long tid = jsonObject.getLong("tid");
+		try {
+			Refund refund = taobaoApiManager.getRefund(refund_id, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(seller_nick));
+			if (refund != null) {
+				tradeManager.refundBuyerReturnGoods(tid, oid, refund.getCompanyName(), refund.getSid());
+			}
+		} catch (Throwable t) {
+	    	logger.error("处理消息异常", t);
+	    }
+	}
+
+	private void onRefundCreated(Message message) {
+		JSONObject jsonObject = new JSONObject(message.getContent());
+		String buyer_nick = jsonObject.getString("buyer_nick");
+		Long oid = jsonObject.getLong("oid");
+		String refund_fee = jsonObject.getString("refund_fee");
+		Long refund_id = jsonObject.getLong("refund_id");
+		String seller_nick = jsonObject.getString("seller_nick");
+		Long tid = jsonObject.getLong("tid");
+		tradeManager.refundCreated(tid, oid, refund_id);
+	}
+
 	private void onTradeBuyerPay(Message message) {
 		
 		JSONObject jsonObject = new JSONObject(message.getContent());

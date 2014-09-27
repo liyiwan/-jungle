@@ -20,6 +20,7 @@ import com.qganlan.dto.LogisticsInfo;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
+import com.qganlan.model.JTbkShopUrl;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 import com.qganlan.service.EmailManager;
@@ -102,7 +103,7 @@ public class TradeManagerImpl implements TradeManager {
 		sb.append("<br>总金额：" + rawTrade.getPayment());
 		sb.append("&nbsp;&nbsp;付款时间：" + sdf.format(rawTrade.getPayTime()));
 		sb.append("<br>买家留言：" + (rawTrade.getBuyerMessage()==null?"":rawTrade.getBuyerMessage()));
-		sb.append("<br>收件地址：" + rawTrade.getReceiverName() + "," + (rawTrade.getReceiverMobile()==null?"":rawTrade.getReceiverMobile()) + "," + (rawTrade.getReceiverPhone()==null?"":rawTrade.getReceiverPhone()) + "," + rawTrade.getReceiverState() + " " + rawTrade.getReceiverCity() + " " + rawTrade.getReceiverDistrict() + " " + rawTrade.getReceiverAddress() + "," + rawTrade.getReceiverZip());
+		sb.append("<br>收件地址：" + rawTrade.getReceiverName() + "，" + (rawTrade.getReceiverMobile()==null?"":rawTrade.getReceiverMobile()) + "，" + (rawTrade.getReceiverPhone()==null?"":rawTrade.getReceiverPhone()) + "，" + rawTrade.getReceiverState() + " " + rawTrade.getReceiverCity() + " " + rawTrade.getReceiverDistrict() + " " + rawTrade.getReceiverAddress() + "，" + rawTrade.getReceiverZip());
 		sb.append("</td>");
 		sb.append("</tr>");
 		
@@ -291,6 +292,25 @@ public class TradeManagerImpl implements TradeManager {
 		for (JRawOrder rawOrder : rawOrders) {
 			tradeDao.fillOrder(rawOrder);
 		}
+		HashMap<Long, com.taobao.api.domain.Trade> tradeMap = new HashMap<Long, com.taobao.api.domain.Trade>();
+		for (JRawOrder rawOrder : rawOrders) {
+			if (rawOrder.getPurchaseTid() != null && !rawOrder.getPurchaseTid().equals(0L)) {
+				com.taobao.api.domain.Trade trade = tradeMap.get(rawOrder.getPurchaseTid());
+				if (trade == null) {
+					trade = taobaoApiManager.getTradeFullInfo(rawOrder.getPurchaseTid(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(rawOrder.getPurchaseNick()));
+					tradeMap.put(rawOrder.getPurchaseTid(), trade);
+				}
+				if (trade != null) {
+					if (!StringUtils.equals(trade.getReceiverName(), rawTrade.getReceiverName()) ||
+							!StringUtils.equals(trade.getReceiverMobile(), rawTrade.getReceiverMobile()) ||
+							!StringUtils.equals(trade.getReceiverState(), rawTrade.getReceiverState()) ||
+							!StringUtils.equals(trade.getReceiverCity(), rawTrade.getReceiverCity())) {
+						tradeDao.setRawOrderStatus(rawOrder, 2L);
+						System.out.println(rawOrder.getTid() + "," + rawOrder.getOid() + " 地址核对不正确");
+					}
+				}
+			}
+		}
 	}
 
 	@Override
@@ -327,8 +347,10 @@ public class TradeManagerImpl implements TradeManager {
 		JRawTrade rawTrade = tradeDao.getRawTrade(tid);
 		List<JRawOrder> rawOrders = tradeDao.getRawOrderList(tid);
 		HashMap<Long, com.taobao.api.domain.Trade> purchaseTradeMap = new HashMap<Long, com.taobao.api.domain.Trade>();
+		HashMap<Long, JRawOrder> rawOrderMap = new HashMap<Long, JRawOrder>();
 		for (JRawOrder rawOrder : rawOrders) {
-			if (rawOrder.getCurStatus() != 11) {
+			rawOrderMap.put(rawOrder.getOid(), rawOrder);
+			if (!rawOrder.getCurStatus().equals(11)) {
 				com.taobao.api.domain.Trade purchaseTrade = null;
 				String purchaseNick = rawOrder.getPurchaseNick();
 				Long purchaseTid = rawOrder.getPurchaseTid();
@@ -351,7 +373,6 @@ public class TradeManagerImpl implements TradeManager {
 						rawOrder.setInvoiceNo(invoiceNo);
 						rawOrder.setCompanyCode(companyCode);
 						rawOrder.setLogisticsCompany(logisticsCompany);
-						tradeDao.updateLogistics(rawOrder);
 					}
 				}
 			}
@@ -359,7 +380,7 @@ public class TradeManagerImpl implements TradeManager {
 		List<LogisticsInfo> logisticsInfoList = new ArrayList<LogisticsInfo>();
 		int count = 0;
 		for (JRawOrder rawOrder : rawOrders) {
-			if (rawOrder.getCurStatus() != 11) {
+			if (!rawOrder.getCurStatus().equals(11)) {
 				String outSid = rawOrder.getInvoiceNo();
 				if (outSid != null && !outSid.equals("")) {
 					count = count + 1;
@@ -392,7 +413,8 @@ public class TradeManagerImpl implements TradeManager {
 				System.out.println("发货完成:" + rawTrade.getTid() + ":" + subTid);
 				String[] aSubTid = subTid.split(",");
 				for (String oid : aSubTid) {
-					tradeDao.markSent(rawTrade.getTid(), Long.valueOf(oid));
+					JRawOrder aRawOrder = rawOrderMap.get(Long.valueOf(oid));
+					aRawOrder.setCurStatus(11);
 				}
 			}
 		} else {
@@ -403,12 +425,23 @@ public class TradeManagerImpl implements TradeManager {
 					System.out.println("发货完成:" + rawTrade.getTid() + ":" + subTid);
 					String[] aSubTid = subTid.split(",");
 					for (String oid : aSubTid) {
-						tradeDao.markSent(rawTrade.getTid(), Long.valueOf(oid));
+						JRawOrder aRawOrder = rawOrderMap.get(Long.valueOf(oid));
+						aRawOrder.setCurStatus(11);
 					}
 				}
 			}
 		}
-		tradeDao.markSent(rawTrade.getTid());
+		boolean allcomplete = true;
+		for (JRawOrder rawOrder : rawOrders) {
+			if (rawOrder.getCurStatus().equals(11)) {
+				tradeDao.updateLogistics(rawOrder);
+			} else if (allcomplete) {
+				allcomplete = false;
+			}
+		}
+		if (allcomplete) {
+			tradeDao.completeTrade(rawTrade.getTid());
+		}
 	}
 	
 	public String getLogisticsCompanyCode(String logisticsCompany) {
@@ -425,6 +458,44 @@ public class TradeManagerImpl implements TradeManager {
 		} catch (Throwable t) {
 	    	t.printStackTrace();
 	    }
+	}
+
+	@Override
+	public List<JTbkShopUrl> getTbkShopUrlList() {
+		return tradeDao.getTbkShopUrlList();
+	}
+
+	@Override
+	public void saveTbkShopUrl(String nick, String tbkUrl) {
+		tradeDao.saveTbkShopUrl(nick, tbkUrl);
+	}
+
+	@Override
+	public List<JRawTrade> getReFundRawTradeList() {
+		return tradeDao.getReFundRawTradeList();
+	}
+
+	@Override
+	public void refundTrade(Long tid) {
+		JRawTrade rawTrade = tradeDao.getRawTrade(tid);
+		try {
+			com.taobao.api.domain.Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(rawTrade.getSellerNick()));
+			if (trade != null) {
+				tradeDao.refundTrade(trade);
+			}
+		} catch (Throwable t) {
+	    	t.printStackTrace();
+	    }
+	}
+
+	@Override
+	public void refundBuyerReturnGoods(Long tid, Long oid, String companyName, String sid) {
+		tradeDao.refundBuyerReturnGoods(tid, oid, companyName, sid);
+	}
+
+	@Override
+	public void refundCreated(Long tid, Long oid, Long refund_id) {
+		tradeDao.refundCreated(tid, oid, refund_id);
 	}
 
 }

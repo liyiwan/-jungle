@@ -6,6 +6,7 @@ import java.util.List;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
+import com.qganlan.model.JTbkShopUrl;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 
@@ -46,5 +47,17 @@ public interface TradeManager {
 	public String getLogisticsCompanyCode(String logisticsCompany);
 
 	public void saveTradeFromTaobao(String nick, Long tid);
+
+	public List<JTbkShopUrl> getTbkShopUrlList();
+
+	public void saveTbkShopUrl(String nick, String tbkUrl);
+
+	public List<JRawTrade> getReFundRawTradeList();
+
+	public void refundTrade(Long tid);
+
+	public void refundBuyerReturnGoods(Long tid, Long oid, String companyName, String sid);
+
+	public void refundCreated(Long tid, Long oid, Long refund_id);
 
 }

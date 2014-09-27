@@ -16,6 +16,7 @@ import com.qganlan.model.JRawTrade;
 import com.qganlan.model.JTbkShopUrl;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
+import com.taobao.api.domain.Order;
 
 @Repository("tradeDao")
 public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implements TradeDao {
@@ -139,7 +140,7 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<JRawTrade> getRecentRawTradeList() {
-		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE CUR_STATUS <> 11 OR DATEDIFF(DAY, CONVERT(VARCHAR(100), PAY_TIME,20), GETDATE()) <=30 ORDER BY PAY_TIME DESC");
+		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE DATEDIFF(DAY, CONVERT(VARCHAR(100), PAY_TIME,20), GETDATE()) <=30 ORDER BY PAY_TIME DESC");
 		query.addEntity(JRawTrade.class);
 		return query.list();
 	}
@@ -147,8 +148,7 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<JRawTrade> getInProgressThirdPartyRawTradeList() {
-		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE CUR_STATUS <> 11 ORDER BY PAY_TIME DESC");
-		query.addEntity(JRawTrade.class);
+		Query query = getSession().createQuery("FROM JRawTrade WHERE curStatus <> 11 ORDER BY payTime DESC");
 		return query.list();
 	}
 
@@ -173,29 +173,87 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	}
 
 	@Override
-	public void markSent(Long tid) {
-		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_TRADE SET CUR_STATUS = 11 WHERE TID = :tid AND NOT EXISTS (SELECT * FROM J_RAW_ORDER WHERE CUR_STATUS <> 11 AND TID = :tid)");
-		query.setLong("tid", tid);
-		query.executeUpdate();
-	}
-
-	@Override
-	public void markSent(Long tid, Long oid) {
-		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_ORDER SET CUR_STATUS = 11 WHERE TID = :tid AND OID = :oid");
-		query.setLong("tid", tid);
-		query.setLong("oid", oid);
-		query.executeUpdate();
-	}
-
-	@Override
 	public void updateLogistics(JRawOrder rawOrder) {
-		SQLQuery query = getSession().createSQLQuery("UPDATE J_RAW_ORDER SET INVOICE_NO = :invoiceNo, COMPANY_CODE = :companyCode, LOGISTICS_COMPANY = :logisticsCompany WHERE tid = :tid AND oid = :oid");
+		Query query = getSession().createQuery("UPDATE JRawOrder SET invoiceNo = :invoiceNo, companyCode = :companyCode, logisticsCompany = :logisticsCompany, curStatus = 11 WHERE tid = :tid AND oid = :oid");
 		query.setString("invoiceNo", rawOrder.getInvoiceNo());
 		query.setString("companyCode", rawOrder.getCompanyCode());
 		query.setString("logisticsCompany", rawOrder.getLogisticsCompany());
 		query.setLong("tid", rawOrder.getTid());
 		query.setLong("oid", rawOrder.getOid());
 		query.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JTbkShopUrl> getTbkShopUrlList() {
+		Query query = getSession().createQuery("FROM JTbkShopUrl");
+		return query.list();
+	}
+
+	@Override
+	public void saveTbkShopUrl(String nick, String tbkUrl) {
+		if (nick != null) {
+			JTbkShopUrl tbkShopUrl = (JTbkShopUrl) getSession().get(JTbkShopUrl.class, nick);
+			if (tbkShopUrl == null) {
+				tbkShopUrl = new JTbkShopUrl();
+				tbkShopUrl.setNick(nick);
+				tbkShopUrl.setTbkShopUrl(tbkUrl);
+			}
+			getSession().saveOrUpdate(tbkShopUrl);
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JRawTrade> getReFundRawTradeList() {
+		Query query = getSession().createQuery("FROM JRawTrade WHERE curStatus = 3 ORDER BY payTime DESC");
+		return query.list();
+	}
+
+	@Override
+	public void refundTrade(com.taobao.api.domain.Trade trade) {
+		Query updateRawOrder = getSession().createQuery("UPDATE JRawOrder SET refundId = :refundId, refundStatus = :refundStatus WHERE tid = :tid AND oid = :oid");
+		for (Order order : trade.getOrders()) {
+			updateRawOrder.setLong("refundId", order.getRefundId());
+			updateRawOrder.setString("refundStatus", order.getRefundStatus());
+			updateRawOrder.setLong("tid", trade.getTid());
+			updateRawOrder.setLong("oid", order.getOid());
+			updateRawOrder.executeUpdate();
+		}
+		Query query = getSession().createQuery("UPDATE JRawTrade SET curStatus = 3 WHERE tid = :tid");
+		query.setLong("tid", trade.getTid());
+		query.executeUpdate();
+	}
+
+	@Override
+	public void refundBuyerReturnGoods(Long tid, Long oid, String companyName, String sid) {
+		Query updateRawOrder = getSession().createQuery("UPDATE JRawOrder SET refundCompanyName = :refundCompanyName, refundSid = :refundSid WHERE tid = :tid AND oid = :oid");
+		updateRawOrder.setString("refundCompanyName", companyName);
+		updateRawOrder.setString("refundSid", sid);
+		updateRawOrder.setLong("tid", tid);
+		updateRawOrder.setLong("oid", oid);
+		updateRawOrder.executeUpdate();
+	}
+
+	@Override
+	public void refundCreated(Long tid, Long oid, Long refund_id) {
+		Query updateRawOrder = getSession().createQuery("UPDATE JRawOrder SET refundId = :refundId WHERE tid = :tid AND oid = :oid");
+		updateRawOrder.setLong("refundId", refund_id);
+		updateRawOrder.setLong("tid", tid);
+		updateRawOrder.setLong("oid", oid);
+		updateRawOrder.executeUpdate();
+		Query updateRawTrade = getSession().createQuery("UPDATE JRawTrade SET curStatus = 3 WHERE tid = :tid AND curStatus <> 3");
+		updateRawTrade.setLong("tid", tid);
+		updateRawTrade.executeUpdate();
+	}
+
+	@Override
+	public void setRawOrderStatus(JRawOrder rawOrder, long l) {
+		Query updateRawTrade = getSession().createQuery("UPDATE JRawOrder SET curStatus = :curStatus WHERE tid = :tid AND oid = :oid");
+		updateRawTrade.setLong("tid", rawOrder.getTid());
+		updateRawTrade.setLong("oid", rawOrder.getOid());
+		updateRawTrade.setLong("curStatus", l);
+		updateRawTrade.executeUpdate();
 	}
 
 }

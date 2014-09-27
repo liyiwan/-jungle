@@ -289,4 +289,48 @@ public class JRawOrder implements Serializable {
 	public void setPurchaseTid(Long purchaseTid) {
 		this.purchaseTid = purchaseTid;
 	}
+	
+	private Long refundId;
+	
+	@Column(name = "REFUND_ID")
+	public Long getRefundId() {
+		return refundId;
+	}
+
+	public void setRefundId(Long refundId) {
+		this.refundId = refundId;
+	}
+
+	private String refundStatus;
+
+	@Column(name = "REFUND_STATUS")
+	public String getRefundStatus() {
+		return refundStatus;
+	}
+
+	public void setRefundStatus(String refundStatus) {
+		this.refundStatus = refundStatus;
+	}
+
+	private String refundCompanyName;
+
+	@Column(name = "REFUND_COMPANY_NAME")
+	public String getRefundCompanyName() {
+		return refundCompanyName;
+	}
+
+	public void setRefundCompanyName(String refundCompanyName) {
+		this.refundCompanyName = refundCompanyName;
+	} 
+	
+	private String refundSid;
+
+	@Column(name = "REFUND_SID")
+	public String getRefundSid() {
+		return refundSid;
+	}
+
+	public void setRefundSid(String refundSid) {
+		this.refundSid = refundSid;
+	}
 }

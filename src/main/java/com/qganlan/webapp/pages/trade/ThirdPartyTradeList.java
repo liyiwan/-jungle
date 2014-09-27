@@ -42,8 +42,10 @@ public class ThirdPartyTradeList {
 	public void setUpRender() {
 		if (type == 1) {
 			rawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
-		} else {
+		} else if (type == 2) {
 			rawTrades = tradeManager.getRecentRawTradeList();
+		} else if (type == 3) {
+			rawTrades = tradeManager.getReFundRawTradeList();
 		}
 	}
 	
@@ -79,6 +81,10 @@ public class ThirdPartyTradeList {
 		tradeManager.completeTrade(tid);
 	}
 	
+	public void onRefundTrade(Long tid) {
+		tradeManager.refundTrade(tid);
+	}
+	
 	public String getRowStyle() {
 		if (rawTrade.getCurStatus().equals(11)) {
 			return "background-color:#dddddd";
@@ -88,7 +94,11 @@ public class ThirdPartyTradeList {
 	}
 	
 	public String getRowStyle2() {
-		if (rawOrder.getPurchaseNick() != null && !rawOrder.getPurchaseNick().equals("") && rawOrder.getPurchaseTid() != null && !rawOrder.getPurchaseTid().equals("")) {
+		if (rawOrder.getCurStatus().equals(11)) {
+			return "background-color:#dddddd";
+		} else if (rawOrder.getCurStatus().equals(2)) {
+			return "background-color:#ffb2b2";
+		} else if (rawOrder.getPurchaseNick() != null && !rawOrder.getPurchaseNick().equals("") && rawOrder.getPurchaseTid() != null && !rawOrder.getPurchaseTid().equals("")) {
 			return "background-color:#FFEC8B";
 		} else if (rawOrder.getProviderNumIid() == null) {
 			return "background-color:#dddddd";
