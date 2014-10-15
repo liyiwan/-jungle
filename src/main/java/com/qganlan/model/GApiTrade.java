@@ -33,7 +33,7 @@ public class GApiTrade {
 	private String phone;
 	private String mobile;
 	private String email;
-	private Integer tradeId;
+	private Long tradeId;
 	private String customerRemark;
 	private String remark;
 	private BigDecimal postFee;
@@ -252,11 +252,11 @@ public class GApiTrade {
 	}
 
 	@Column(name = "TradeID")
-	public Integer getTradeId() {
+	public Long getTradeId() {
 		return this.tradeId;
 	}
 
-	public void setTradeId(Integer tradeId) {
+	public void setTradeId(Long tradeId) {
 		this.tradeId = tradeId;
 	}
 

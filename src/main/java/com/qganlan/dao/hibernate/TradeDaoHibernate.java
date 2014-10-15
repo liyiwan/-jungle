@@ -12,6 +12,7 @@ import org.springframework.stereotype.Repository;
 import com.qganlan.dao.TradeDao;
 import com.qganlan.model.GApiTrade;
 import com.qganlan.model.GApiTradeGoods;
+import com.qganlan.model.GCfgLogistics;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -310,4 +311,35 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 		return null;
 	}
 
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<GApiTrade> getApiTradeForSyncLogistics() {
+		Query query = getSession().createQuery("FROM GApiTrade WHERE synStatus = 0 OR synStatus = 1");
+		return query.list();
+	}
+
+	@Override
+	public Trade getTradeByTradeID(Long tradeId) {
+		return (Trade) getSession().get(Trade.class, tradeId);
+	}
+
+	@Override
+	public GCfgLogistics getGCfgLogistics(Long logisticsId) {
+		return (GCfgLogistics) getSession().get(GCfgLogistics.class, logisticsId);
+	}
+
+	@Override
+	public void updateLogisticsSuccess(GApiTrade apiTrade) {
+		Query query = getSession().createQuery("UPDATE GApiTrade SET synStatus = 4 WHERE billId = :billId");
+		query.setLong("billId", apiTrade.getBillId());
+		query.executeUpdate();
+	}
+
+	@Override
+	public void updateLogisticsFail(GApiTrade apiTrade) {
+		Query query = getSession().createQuery("UPDATE GApiTrade SET synStatus = 2, synCause = :synCause WHERE billId = :billId");
+		query.setLong("billId", apiTrade.getBillId());
+		query.setString("synCause", "发货同步失败，请手工发货。");
+		query.executeUpdate();
+	}
 }

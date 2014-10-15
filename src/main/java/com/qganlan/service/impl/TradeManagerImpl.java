@@ -20,6 +20,7 @@ import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.LogisticsInfo;
 import com.qganlan.model.GApiTrade;
 import com.qganlan.model.GApiTradeGoods;
+import com.qganlan.model.GCfgLogistics;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -591,7 +592,7 @@ public class TradeManagerImpl implements TradeManager {
 		apiTrade.setSynStatus(0);
 		apiTrade.setTotalMoney(new BigDecimal(trade.getPayment()));
 		apiTrade.setTown(trade.getReceiverDistrict());
-		apiTrade.setTradeId(0);
+		apiTrade.setTradeId(0L);
 		apiTrade.setTradeNo(trade.getTid()+"");
 		apiTrade.setTradeStatus("买家已付款");
 		apiTrade.setTradeTime(trade.getCreated());
@@ -631,6 +632,30 @@ public class TradeManagerImpl implements TradeManager {
 			}
 			apiTradeGoods.setTradeGoodsSpec(order.getSkuPropertiesName());
 			tradeDao.saveApiTradeGoods(apiTradeGoods);
+		}
+	}
+
+	@Override
+	public List<GApiTrade> getApiTradeForSyncLogistics() {
+		return tradeDao.getApiTradeForSyncLogistics();
+	}
+
+	@Override
+	public void syncLogistics(GApiTrade apiTrade) {
+		Trade trade = tradeDao.getTradeByTradeID(apiTrade.getTradeId());
+		if (trade != null && trade.getTradeStatus().equals(11)) {
+			String invoiceNo = trade.getPostId();
+			Long logisticsId = trade.getLogisticId();
+			GCfgLogistics cfgLogistics = tradeDao.getGCfgLogistics(logisticsId);
+			String companyCode = cfgLogistics.getTaobaoCompanyCode();
+			boolean isSuccess = taobaoApiManager.sendTrade(Long.valueOf(apiTrade.getTradeNo()), null, invoiceNo, companyCode, taobaoApiManager.getSessionKey(apiTrade.getSeller()));
+			if (isSuccess) {
+				System.out.println("发货完成: " + apiTrade.getSeller() + " " + apiTrade.getTradeNo() + " " + apiTrade.getCustomerId());
+				tradeDao.updateLogisticsSuccess(apiTrade);
+			} else {
+				System.out.println("发货失败: " + apiTrade.getSeller() + " " + apiTrade.getTradeNo() + " " + apiTrade.getCustomerId());
+				tradeDao.updateLogisticsFail(apiTrade);
+			}
 		}
 	}
 

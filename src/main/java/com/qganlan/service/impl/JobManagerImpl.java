@@ -9,6 +9,7 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
 import com.qganlan.dto.GoodsDTO;
+import com.qganlan.model.GApiTrade;
 import com.qganlan.model.ItemUpdate;
 import com.qganlan.model.JRawTrade;
 import com.qganlan.service.AccountManager;
@@ -76,6 +77,10 @@ public class JobManagerImpl implements JobManager {
 		List<JRawTrade> inprogressRawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
 		for (JRawTrade aRawTrade : inprogressRawTrades) {
 			tradeManager.autoSendTrade(aRawTrade.getTid());
+		}
+		List<GApiTrade> apiTrades = tradeManager.getApiTradeForSyncLogistics();
+		for (GApiTrade apiTrade : apiTrades) {
+			tradeManager.syncLogistics(apiTrade);
 		}
 	}
 

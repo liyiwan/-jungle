@@ -7,6 +7,7 @@ import org.appfuse.dao.GenericDao;
 
 import com.qganlan.model.GApiTrade;
 import com.qganlan.model.GApiTradeGoods;
+import com.qganlan.model.GCfgLogistics;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -77,5 +78,15 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 	public void saveApiTradeGoods(GApiTradeGoods apiTradeGoods);
 
 	public GApiTrade getApiTrade(Long tid);
+
+	public List<GApiTrade> getApiTradeForSyncLogistics();
+
+	public Trade getTradeByTradeID(Long tradeId);
+
+	public GCfgLogistics getGCfgLogistics(Long logisticsId);
+
+	public void updateLogisticsSuccess(GApiTrade apiTrade);
+
+	public void updateLogisticsFail(GApiTrade apiTrade);
 
 }

@@ -3,6 +3,7 @@ package com.qganlan.service;
 import java.util.Date;
 import java.util.List;
 
+import com.qganlan.model.GApiTrade;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -63,5 +64,9 @@ public interface TradeManager {
 	public List<JRawTrade> getPendingThirdPartyRawTradeList();
 
 	public void saveTaobaoTrade(com.taobao.api.domain.Trade trade);
+
+	public List<GApiTrade> getApiTradeForSyncLogistics();
+
+	public void syncLogistics(GApiTrade apiTrade);
 
 }
