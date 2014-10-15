@@ -314,7 +314,7 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 	@SuppressWarnings("unchecked")
 	@Override
 	public List<GApiTrade> getApiTradeForSyncLogistics() {
-		Query query = getSession().createQuery("FROM GApiTrade WHERE synStatus = 0 OR synStatus = 1");
+		Query query = getSession().createQuery("FROM GApiTrade WHERE curStatus = 4 AND (synStatus = 0 OR synStatus = 1)");
 		return query.list();
 	}
 
