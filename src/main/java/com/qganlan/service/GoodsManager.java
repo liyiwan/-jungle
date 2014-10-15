@@ -30,4 +30,5 @@ public interface GoodsManager {
 	public void deleteItemUpdate(ItemUpdate itemUpdate);
 	public void saveItemUpdate(ItemUpdate itemUpdate);
 	public List<ThirdPartyGoods> getTirdPartyGoodsList();
+	public GoodsSpecDTO getGoodsSpec(String outerSkuId);
 }

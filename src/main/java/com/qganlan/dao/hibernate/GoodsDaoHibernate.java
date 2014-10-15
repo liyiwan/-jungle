@@ -350,4 +350,10 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		query.setResultTransformer(Transformers.aliasToBean(ThirdPartyGoods.class));
 		return query.list();
 	}
+
+	@Override
+	public GoodsSpecDTO getGoodsSpec(String outerId) {
+		// TODO Auto-generated method stub
+		return null;
+	}
 }

@@ -5,6 +5,8 @@ import java.util.List;
 
 import org.appfuse.dao.GenericDao;
 
+import com.qganlan.model.GApiTrade;
+import com.qganlan.model.GApiTradeGoods;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -65,5 +67,15 @@ public interface TradeDao extends GenericDao<Trade, Long> {
 	public void refundCreated(Long tid, Long oid, Long refund_id);
 
 	public void setRawOrderStatus(JRawOrder rawOrder, long l);
+
+	public List<JRawTrade> getPendingThirdPartyRawTradeList();
+
+	public Long getNextTradeBillId();
+
+	public void saveApiTrade(GApiTrade apiTrade);
+
+	public void saveApiTradeGoods(GApiTradeGoods apiTradeGoods);
+
+	public GApiTrade getApiTrade(Long tid);
 
 }

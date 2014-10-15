@@ -25,6 +25,9 @@
         <mapping class="com.qganlan.model.JRawOrder"/>
         <mapping class="com.qganlan.model.JTbkShopUrl"/>
         <mapping class="com.qganlan.model.JLogisticsCompany"/>
+        <mapping class="com.qganlan.model.GApiTrade"/>
+        <mapping class="com.qganlan.model.GApiTradeGoods"/>
+        <mapping class="com.qganlan.model.GSysCreateNo"/>
         <mapping resource="stock.hbm.xml"/>
         <mapping resource="goods.hbm.xml"/>
         <mapping resource="trade.hbm.xml"/>

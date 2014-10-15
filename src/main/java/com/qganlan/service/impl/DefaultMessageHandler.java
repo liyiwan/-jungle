@@ -97,16 +97,20 @@ public class DefaultMessageHandler implements MessageHandler {
 	}
 
 	private void onTradeBuyerPay(Message message) {
-		
 		JSONObject jsonObject = new JSONObject(message.getContent());
 		String sellerNick = jsonObject.getString("seller_nick");
 		Long tid = jsonObject.getLong("tid");
 		try {
 			Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(sellerNick));
 			if (trade != null) {
+				System.out.println("有订单付款 tid=" + trade.getTid() + " sellerNick=" + trade.getSellerNick() + " buyerNick=" + trade.getBuyerNick());
 				JRawTrade rawTrade = tradeManager.recordThirdPartyTrade(trade);
-				tradeManager.notifyByEmail(rawTrade);
-				
+				if (rawTrade != null) {
+					tradeManager.notifyByEmail(rawTrade);
+				}
+				if (trade.getSellerNick().equals("小脚丫商城") || trade.getSellerNick().equals("lingixge")) {
+					tradeManager.saveTaobaoTrade(trade);
+				}
 			}
 		} catch (Throwable t) {
 	    	logger.error("处理消息异常", t);

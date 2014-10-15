@@ -40,7 +40,9 @@ public class ThirdPartyTradeList {
 	private String nick;
 	
 	public void setUpRender() {
-		if (type == 1) {
+		if (type == 0) {
+			rawTrades = tradeManager.getPendingThirdPartyRawTradeList();
+		} else if (type == 1) {
 			rawTrades = tradeManager.getInProgressThirdPartyRawTradeList();
 		} else if (type == 2) {
 			rawTrades = tradeManager.getRecentRawTradeList();

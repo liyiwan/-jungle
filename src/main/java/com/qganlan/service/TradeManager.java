@@ -60,4 +60,8 @@ public interface TradeManager {
 
 	public void refundCreated(Long tid, Long oid, Long refund_id);
 
+	public List<JRawTrade> getPendingThirdPartyRawTradeList();
+
+	public void saveTaobaoTrade(com.taobao.api.domain.Trade trade);
+
 }

@@ -16,14 +16,20 @@ import org.springframework.stereotype.Service;
 
 import com.qganlan.common.TbkUtil;
 import com.qganlan.dao.TradeDao;
+import com.qganlan.dto.GoodsSpecDTO;
 import com.qganlan.dto.LogisticsInfo;
+import com.qganlan.model.GApiTrade;
+import com.qganlan.model.GApiTradeGoods;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
 import com.qganlan.model.JTbkShopUrl;
+import com.qganlan.model.Shop;
 import com.qganlan.model.Trade;
 import com.qganlan.model.TradeGoods;
 import com.qganlan.service.EmailManager;
+import com.qganlan.service.GoodsManager;
+import com.qganlan.service.ShopManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
 import com.taobao.api.domain.Item;
@@ -42,6 +48,24 @@ public class TradeManagerImpl implements TradeManager {
 	@Autowired
 	private EmailManager emailManager;
 	
+	@Autowired
+	private GoodsManager goodsManager;
+	
+	@Autowired
+	private ShopManager shopManager;
+	
+	public void setShopManager(ShopManager shopManager) {
+		this.shopManager = shopManager;
+	}
+
+	public void setGoodsManager(GoodsManager goodsManager) {
+		this.goodsManager = goodsManager;
+	}
+
+	public TaobaoApiManager getTaobaoApiManager() {
+		return taobaoApiManager;
+	}
+
 	public void setTaobaoApiManager(TaobaoApiManager taobaoApiManager) {
 		this.taobaoApiManager = taobaoApiManager;
 	}
@@ -183,7 +207,7 @@ public class TradeManagerImpl implements TradeManager {
 		
 		String subject = "交易通知【" + rawTrade.getSellerNick() + "】：" + rawTrade.getBuyerNick() + " " + rawTrade.getTid() + " " + rawTrade.getPayment();
 		String content = sb.toString();
-		String[] toMails = { "9394908@qq.com", "1043436304@qq.com"};
+		String[] toMails = { "9394908@qq.com", "1043436304@qq.com", "19647746@qq.com"};
 		for (String mail : toMails) {
 			if ("丹丹284272539".equals(rawTrade.getSellerNick()) && !mail.equals("9394908@qq.com")) {
 				continue;
@@ -203,8 +227,12 @@ public class TradeManagerImpl implements TradeManager {
 	}
 	
 	public JRawTrade  recordThirdPartyTrade(com.taobao.api.domain.Trade trade) {
+		JRawTrade rawTrade = tradeDao.getRawTrade(trade.getTid());
+		if (rawTrade != null) {
+			return null;
+		}
 		boolean record = false;
-		JRawTrade rawTrade = new JRawTrade();
+		rawTrade = new JRawTrade();
 		BeanCopier tradeCopier = BeanCopier.create(trade.getClass(), rawTrade.getClass(), false);
 		tradeCopier.copy(trade, rawTrade, null);
 		rawTrade.setCurStatus(0);
@@ -218,27 +246,35 @@ public class TradeManagerImpl implements TradeManager {
 			orderCopier.copy(order, rawOrder, null);
 			rawOrder.setTid(rawTrade.getTid());
 			rawOrder.setCurStatus(0);
+
+			String[] id = order.getOuterIid().split("-");
+			String outerNumIid = null;
+			if (id.length == 2) {
+				outerNumIid = id[1];
+			} else if (id.length == 1) {
+				outerNumIid = id[0];
+			}
+			if (StringUtils.isNumeric(outerNumIid)) {
+				Item item = itemMap.get(outerNumIid);
+				if (item == null) { 
+					item = taobaoApiManager.getTaobaoItemByNumIid(Long.valueOf(outerNumIid), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), null);
+					itemMap.put(outerNumIid, item);
+				}
+				if (item != null) {
+					String nick = item.getNick();
+					rawOrder.setProviderNick(nick);
+					rawOrder.setProviderNumIid(item.getNumIid());
+				}
+			}
+
+			rawOrders.add(rawOrder);
 			
-			if (order.getOuterIid() != null && (order.getOuterIid().toUpperCase().startsWith("ID-") || order.getOuterIid().toUpperCase().startsWith("TB-") || order.getOuterIid().toUpperCase().startsWith("TM-"))) {
-				String[] id = order.getOuterIid().split("-");
-				if (id.length == 2) {
-					String outerNumIid = id[1];
-					if (StringUtils.isNumeric(outerNumIid)) {
-						Item item = itemMap.get(outerNumIid);
-						if (item == null) { 
-							item = taobaoApiManager.getTaobaoItemByNumIid(Long.valueOf(outerNumIid), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), null);
-							itemMap.put(outerNumIid, item);
-						}
-						if (item != null) {
-							String nick = item.getNick();
-							rawOrder.setProviderNick(nick);
-							rawOrder.setProviderNumIid(item.getNumIid());
-						}
-					}
+			if (!record) {
+				if (trade.getSellerNick().equals("dwf306") || trade.getSellerNick().equals("janny0293") || trade.getSellerNick().equals("狐狐屋")) {
+					record = true;
 				}
 			}
 			
-			rawOrders.add(rawOrder);
 			if (!record && order.getOuterIid() != null) {
 				String outerIid = order.getOuterIid().toUpperCase();
 				if (outerIid.startsWith("ID-") || outerIid.startsWith("TB-") || outerIid.startsWith("TM-")) {
@@ -454,6 +490,7 @@ public class TradeManagerImpl implements TradeManager {
 			com.taobao.api.domain.Trade trade = taobaoApiManager.getTradeFullInfo(tid, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey(nick));
 			if (trade != null) {
 				recordThirdPartyTrade(trade);
+				saveTaobaoTrade(trade);
 			}
 		} catch (Throwable t) {
 	    	t.printStackTrace();
@@ -496,6 +533,105 @@ public class TradeManagerImpl implements TradeManager {
 	@Override
 	public void refundCreated(Long tid, Long oid, Long refund_id) {
 		tradeDao.refundCreated(tid, oid, refund_id);
+	}
+
+	@Override
+	public List<JRawTrade> getPendingThirdPartyRawTradeList() {
+		return tradeDao.getPendingThirdPartyRawTradeList();
+	}
+
+	@Override
+	public void saveTaobaoTrade(com.taobao.api.domain.Trade trade) {
+		GApiTrade apiTrade = tradeDao.getApiTrade(trade.getTid());
+		if (apiTrade != null) {
+			return;
+		}
+		Long billId = tradeDao.getNextTradeBillId();
+		apiTrade = new GApiTrade();
+		apiTrade.setBillId(billId);
+		apiTrade.setAdr(trade.getReceiverState() + " " + trade.getReceiverCity() + " " + trade.getReceiverDistrict() + " " + trade.getReceiverAddress());
+		apiTrade.setApitype(1);
+		apiTrade.setBbrandSale(false);
+		apiTrade.setBdelayForOrder(false);
+		apiTrade.setBdelayForRemark(false);
+		apiTrade.setBfx(false);
+		apiTrade.setBsplit(false);
+		apiTrade.setBsoldOver(false);
+		apiTrade.setBwlb(false);
+		apiTrade.setCity(trade.getReceiverCity());
+		apiTrade.setCodserviceFee(BigDecimal.ZERO);
+		apiTrade.setCurStatus(2);
+		apiTrade.setCustomerId(trade.getBuyerNick());
+		apiTrade.setCustomerName(trade.getReceiverName());
+		apiTrade.setCustomerRemark(trade.getBuyerMessage());
+		apiTrade.setDrawBack(0);
+		apiTrade.setDtimeStamp(0.0);
+		apiTrade.setEmail(trade.getBuyerEmail());
+		apiTrade.setFavourableMoney(BigDecimal.ZERO);
+		apiTrade.setFromId(1);
+		apiTrade.setGetTime(new Date());
+		apiTrade.setGoodsFee(new BigDecimal(trade.getPayment()));
+		apiTrade.setMobile(trade.getReceiverMobile());
+		apiTrade.setPayAccount(trade.getBuyerAlipayNo());
+		apiTrade.setPayId(trade.getAlipayNo());
+		apiTrade.setPayTime(trade.getPayTime());
+		apiTrade.setPhone(trade.getReceiverPhone());
+		apiTrade.setPostFee(BigDecimal.ZERO);
+		apiTrade.setProvince(trade.getReceiverState());
+		apiTrade.setRemark(trade.getSellerMemo());
+		apiTrade.setRemind(false);
+		apiTrade.setSeller(trade.getSellerNick());
+		Shop shop = shopManager.getShopByNick(trade.getSellerNick());
+		if (shop != null) {
+			apiTrade.setShopId(shop.getShopId());
+		} else {
+			apiTrade.setShopId(1000L);
+		}
+		apiTrade.setSndStyle("快递");
+		apiTrade.setSynStatus(0);
+		apiTrade.setTotalMoney(new BigDecimal(trade.getPayment()));
+		apiTrade.setTown(trade.getReceiverDistrict());
+		apiTrade.setTradeId(0);
+		apiTrade.setTradeNo(trade.getTid()+"");
+		apiTrade.setTradeStatus("买家已付款");
+		apiTrade.setTradeTime(trade.getCreated());
+		apiTrade.setTradeType("零售业务");
+		apiTrade.setZip(trade.getReceiverZip());
+		apiTrade.setPhone(trade.getReceiverPhone());
+		apiTrade.setCountry("");
+		apiTrade.setChargeType("");
+		apiTrade.setQq("");
+		apiTrade.setInvoiceTitle("");
+		apiTrade.setSynCause("");
+		apiTrade.setSummary("");
+		tradeDao.saveApiTrade(apiTrade);
+		for (Order order : trade.getOrders()) {
+			GApiTradeGoods apiTradeGoods = new GApiTradeGoods();
+			apiTradeGoods.setBfit(false);
+			apiTradeGoods.setBillId(apiTrade.getBillId());
+			apiTradeGoods.setOid(order.getOid()+"");
+			apiTradeGoods.setCurStatus(0);
+			apiTradeGoods.setDiscountMoney(BigDecimal.ZERO);
+			apiTradeGoods.setGoodsCount(order.getNum());
+			apiTradeGoods.setIsOversold(false);
+			apiTradeGoods.setPrice(new BigDecimal(order.getPrice()));
+			apiTradeGoods.setTradeGoodsName(order.getTitle());
+			GoodsSpecDTO goodsSpec = null;
+			if (order.getOuterSkuId() != null && !order.getOuterSkuId().equals("")) {
+				apiTradeGoods.setTradeGoodsNo(order.getOuterSkuId());
+				goodsSpec = goodsManager.getGoodsSpec(order.getOuterSkuId());
+			} else if (order.getOuterIid() != null && !order.getOuterIid().equals("")) {
+				apiTradeGoods.setTradeGoodsNo(order.getOuterIid());
+				goodsSpec = goodsManager.getGoodsSpec(order.getOuterIid());
+			}
+			if (goodsSpec != null) {
+				apiTradeGoods.setGoodsId(goodsSpec.getGoodsId());
+				apiTradeGoods.setGoodsSpec(goodsSpec.getSpecName());
+				apiTradeGoods.setSpecId(goodsSpec.getSpecId());
+			}
+			apiTradeGoods.setTradeGoodsSpec(order.getSkuPropertiesName());
+			tradeDao.saveApiTradeGoods(apiTradeGoods);
+		}
 	}
 
 }

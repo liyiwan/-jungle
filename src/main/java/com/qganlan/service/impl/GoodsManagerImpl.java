@@ -288,4 +288,9 @@ public class GoodsManagerImpl implements GoodsManager {
 	public List<ThirdPartyGoods> getTirdPartyGoodsList() {
 		return goodsDao.getThirdPartyGoodsList();
 	}
+
+	@Override
+	public GoodsSpecDTO getGoodsSpec(String outerId) {
+		return goodsDao.getGoodsSpecBySkuOuterId(outerId);
+	}
 }

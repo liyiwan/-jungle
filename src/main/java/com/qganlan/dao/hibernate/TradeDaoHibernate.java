@@ -10,6 +10,8 @@ import org.hibernate.SQLQuery;
 import org.springframework.stereotype.Repository;
 
 import com.qganlan.dao.TradeDao;
+import com.qganlan.model.GApiTrade;
+import com.qganlan.model.GApiTradeGoods;
 import com.qganlan.model.JLogisticsCompany;
 import com.qganlan.model.JRawOrder;
 import com.qganlan.model.JRawTrade;
@@ -254,6 +256,58 @@ public class TradeDaoHibernate extends GenericDaoHibernate<Trade, Long> implemen
 		updateRawTrade.setLong("oid", rawOrder.getOid());
 		updateRawTrade.setLong("curStatus", l);
 		updateRawTrade.executeUpdate();
+	}
+
+	@SuppressWarnings("unchecked")
+	@Override
+	public List<JRawTrade> getPendingThirdPartyRawTradeList() {
+		SQLQuery query = getSession().createSQLQuery("SELECT * FROM J_RAW_TRADE WHERE CUR_STATUS <> 11 AND EXISTS (SELECT * FROM J_RAW_ORDER WHERE TID = J_RAW_TRADE.TID AND ((PURCHASE_NICK IS NULL OR PURCHASE_NICK = '') OR (PURCHASE_TID IS NULL OR PURCHASE_TID = 0))) ORDER BY PAY_TIME DESC");
+		query.addEntity(JRawTrade.class);
+		return query.list();
+	}
+
+	private Object billIdLock = new Object();
+	@Override
+	public Long getNextTradeBillId() {
+		synchronized(billIdLock) {
+			Query query = getSession().createQuery("SELECT curNo + 1 FROM GSysCreateNo WHERE tableName = 'G_API_TradeList' AND fieldName = 'BillID'");
+			Long no1 = (Long) query.uniqueResult();
+			if (no1 == null) {
+				no1 = 1L;
+			}
+			query = getSession().createQuery("SELECT MAX(billId) + 1 FROM GApiTrade");
+			Long no2 = (Long) query.uniqueResult();
+			if (no2 == null) {
+				no2 = 1L;
+			}
+			Long no = no1 > no2 ? no1 : no2;
+			query = getSession().createQuery("UPDATE GSysCreateNo SET curNo = :curNo WHERE tableName = 'G_API_TradeList' AND fieldName = 'BillID'");
+			query.setLong("curNo", no);
+			query.executeUpdate();
+			return no;
+		}
+	}
+
+	@Override
+	public void saveApiTrade(GApiTrade apiTrade) {
+		getSession().save(apiTrade);		
+	}
+
+	@Override
+	public void saveApiTradeGoods(GApiTradeGoods apiTradeGoods) {
+		getSession().save(apiTradeGoods);
+	}
+
+	@SuppressWarnings("rawtypes")
+	@Override
+	public GApiTrade getApiTrade(Long tid) {
+		Query query = getSession().createQuery("FROM GApiTrade WHERE tradeNo = :tradeNo");
+		query.setString("tradeNo", tid+"");
+		List l = query.list();
+		if (l.size() > 0) {
+			return (GApiTrade) l.get(0);
+		}
+		return null;
 	}
 
 }

@@ -14,6 +14,7 @@
     <table>
     	<tr>
     		<td><a target="_blank" href="http://member1.taobao.com/member/fresh/deliver_address.htm" class="btn btn-primary">&#160;我的地址&#160;</a></td>
+    		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="0" class="btn btn-primary">&#160;待下单&#160;</a></td>
     		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="1" class="btn btn-primary">&#160;处理中订单&#160;</a></td>
     		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="2" class="btn btn-primary">&#160;一个月内订单&#160;</a></td>
     		<td><a t:type="pagelink" page="trade/thirdpartytradelist" context="3" class="btn btn-primary">&#160;售后订单&#160;</a></td>
@@ -61,7 +62,7 @@
     						<span>快递单号：</span>${rawOrder.refundSid}<br/>
     					</t:if>
     				</td>
-    				<td align="left" valign="top" style="${rowStyle2}">${price}</td>
+    				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.price}</td>
     				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.num}</td>
     				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.payment}</td>
     				<td align="left" valign="top" style="${rowStyle2}">${rawOrder.purchaseNick}</td>

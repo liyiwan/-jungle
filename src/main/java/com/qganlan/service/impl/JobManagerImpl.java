@@ -120,7 +120,7 @@ public class JobManagerImpl implements JobManager {
 	private void sendAccountBalanceReport() {
 		try {
 			String content = accountManager.getHtmlAccountBalanceReport();
-			String[] receivers = new String[] {"1106628276@qq.com", "9394908@qq.com", "dwf306@sina.com"};
+			String[] receivers = new String[] {"1106628276@qq.com", "9394908@qq.com", "dwf306@sina.com", "19647746@qq.com"};
 			SimpleDateFormat sdf = new SimpleDateFormat("yyyyMMdd");
 			emailManager.sentHtml("今日账户报表" + sdf.format(new Date()), content, receivers);
 			System.out.println("今日账户报表发送成功");
