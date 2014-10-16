@@ -576,7 +576,7 @@ public class TradeManagerImpl implements TradeManager {
 		apiTrade.setPayAccount(trade.getBuyerAlipayNo());
 		apiTrade.setPayId(trade.getAlipayNo());
 		apiTrade.setPayTime(trade.getPayTime());
-		apiTrade.setPhone(trade.getReceiverPhone());
+		apiTrade.setPhone(trade.getReceiverMobile() + " " + trade.getReceiverPhone());
 		apiTrade.setPostFee(BigDecimal.ZERO);
 		apiTrade.setProvince(trade.getReceiverState());
 		apiTrade.setRemark(trade.getSellerMemo());
@@ -598,7 +598,6 @@ public class TradeManagerImpl implements TradeManager {
 		apiTrade.setTradeTime(trade.getCreated());
 		apiTrade.setTradeType("零售业务");
 		apiTrade.setZip(trade.getReceiverZip());
-		apiTrade.setPhone(trade.getReceiverPhone());
 		apiTrade.setCountry("");
 		apiTrade.setChargeType("");
 		apiTrade.setQq("");

@@ -10,7 +10,7 @@ import javax.persistence.Table;
 @Table(name = "G_Cfg_LogisticList")
 public class GCfgLogistics {
 
-	private int logisticId;
+	private Long logisticId;
 	private String name;
 	private String linkMan;
 	private String tel;
@@ -30,11 +30,11 @@ public class GCfgLogistics {
 
 	@Id
 	@Column(name = "LogisticID", unique = true, nullable = false)
-	public int getLogisticId() {
+	public Long getLogisticId() {
 		return this.logisticId;
 	}
 
-	public void setLogisticId(int logisticId) {
+	public void setLogisticId(Long logisticId) {
 		this.logisticId = logisticId;
 	}
 

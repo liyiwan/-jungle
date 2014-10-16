@@ -27,4 +27,5 @@ public interface TaobaoApiManager {
 	public boolean sendTrade(Long tid, String subTid, String invoiceNo, String companyCode, String sessionKey);
 	public List<String> getTmcAuthorizedSellers();
 	public Refund getRefund(Long refund_id, String appKey, String appSecret, String sessionKey);
+	public void updateItemQuantity(Long numIid, Long skuIid, Long quantity, String appKey, String appSecret, String sessionKey);
 }

@@ -6,8 +6,9 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 
 @Entity
-@Table(name = "J_MyConfig")
+@Table(name = "J_MY_CONFIG")
 public class MyConfig {
+	
 	private String configKey;
 	private String configValue;
 	
@@ -29,4 +30,5 @@ public class MyConfig {
 	public void setConfigValue(String configValue) {
 		this.configValue = configValue;
 	}
+	
 }

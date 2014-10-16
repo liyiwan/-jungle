@@ -24,6 +24,7 @@ import com.taobao.api.domain.Sku;
 import com.taobao.api.domain.TbkItem;
 import com.taobao.api.domain.Trade;
 import com.taobao.api.request.ItemGetRequest;
+import com.taobao.api.request.ItemQuantityUpdateRequest;
 import com.taobao.api.request.ItemsCustomGetRequest;
 import com.taobao.api.request.LogisticsCompaniesGetRequest;
 import com.taobao.api.request.LogisticsOfflineSendRequest;
@@ -370,6 +371,21 @@ public class TaobaoApiManagerImpl implements TaobaoApiManager {
 			e.printStackTrace();
 		}
 		return null;
+	}
+	
+	public void updateItemQuantity(Long numIid, Long skuIid, Long quantity, String appKey, String appSecret, String sessionKey) {
+		TaobaoClient taobaoClient = new DefaultTaobaoClient(TAOBAO_API_URL, appKey, appSecret);
+		ItemQuantityUpdateRequest req = new ItemQuantityUpdateRequest();
+		req.setNumIid(numIid);
+		if (skuIid != null) {
+			req.setSkuId(skuIid);
+		}
+		req.setQuantity(quantity);
+		try {
+			taobaoClient.execute(req , sessionKey);
+		} catch (ApiException e) {
+			e.printStackTrace();
+		}
 	}
 
 }

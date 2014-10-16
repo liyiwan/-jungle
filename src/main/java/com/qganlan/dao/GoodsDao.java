@@ -44,5 +44,7 @@ public interface GoodsDao extends GenericDao<Goods, Long> {
 	public void saveItemUpdate(ItemUpdate itemUpdate);
 	public void deleteApiSysMatch(String string);
 	public List<ThirdPartyGoods> getThirdPartyGoodsList();
-	public GoodsSpecDTO getGoodsSpec(String outerId);
+	public List<GoodsSpecDTO> getGoodsSpecListForUpdateOnSaleStock(Long updateAge);
+	public Long getOrderedCount(Long goodsId, Long specId);
+	public Long getPendingSendCount(Long goodsId, Long specId);
 }

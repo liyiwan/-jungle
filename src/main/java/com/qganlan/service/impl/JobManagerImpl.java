@@ -17,6 +17,7 @@ import com.qganlan.service.EmailManager;
 import com.qganlan.service.GoodsManager;
 import com.qganlan.service.JobManager;
 import com.qganlan.service.RzcshopManager;
+import com.qganlan.service.StockManager;
 import com.qganlan.service.TaobaoApiManager;
 import com.qganlan.service.TradeManager;
 import com.taobao.api.domain.Item;
@@ -36,6 +37,12 @@ public class JobManagerImpl implements JobManager {
 	private AccountManager accountManager;
 	@Autowired
 	private TradeManager tradeManager;
+	@Autowired
+	private StockManager stockManager;
+
+	public void setStockManager(StockManager stockManager) {
+		this.stockManager = stockManager;
+	}
 
 	public void setAccountManager(AccountManager accountManager) {
 		this.accountManager = accountManager;
@@ -69,7 +76,7 @@ public class JobManagerImpl implements JobManager {
 	@Scheduled(cron = "0 0 20 ? * *")
 	public void dailyJob() {
 		sendAccountBalanceReport();
-		//checkGoods();
+		stockManager.synchronizeStock();
 	}
 
 	@Scheduled(cron = "0 0 12,16,17,18,19,20 * * ?")

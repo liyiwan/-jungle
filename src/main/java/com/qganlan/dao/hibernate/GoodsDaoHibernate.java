@@ -351,9 +351,31 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 		return query.list();
 	}
 
+	@SuppressWarnings("unchecked")
 	@Override
-	public GoodsSpecDTO getGoodsSpec(String outerId) {
-		// TODO Auto-generated method stub
-		return null;
+	public List<GoodsSpecDTO> getGoodsSpecListForUpdateOnSaleStock(Long updateAge) {
+		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT GoodsID AS GoodsId, SpecID AS SpecId, Stock AS Stock FROM G_Stock_Spec WHERE (WarehouseID = 1000) AND (UpdateAge >= :updateAge)");
+		query.setLong("updateAge", updateAge);
+		query.addScalar("GoodsId", StandardBasicTypes.LONG);
+		query.addScalar("SpecId", StandardBasicTypes.LONG);
+		query.addScalar("Stock", StandardBasicTypes.LONG);
+		query.setResultTransformer(Transformers.aliasToBean(GoodsSpecDTO.class));
+		return query.list();
+	}
+
+	@Override
+	public Long getOrderedCount(Long goodsId, Long specId) {
+		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT SUM(GoodsCount) FROM G_API_TradeGoods, G_API_TradeList WHERE G_API_TradeGoods.BillID = G_API_TradeList.BillID AND G_API_TradeList.curStatus = 2 AND G_API_TradeGoods.GoodsID = :GoodsID AND G_API_TradeGoods.SpecID = :SpecID");
+		query.setLong("GoodsID", goodsId);
+		query.setLong("SpecID", specId);
+		return (Long) query.uniqueResult();
+	}
+
+	@Override
+	public Long getPendingSendCount(Long goodsId, Long specId) {
+		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT SUM(SellCount) FROM G_Trade_GoodsList, G_Trade_TradeList WHERE G_Trade_GoodsList.TradeID = G_Trade_TradeList.TradeID AND (G_Trade_TradeList.curStatus = 2 OR G_Trade_TradeList.curStatus = 5) AND G_Trade_GoodsList.GoodsID = :GoodsID AND G_Trade_GoodsList.SpecID = :SpecID");
+		query.setLong("GoodsID", goodsId);
+		query.setLong("SpecID", specId);
+		return (Long) query.uniqueResult();
 	}
 }
