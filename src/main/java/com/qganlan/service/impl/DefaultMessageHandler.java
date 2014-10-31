@@ -108,7 +108,7 @@ public class DefaultMessageHandler implements MessageHandler {
 				if (rawTrade != null) {
 					tradeManager.notifyByEmail(rawTrade);
 				}
-				if (trade.getSellerNick().equals("小脚丫商城") || trade.getSellerNick().equals("lingixge")) {
+				if (trade.getSellerNick().equals("小脚丫商城") || trade.getSellerNick().equals("lingxige")) {
 					tradeManager.saveTaobaoTrade(trade);
 				}
 			}

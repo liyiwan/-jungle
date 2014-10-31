@@ -248,23 +248,26 @@ public class TradeManagerImpl implements TradeManager {
 			rawOrder.setTid(rawTrade.getTid());
 			rawOrder.setCurStatus(0);
 
-			String[] id = order.getOuterIid().split("-");
-			String outerNumIid = null;
-			if (id.length == 2) {
-				outerNumIid = id[1];
-			} else if (id.length == 1) {
-				outerNumIid = id[0];
-			}
-			if (StringUtils.isNumeric(outerNumIid)) {
-				Item item = itemMap.get(outerNumIid);
-				if (item == null) { 
-					item = taobaoApiManager.getTaobaoItemByNumIid(Long.valueOf(outerNumIid), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), null);
-					itemMap.put(outerNumIid, item);
+			if (order.getOuterIid() != null) {
+				String[] id = order.getOuterIid().split("-");
+				String outerNumIid = null;
+				if (id.length == 2) {
+					outerNumIid = id[1];
+				} else if (id.length == 1) {
+					outerNumIid = id[0];
 				}
-				if (item != null) {
-					String nick = item.getNick();
-					rawOrder.setProviderNick(nick);
-					rawOrder.setProviderNumIid(item.getNumIid());
+				if (StringUtils.isNumeric(outerNumIid)) {
+					Item item = itemMap.get(outerNumIid);
+					if (item == null) { 
+						item = taobaoApiManager.getTaobaoItemByNumIid(Long.valueOf(outerNumIid), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), null);
+						itemMap.put(outerNumIid, item);
+					}
+					if (item != null) {
+						String nick = item.getNick();
+						rawOrder.setProviderNick(nick);
+						rawOrder.setProviderNumIid(item.getNumIid());
+						record = true;
+					}
 				}
 			}
 

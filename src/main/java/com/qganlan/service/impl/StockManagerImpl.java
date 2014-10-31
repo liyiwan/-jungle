@@ -54,6 +54,7 @@ public class StockManagerImpl implements StockManager {
 		Long updateAge = Long.valueOf(config.getConfigValue());
 		List<GoodsSpecDTO> goodsSpecList = goodsDao.getGoodsSpecListForUpdateOnSaleStock(updateAge);
 		for (GoodsSpecDTO goodsSpec : goodsSpecList) {
+			System.out.println("同步库存 goodsId=" + goodsSpec.getGoodsId() + " specId=" + goodsSpec.getSpecId());
 			GoodsDTO goods = goodsDao.getGoods(goodsSpec.getGoodsId());
 			GoodsSpecDTO aGoodsSpecDTO = goodsDao.getGoodsSpec(goodsSpec.getGoodsId(), goodsSpec.getSpecId());
 			Long orderedCount = goodsDao.getOrderedCount(goodsSpec.getGoodsId(), goodsSpec.getSpecId());
@@ -64,24 +65,30 @@ public class StockManagerImpl implements StockManager {
 			}
 			if (goods != null && aGoodsSpecDTO != null) {
 				if (goodsSpec.getSpecId().equals(0L)) {
-					List<Item> items = taobaoApiManager.getTaobaoItemsByOuterId(goods.getGoodsNo(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("小脚丫商城"));
-					for (Item item : items) {
-						taobaoApiManager.updateItemQuantity(item.getNumIid(), null, stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("小脚丫商城"));
+					List<Item> items = taobaoApiManager.getTaobaoItemsByOuterId(goods.getGoodsNo(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("小脚丫商城"));
+					if (items != null) {
+						for (Item item : items) {
+							taobaoApiManager.updateItemQuantity(item.getNumIid(), null, stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("小脚丫商城"));
+						}
 					}
-					
-					items = taobaoApiManager.getTaobaoItemsByOuterId(goods.getGoodsNo(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("lingxige"));
-					for (Item item : items) {
-						taobaoApiManager.updateItemQuantity(item.getNumIid(), null, stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("lingxige"));
+					items = taobaoApiManager.getTaobaoItemsByOuterId(goods.getGoodsNo(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("lingxige"));
+					if (items != null) {
+						for (Item item : items) {
+							taobaoApiManager.updateItemQuantity(item.getNumIid(), null, stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("lingxige"));
+						}
 					}
 				} else {
-					List<Sku> skus = taobaoApiManager.getTaobaoSkusByOuterId(goods.getGoodsNo() + aGoodsSpecDTO.getSpecCode(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("小脚丫商城"));
-					for (Sku sku : skus) {
-						taobaoApiManager.updateItemQuantity(sku.getNumIid(), sku.getSkuId(), stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("小脚丫商城"));
+					List<Sku> skus = taobaoApiManager.getTaobaoSkusByOuterId(goods.getGoodsNo() + aGoodsSpecDTO.getSpecCode(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("小脚丫商城"));
+					if (skus != null) {
+						for (Sku sku : skus) {
+							taobaoApiManager.updateItemQuantity(sku.getNumIid(), sku.getSkuId(), stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("小脚丫商城"));
+						}
 					}
-					
-					skus = taobaoApiManager.getTaobaoSkusByOuterId(goods.getGoodsNo() + aGoodsSpecDTO.getSpecCode(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("lingxige"));
-					for (Sku sku : skus) {
-						taobaoApiManager.updateItemQuantity(sku.getNumIid(), sku.getSkuId(), stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppKey(), taobaoApiManager.getSessionKey("lingxige"));
+					skus = taobaoApiManager.getTaobaoSkusByOuterId(goods.getGoodsNo() + aGoodsSpecDTO.getSpecCode(), taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("lingxige"));
+					if (skus != null) {
+						for (Sku sku : skus) {
+							taobaoApiManager.updateItemQuantity(sku.getNumIid(), sku.getSkuId(), stock, taobaoApiManager.getAppKey(), taobaoApiManager.getAppSecret(), taobaoApiManager.getSessionKey("lingxige"));
+						}
 					}
 				}
 			}

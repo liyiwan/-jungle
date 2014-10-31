@@ -365,17 +365,19 @@ public class GoodsDaoHibernate extends GenericDaoHibernate<Goods, Long> implemen
 
 	@Override
 	public Long getOrderedCount(Long goodsId, Long specId) {
-		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT SUM(GoodsCount) FROM G_API_TradeGoods, G_API_TradeList WHERE G_API_TradeGoods.BillID = G_API_TradeList.BillID AND G_API_TradeList.curStatus = 2 AND G_API_TradeGoods.GoodsID = :GoodsID AND G_API_TradeGoods.SpecID = :SpecID");
-		query.setLong("GoodsID", goodsId);
-		query.setLong("SpecID", specId);
-		return (Long) query.uniqueResult();
+		Query query = (Query) getSession().createQuery("SELECT SUM(apiTradeGoods.goodsCount) FROM GApiTradeGoods AS apiTradeGoods, GApiTrade AS apiTrade WHERE apiTradeGoods.billId = apiTrade.billId AND apiTrade.curStatus = 2 AND apiTradeGoods.goodsId = :goodsId AND apiTradeGoods.specId = :specId");
+		query.setLong("goodsId", goodsId);
+		query.setLong("specId", specId);
+		Long result = (Long) query.uniqueResult();
+		return result == null ? 0L : result;
 	}
 
 	@Override
 	public Long getPendingSendCount(Long goodsId, Long specId) {
-		SQLQuery query = (SQLQuery) getSession().createSQLQuery("SELECT SUM(SellCount) FROM G_Trade_GoodsList, G_Trade_TradeList WHERE G_Trade_GoodsList.TradeID = G_Trade_TradeList.TradeID AND (G_Trade_TradeList.curStatus = 2 OR G_Trade_TradeList.curStatus = 5) AND G_Trade_GoodsList.GoodsID = :GoodsID AND G_Trade_GoodsList.SpecID = :SpecID");
-		query.setLong("GoodsID", goodsId);
-		query.setLong("SpecID", specId);
-		return (Long) query.uniqueResult();
+		Query query = (Query) getSession().createQuery("SELECT SUM(tradeGoods.sellCount) FROM TradeGoods AS tradeGoods, Trade AS trade WHERE tradeGoods.tradeId = trade.tradeId AND (trade.tradeStatus = 2 OR trade.tradeStatus = 5) AND tradeGoods.goodsId = :goodsId AND tradeGoods.specId = :specId");
+		query.setLong("goodsId", goodsId);
+		query.setLong("specId", specId);
+		Long result = (Long) query.uniqueResult();
+		return result == null ? 0L : result;
 	}
 }

@@ -7,8 +7,11 @@ import org.apache.tapestry5.annotations.Property;
 import org.apache.tapestry5.ioc.Messages;
 import org.apache.tapestry5.ioc.annotations.Inject;
 import org.appfuse.model.User;
+
+import com.qganlan.service.StockManager;
 import com.qganlan.webapp.services.SecurityContext;
 import org.slf4j.Logger;
+import org.springframework.beans.factory.annotation.Autowired;
 
 public class Home {
 
@@ -30,5 +33,12 @@ public class Home {
     @Persist
     @Property
     private User currentUser;
+    
+    @Inject
+	private StockManager stockManager;
+    
+    public void onSynchronizeStock() {
+    	stockManager.synchronizeStock();
+    }
 
 }

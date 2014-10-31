@@ -3,5 +3,7 @@
           xmlns:t="http://tapestry.apache.org/schema/tapestry_5_3.xsd">
 
     <p>欢迎使用杭州小脚丫电子商务有限公司系统</p>
+    
+    <a t:type="eventlink" event="synchronizeStock" id="synchronizeStock" class="btn btn-primary" t:mixins="Confirm" t:message="同步库存，请确认！"><i class="icon-plus icon-white"></i>&#160;同步库存&#160;</a>
 
 </html>
